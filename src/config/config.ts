@@ -12,7 +12,7 @@ declare global {
 
 export const ServiceBaseUrl = window.config
   ? window.config.BACKEND_BASE_URL
-  : "http://localhost:5140/api/v1";
+  : "http://localhost:5269/api/v1";
 
 export const AppConfig = {
   serviceUrls: {
