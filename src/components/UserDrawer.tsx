@@ -37,7 +37,7 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
     if (!usersList) return;
 
     dispatch(addMultipleUsers(usersList)).then((result) => {
-      const responseMessage = result.payload as AddUsersResponse;
+      const responseMessage = result.payload.data as AddUsersResponse;
       const isAllAreSuccessfullyAdded: boolean =
         responseMessage.existingUsers.length === 0 &&
         responseMessage.invalidUsers.length === 0 &&

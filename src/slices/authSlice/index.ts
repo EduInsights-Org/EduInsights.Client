@@ -74,19 +74,13 @@ const authSlice = createSlice({
       .addCase(login.pending, (state) => {
         state.loginStatus = RequestState.LOADING;
       })
-      .addCase(
-        login.fulfilled,
-        (
-          state,
-          action: PayloadAction<{ userInfo: BasicInfo; accessToken: string }>
-        ) => {
-          state.isAuthenticated = true;
-          state.userInfo = action.payload.userInfo;
-          state.accessToken = action.payload.accessToken;
-          state.loginStatus = RequestState.SUCCEEDED;
-          state.status = RequestState.SUCCEEDED;
-        }
-      )
+      .addCase(login.fulfilled, (state, action) => {
+        state.isAuthenticated = true;
+        state.userInfo = action.payload.data.userInfo;
+        state.accessToken = action.payload.data.accessToken;
+        state.loginStatus = RequestState.SUCCEEDED;
+        state.status = RequestState.SUCCEEDED;
+      })
       .addCase(login.rejected, (state, action) => {
         state.error = action.payload as string;
         state.loginStatus = RequestState.FAILED;
@@ -110,7 +104,8 @@ const authSlice = createSlice({
       })
       .addCase(refreshAccessToken.fulfilled, (state, action) => {
         state.isAuthenticated = true;
-        state.accessToken = action.payload.accessToken;
+        console.log(action.payload.data);
+        state.accessToken = action.payload.data.accessToken;
       })
       .addCase(refreshAccessToken.rejected, (state) => {
         state.status = RequestState.FAILED;
@@ -121,8 +116,8 @@ const authSlice = createSlice({
       })
       .addCase(
         getUserInfo.fulfilled,
-        (state, action: PayloadAction<BasicInfo>) => {
-          state.userInfo = action.payload;
+        (state, action: PayloadAction<{ data: BasicInfo }>) => {
+          state.userInfo = action.payload.data;
           state.status = RequestState.SUCCEEDED;
         }
       )

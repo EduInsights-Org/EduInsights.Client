@@ -42,8 +42,8 @@ const batchSlice = createSlice({
       })
       .addCase(
         getBatchesByInstituteId.fulfilled,
-        (state, action: PayloadAction<Batch[]>) => {
-          state.batches = action.payload;
+        (state, action: PayloadAction<{ data: Batch[] }>) => {
+          state.batches = action.payload.data;
           state.status = RequestState.SUCCEEDED;
         }
       )
@@ -54,11 +54,14 @@ const batchSlice = createSlice({
       .addCase(createBatch.pending, (state) => {
         state.createStatus = RequestState.LOADING;
       })
-      .addCase(createBatch.fulfilled, (state, action: PayloadAction<Batch>) => {
-        const batches: Batch[] = state.batches || [];
-        state.batches = [...batches, action.payload];
-        state.createStatus = RequestState.SUCCEEDED;
-      })
+      .addCase(
+        createBatch.fulfilled,
+        (state, action: PayloadAction<{ data: Batch }>) => {
+          const batches: Batch[] = state.batches || [];
+          state.batches = [...batches, action.payload.data];
+          state.createStatus = RequestState.SUCCEEDED;
+        }
+      )
       .addCase(createBatch.rejected, (state) => {
         state.createStatus = RequestState.FAILED;
       });

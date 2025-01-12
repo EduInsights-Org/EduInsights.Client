@@ -30,8 +30,8 @@ const instituteSlice = createSlice({
       })
       .addCase(
         getInstituteById.fulfilled,
-        (state, action: PayloadAction<Institute>) => {
-          state.institute = action.payload;
+        (state, action: PayloadAction<{ data: Institute }>) => {
+          state.institute = action.payload.data;
           state.status = RequestState.SUCCEEDED;
         }
       )

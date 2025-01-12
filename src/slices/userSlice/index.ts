@@ -17,7 +17,7 @@ export interface CreateUserPayload {
 
 export interface AddUsersResponse {
   success: boolean;
-  addedUsers	: string[];
+  addedUsers: string[];
   invalidUsers: string[];
   existingUsers: string[];
   message: string;
@@ -52,8 +52,8 @@ const instituteSlice = createSlice({
       })
       .addCase(
         addMultipleUsers.fulfilled,
-        (state, action: PayloadAction<AddUsersResponse>) => {
-          state.message = action.payload;
+        (state, action: PayloadAction<{ data: AddUsersResponse }>) => {
+          state.message = action.payload.data;
           state.status = RequestState.SUCCEEDED;
         }
       )
@@ -64,7 +64,7 @@ const instituteSlice = createSlice({
 });
 
 export const addMultipleUsers = createAsyncThunk(
-  "institute/addMultipleUsers",
+  "user/addMultipleUsers",
   async (users: CreateUserPayload[]) => {
     return new Promise<any>((resolve, reject) => {
       AxiosPrivateService.getInstance()
