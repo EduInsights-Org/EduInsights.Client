@@ -44,7 +44,7 @@ const Login = () => {
 
       if (login.fulfilled.match(result)) {
         const token = result.payload.accessToken;
-        const instituteId = result.payload.userInfo.instituteId;
+        const instituteId = result.payload.data.userInfo.instituteId;
         new AxiosPrivateService(token);
 
         setAuth((prev: any) => ({
@@ -65,7 +65,7 @@ const Login = () => {
           throw new Error("Failed to fetch batches");
         }
 
-        const batches = batchesResult.payload as Batch[];
+        const batches = batchesResult.payload.data as Batch[];
 
         if (batches.length > 0) {
           dispatch(selectBatch(batches[0].id));

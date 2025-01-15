@@ -119,7 +119,7 @@ const SideBar = () => {
         >
           <div className="flex flex-col p-1 gap-y-1 font-light">
             {batches?.map((b) => (
-              <MenuItem>
+              <MenuItem key={b.id}>
                 <button
                   className={`flex w-full px-2 py-2 text-xs dark:text-grayfont text-light-black rounded-md hover:bg-light-hoverBg dark:hover:bg-hoverBg
                     ${
