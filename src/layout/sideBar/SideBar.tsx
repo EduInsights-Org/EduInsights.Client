@@ -19,7 +19,7 @@ import { useTheme } from "../../context/ThemeContext";
 import { selectBatch } from "../../slices/batchSlice";
 import { Avatar } from "@radix-ui/themes";
 import BatchForm from "../../components/BatchForm";
-const roles: Role[] = [Role.SUPER_ADMIN];
+const roles: Role[] = [Role.SuperAdmin];
 
 function useRouteMatch(patterns: readonly string[]) {
   const { pathname } = useLocation();

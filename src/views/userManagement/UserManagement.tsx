@@ -4,7 +4,7 @@ import {
   PencilIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -16,6 +16,8 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
+import { useAppDispatch, useAppSelector } from "../../slices/store";
+import { getUsers } from "../../slices/userSlice";
 
 ChartJS.register(
   CategoryScale,
@@ -92,7 +94,15 @@ const pieChartOptions = {
 };
 
 const UserManagement = () => {
+  const dispatch = useAppDispatch();
+
+  const users = useAppSelector((state) => state.user.users);
+
   const [enabled, setEnabled] = useState(true);
+
+  useEffect(() => {
+    dispatch(getUsers());
+  }, []);
 
   return (
     <main>
@@ -133,8 +143,11 @@ const UserManagement = () => {
               </tr>
             </thead>
             <tbody>
-              {[1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1].map((_) => (
-                <tr className="border-light-borderGray dark:border-borderGray">
+              {users.map((user, index) => (
+                <tr
+                  key={index}
+                  className="border-light-borderGray dark:border-borderGray"
+                >
                   <td className="pl-4 py-2">
                     <div className="flex items-center">
                       <input
@@ -145,10 +158,12 @@ const UserManagement = () => {
                       />
                     </div>
                   </td>
-                  <td className="py-2">Arun deshan</td>
-                  <td className="pl-6 py-2">18APC3535</td>
-                  <td className="pr-6 py-2">arun68</td>
-                  <td className="pr-6 py-2">Student</td>
+                  <td className="py-2">
+                    {user.firstName + " " + user.lastName}
+                  </td>
+                  <td className="pl-6 py-2">{user.indexNumber === null ? <>N/A</>: <>{user.indexNumber}</>}</td>
+                  <td className="pr-6 py-2">{user.userName}</td>
+                  <td className="pr-6 py-2">{user.role}</td>
                   <td className="pr-6 py-2">Active</td>
                   <td className="pl-0 py-2">
                     <div className="flex flex-row gap-x-4">

@@ -29,6 +29,7 @@ interface RegisterPayload {
   userName: string;
   instituteName: string;
   password: string;
+  role: string;
 }
 
 interface LoginPayload {
@@ -130,7 +131,14 @@ const authSlice = createSlice({
 export const register = createAsyncThunk(
   "auth/register",
   async (
-    { firstName, lastName, userName, password, instituteName }: RegisterPayload,
+    {
+      firstName,
+      lastName,
+      userName,
+      password,
+      instituteName,
+      role,
+    }: RegisterPayload,
     { rejectWithValue }
   ) => {
     return AxiosPublicService.getInstance()
@@ -142,6 +150,7 @@ export const register = createAsyncThunk(
           userName,
           password,
           instituteName,
+          role,
         })
       )
       .then((response) => response.data)

@@ -2,11 +2,10 @@ import { useLocation } from "react-router-dom";
 import { getActiveRouteDetails } from "../../route";
 import { Role } from "../../utils/types";
 import { useMemo, useState } from "react";
-import { PlusIcon } from "@heroicons/react/16/solid";
 import UserDrawer from "../../components/UserDrawer";
 import ResultDrawer from "../../components/ResultDrawer";
 
-const roles: Role[] = [Role.SUPER_ADMIN];
+const roles: Role[] = [Role.SuperAdmin];
 
 const Header = () => {
   const { pathname } = useLocation();
@@ -43,10 +42,9 @@ const Header = () => {
       {drawer && (
         <button
           onClick={() => setOpen(true)}
-          className="px-3 py-1 text-xs font-medium text-white bg-primaryLight rounded-sm hover:bg-primaryDark"
+          className="p-2 bg-black dark:bg-white hover:dark:bg-white/90 rounded-sm px-3 py-3 w-24 h-8 flex items-center justify-center hover:bg-black/90 text-xs font-medium leading-none text-white dark:text-black"
         >
-          {/* <PlusIcon className="h-5 w-5 text-white" /> */}
-          Add User
+          Add User(s)
         </button>
       )}
       {drawer}

@@ -9,7 +9,7 @@ import { Field, Input, Label } from "@headlessui/react";
 import clsx from "clsx";
 import { useTheme } from "../context/ThemeContext";
 import { Spinner } from "@radix-ui/themes";
-import { RequestState } from "../utils/types";
+import { RequestState, Role } from "../utils/types";
 
 const Register = () => {
   const { isDarkMode } = useTheme();
@@ -43,6 +43,7 @@ const Register = () => {
         userName: user,
         password: pwd,
         instituteName,
+        role: Role.SuperAdmin,
       })
     );
     if (register.fulfilled.match(result)) navigate("/login");

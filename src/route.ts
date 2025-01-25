@@ -41,7 +41,7 @@ export const routes: RouteObjectWithRole[] = [
       React.createElement(DashboardIcon, { isActive: true }), 
     ],
     element: React.createElement(View.Dashboard),
-    allowRoles: [Role.SUPER_ADMIN],
+    allowRoles: [Role.SuperAdmin],
   },
   {
     path: "/user-management",
@@ -51,7 +51,7 @@ export const routes: RouteObjectWithRole[] = [
       React.createElement(UserManagementIcon, { isActive: true }), 
     ],
     element: React.createElement(View.UserManagement),
-    allowRoles: [Role.SUPER_ADMIN],
+    allowRoles: [Role.SuperAdmin],
   },
   {
     path: "/result-management",
@@ -61,7 +61,7 @@ export const routes: RouteObjectWithRole[] = [
       React.createElement(ResultManagementIcon, { isActive: true }), 
     ],
     element: React.createElement(View.UserManagement),
-    allowRoles: [Role.SUPER_ADMIN],
+    allowRoles: [Role.SuperAdmin],
   },
   {
     path: "/analytics",
@@ -71,7 +71,7 @@ export const routes: RouteObjectWithRole[] = [
       React.createElement(AnalyticsIcon, { isActive: true }), 
     ],
     element: React.createElement(View.UserManagement),
-    allowRoles: [Role.SUPER_ADMIN],
+    allowRoles: [Role.SuperAdmin],
   },
   {
     path: "/audit-logs",
@@ -81,7 +81,7 @@ export const routes: RouteObjectWithRole[] = [
       React.createElement(AuditLogsIcon, { isActive: true }), 
     ],
     element: React.createElement(View.UserManagement),
-    allowRoles: [Role.SUPER_ADMIN],
+    allowRoles: [Role.SuperAdmin],
   },
   {
     path: "/settings",
@@ -91,7 +91,7 @@ export const routes: RouteObjectWithRole[] = [
       React.createElement(SettingsIcon, { isActive: true }), 
     ],
     element: React.createElement(View.UserManagement),
-    allowRoles: [Role.SUPER_ADMIN],
+    allowRoles: [Role.SuperAdmin],
   },
 ];
 

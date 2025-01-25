@@ -3,17 +3,24 @@ import { ChevronDownIcon } from "@radix-ui/themes";
 import clsx from "clsx";
 import { Drawer } from "rsuite";
 import { useAppDispatch, useAppSelector } from "../slices/store";
-import { addMultipleUsers, AddUsersResponse } from "../slices/userSlice";
+import {
+  addMultipleUsers,
+  addUser,
+  AddUsersResponse,
+  CreateUserPayload,
+  getUsers,
+} from "../slices/userSlice";
 import { useToast } from "../context/ToastContext";
 import ToastContainer from "./ToastContainer";
 import PreLoader from "./PreLoader";
-import { RequestState } from "../utils/types";
+import { RequestState, Role } from "../utils/types";
 import useCSV from "../hooks/useCSV";
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
   XCircleIcon,
 } from "@heroicons/react/16/solid";
+import { useState } from "react";
 
 interface UserDrawerProps {
   open: boolean;
@@ -25,6 +32,7 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
     usersList,
     fileName,
     error: csvFileError,
+    resetCSVFile,
     handleCSVSelect,
   } = useCSV();
 
@@ -32,10 +40,26 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
   const dispatch = useAppDispatch();
   const createUsersState = useAppSelector((state) => state.user.status);
   const instituteId = useAppSelector((state) => state.institute.institute!.id);
+  const batchId = useAppSelector((state) => state.batch.selectedBatchId!);
+
+  const [userName, setUserName] = useState<string>("");
+  const [firstName, setFirstName] = useState<string>("");
+  const [lastName, setLastName] = useState<string>("");
+  const [indexNumber, setIndexNumber] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [role, setRole] = useState<Role>(Role.Student);
+
+  const [errors, setErrors] = useState({
+    userName: false,
+    firstName: false,
+    lastName: false,
+    indexNumber: false,
+    email: false,
+  });
+  const [csvFileValidation, setCsvFileValidation] = useState<boolean>(false);
 
   const handleCreateUsers = () => {
-    if (!usersList) return;
-
+    if (!usersList) return setCsvFileValidation(true);
     dispatch(addMultipleUsers(usersList)).then((result) => {
       const responseMessage = result.payload.data as AddUsersResponse;
       const isAllAreSuccessfullyAdded: boolean =
@@ -76,6 +100,84 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
     });
   };
 
+  const handleCreateUser = () => {
+    if (!checkValidation()) return;
+    const user: CreateUserPayload = {
+      firstName,
+      lastName,
+      userName,
+      indexNumber,
+      email,
+      instituteId,
+      batchId,
+      password: "123321",
+      role,
+    };
+    dispatch(addUser(user))
+      .then((result) => {
+        const isResponseSuccess = result.payload.success as boolean;
+        const responseMessage = result.payload.message as string;
+        addToast({
+          id: "1",
+          message: responseMessage,
+          type: "success",
+          duration: 50000,
+          swipeDirection: "right",
+        });
+
+        isResponseSuccess && resetFields();
+        dispatch(getUsers());
+      })
+      .catch((error) => {
+        console.log(error);
+        addToast({
+          id: "1",
+          message: "Error when adding the user",
+          type: "error",
+          duration: 50000,
+          swipeDirection: "right",
+        });
+      });
+  };
+
+  const checkValidation = (): boolean => {
+    const newErrors = {
+      userName: userName.trim().length === 0,
+      firstName: firstName.trim().length === 0,
+      lastName: lastName.trim().length === 0,
+      indexNumber: indexNumber.trim().length === 0,
+      email: email.trim().length === 0,
+    };
+
+    setErrors(newErrors);
+
+    return !Object.values(newErrors).some((hasError) => hasError);
+  };
+
+  const resetFields = () => {
+    setUserName("");
+    setFirstName("");
+    setLastName("");
+    setIndexNumber("");
+    setEmail("");
+    setRole(Role.Student);
+    setErrors({
+      userName: false,
+      firstName: false,
+      lastName: false,
+      indexNumber: false,
+      email: false,
+    });
+  };
+
+  const CSVResetButton = () => {
+    return (
+      <button onClick={() => resetCSVFile()}>
+        <XCircleIcon className="h-5 w-5 absolute top-2 right-2 text-light-font02 dark:text-font02" />
+      </button>
+    );
+  };
+
   return (
     <Drawer backdrop="static" open={open} onClose={() => setOpen(false)}>
       <Drawer.Header
@@ -101,13 +203,20 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
               First Name
             </Label>
             <Input
-              // onChange={(e) => setUser(e.target.value)}
-              // value={user}
-              id="username"
+              onChange={(e) => {
+                checkValidation();
+                setFirstName(e.target.value);
+              }}
+              value={firstName}
+              id="firstName"
               type="text"
               required
               className={clsx(
-                "ring-1 ring-inset mt-1 mb-3 block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                "ring-1 ring-inset mt-1 mb-3 block w-full rounded-md bg-light-subBg dark:bg-subBg py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                "bg-light-subBg dark:bg-subBg",
+                errors.firstName
+                  ? "ring-red-500 dark:ring-red-500"
+                  : "ring-light-borderGray dark:ring-borderGray",
                 "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
               )}
             />
@@ -117,13 +226,20 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
               Last Name
             </Label>
             <Input
-              // onChange={(e) => setUser(e.target.value)}
-              // value={user}
-              id="username"
+              onChange={(e) => {
+                checkValidation();
+                setLastName(e.target.value);
+              }}
+              value={lastName}
+              id="lastName"
               type="text"
               required
               className={clsx(
-                "ring-1 ring-inset mt-1 mb-3 block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                "ring-1 ring-inset mt-1 mb-3 block w-full rounded-md bg-light-subBg dark:bg-subBg py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                "bg-light-subBg dark:bg-subBg",
+                errors.lastName
+                  ? "ring-red-500 dark:ring-red-500"
+                  : "ring-light-borderGray dark:ring-borderGray",
                 "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
               )}
             />
@@ -136,13 +252,20 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
               User Name
             </Label>
             <Input
-              // onChange={(e) => setUser(e.target.value)}
-              // value={user}
+              onChange={(e) => {
+                checkValidation();
+                setUserName(e.target.value);
+              }}
+              value={userName}
               id="username"
               type="text"
               required
               className={clsx(
-                "ring-1 ring-inset mt-1 mb-3 block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                "ring-1 ring-inset mt-1 mb-3 block w-full rounded-md bg-light-subBg dark:bg-subBg py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                "bg-light-subBg dark:bg-subBg",
+                errors.userName
+                  ? "ring-red-500 dark:ring-red-500"
+                  : "ring-light-borderGray dark:ring-borderGray",
                 "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
               )}
             />
@@ -152,13 +275,20 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
               Index Number
             </Label>
             <Input
-              // onChange={(e) => setUser(e.target.value)}
-              // value={user}
+              onChange={(e) => {
+                checkValidation();
+                setIndexNumber(e.target.value);
+              }}
+              value={indexNumber}
               id="username"
               type="text"
               required
               className={clsx(
-                "ring-1 ring-inset mt-1 mb-3 block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                "ring-1 ring-inset mt-1 mb-3 block w-full rounded-md bg-light-subBg dark:bg-subBg py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                "bg-light-subBg dark:bg-subBg",
+                errors.indexNumber
+                  ? "ring-red-500 dark:ring-red-500"
+                  : "ring-light-borderGray dark:ring-borderGray",
                 "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
               )}
             />
@@ -171,13 +301,20 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
               Email
             </Label>
             <Input
-              // onChange={(e) => setUser(e.target.value)}
-              // value={user}
+              onChange={(e) => {
+                checkValidation();
+                setEmail(e.target.value);
+              }}
+              value={email}
               id="username"
               type="text"
               required
               className={clsx(
-                "ring-1 ring-inset mt-1 block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                "ring-1 ring-inset mt-1 mb-3 block w-full rounded-md bg-light-subBg dark:bg-subBg py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                "bg-light-subBg dark:bg-subBg",
+                errors.email
+                  ? "ring-red-500 dark:ring-red-500"
+                  : "ring-light-borderGray dark:ring-borderGray",
                 "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
               )}
             />
@@ -191,14 +328,21 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
                 className={clsx(
                   "ring-1 ring-inset appearance-none mt-1 block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
                   "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01",
-                  // Make the text of each option black on Windows
                   "*:text-black"
                 )}
+                value={role}
+                onChange={(e) => {
+                  const val = e.target.value;
+                  if (val === Role.SuperAdmin) return setRole(Role.SuperAdmin);
+                  if (val === Role.Admin) return setRole(Role.Admin);
+                  if (val === Role.dataEntry) return setRole(Role.dataEntry);
+                  if (val === Role.Student) return setRole(Role.Student);
+                }}
               >
-                <option value="Student">Student</option>
-                <option value="super_admin">Super admin</option>
-                <option value="admin">Admin</option>
-                <option value="data_entry">Data entry</option>
+                <option value="SUPER_ADMIN">Super admin</option>
+                <option value="ADMIN">Admin</option>
+                <option value="DATA_ENTRY">Data entry</option>
+                <option value="STUDENT">Student</option>
               </Select>
               <ChevronDownIcon
                 className="group pointer-events-none absolute top-4 right-2.5 size-2 fill-light-font02 dark:fill-font02"
@@ -208,6 +352,17 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
           </Field>
         </div>
 
+        <button
+          onClick={() => handleCreateUser()}
+          className="p-2 bg-black dark:bg-white hover:dark:bg-white/90 rounded-sm px-3 py-3 w-24 h-8 flex items-center justify-center hover:bg-black/90 text-xs ml-auto mt-auto font-medium leading-none text-white dark:text-black"
+        >
+          {createUsersState === RequestState.LOADING ? (
+            <PreLoader size="small" isFullScreen={false} />
+          ) : (
+            <>Add User</>
+          )}
+        </button>
+
         <div className="h-[1px] bg-light-borderGray dark:bg-borderGray my-8" />
 
         <div
@@ -215,7 +370,8 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
             "flex gap-x-2 justify-between w-full h-56 border-[1px] rounded-md",
             {
               "border-light-borderGray dark:border-borderGray border-dashed":
-                csvFileError === null,
+                csvFileValidation === false && csvFileError === null,
+              "border-red-500 border-dashed": csvFileValidation === true,
               "border-[#bd5622] dark:border-[#df985d]": csvFileError === true,
               "border-[#45855f] dark:border-[#59aa77]": csvFileError === false,
             }
@@ -254,7 +410,10 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
                 type="file"
                 accept=".csv"
                 className="hidden"
-                onChange={(e) => handleCSVSelect(e, instituteId)}
+                onChange={(e) => {
+                  setCsvFileValidation(false);
+                  handleCSVSelect(e, instituteId, batchId);
+                }}
               />
             </label>
           ) : (
@@ -262,9 +421,7 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
               {csvFileError ? (
                 <div className="relative flex items-center justify-center gap-x-2 w-full bg-[#fdf0d9] dark:bg-[#301f13] px-2 rounded-md">
                   <ExclamationCircleIcon className="h-10 w-10 text-[#bd5622] dark:text-[#df985d]" />
-                  <button>
-                    <XCircleIcon className="h-5 w-5 absolute top-2 right-2 text-[#bd5622] dark:text-font02" />
-                  </button>
+                  <CSVResetButton />
                   <div className="flex flex-col gap-y-1">
                     <span className="text-sm font-semibold leading-none text-[#bd5622] dark:text-[#df985d]">
                       {fileName}
@@ -275,9 +432,9 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
                   </div>
                 </div>
               ) : (
-                <div className="flex items-center justify-center w-full gap-x-2 rounded-md bg-[#e9f6eb] dark:bg-[#192d23] dark:border-[#59aa77] px-2">
+                <div className="relative flex items-center justify-center w-full gap-x-2 rounded-md bg-[#e9f6eb] dark:bg-[#192d23] dark:border-[#59aa77] px-2">
                   <CheckCircleIcon className="h-10 w-10 dark:text-[#59aa77] text-[#45855f]" />
-
+                  <CSVResetButton />
                   <div className="flex flex-col gap-y-1">
                     <span className="text-sm font-semibold leading-none dark:text-[#59aa77] text-[#45855f]">
                       {fileName}
@@ -294,12 +451,12 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
 
         <button
           onClick={() => handleCreateUsers()}
-          className="p-2 bg-primaryLight rounded-md px-8 py-3 w-24 h-8 flex items-center justify-center hover:bg-primaryDark ml-auto mt-auto text-sm font-bold leading-none text-white"
+          className="p-2 bg-black dark:bg-white hover:dark:bg-white/90 rounded-sm px-3 py-3 w-24 h-8 flex items-center justify-center hover:bg-black/90 text-xs ml-auto mt-auto font-medium leading-none text-white dark:text-black"
         >
           {createUsersState === RequestState.LOADING ? (
             <PreLoader size="small" isFullScreen={false} />
           ) : (
-            <>Create</>
+            <>Add Users</>
           )}
         </button>
         <ToastContainer />
