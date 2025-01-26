@@ -105,7 +105,6 @@ const authSlice = createSlice({
       })
       .addCase(refreshAccessToken.fulfilled, (state, action) => {
         state.isAuthenticated = true;
-        console.log(action.payload.data);
         state.accessToken = action.payload.data.accessToken;
       })
       .addCase(refreshAccessToken.rejected, (state) => {

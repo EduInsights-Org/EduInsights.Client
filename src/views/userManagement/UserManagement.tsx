@@ -18,7 +18,8 @@ import {
 } from "chart.js";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
 import { getRoleDistribution, getUsers } from "../../slices/userSlice";
-import { Role } from "../../utils/types";
+import { Select, TextField } from "@radix-ui/themes";
+import { capitalize } from "../../utils/utils";
 
 ChartJS.register(
   CategoryScale,
@@ -72,9 +73,11 @@ const UserManagement = () => {
   const dispatch = useAppDispatch();
 
   const [page, setPage] = useState(1);
+  const [selectBatch, setSelectBatch] = useState<string | null>(null);
+  const [usersForDelete, setUsersForDelete] = useState<string[]>([]);
 
   const instituteId = useAppSelector((state) => state.institute.institute!.id);
-  const batchId = useAppSelector((state) => state.batch.selectedBatchId!);
+  const batches = useAppSelector((state) => state.batch.batches);
   const users = useAppSelector((state) => state.user.paginatedResponse.data);
   const roleDistribution = useAppSelector(
     (state) => state.user.roleDistribution
@@ -87,9 +90,9 @@ const UserManagement = () => {
   );
 
   useEffect(() => {
-    dispatch(getUsers({ instituteId, page, pageSize }));
+    dispatch(getUsers({ instituteId, batchId: selectBatch, page, pageSize }));
     dispatch(getRoleDistribution({ instituteId }));
-  }, [instituteId, batchId, page, pageSize]);
+  }, [instituteId, selectBatch, page, pageSize]);
 
   const handlePreviousPage = () => {
     if (page > 1) {
@@ -130,14 +133,61 @@ const UserManagement = () => {
     ],
   };
 
+  const selectAllForDelete = () => {
+    if (usersForDelete.length === users.length) return setUsersForDelete([]);
+    setUsersForDelete(users.map((i) => i.id));
+  };
+
+  const selectForDelete = (userId: string) => {
+    setUsersForDelete((prevUsers) => {
+      if (prevUsers.includes(userId)) {
+        return prevUsers.filter((id) => id !== userId);
+      } else {
+        return [...prevUsers, userId];
+      }
+    });
+  };
   return (
     <main>
       <div className="flex justify-between flex-row-reverse gap-x-2">
         <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[600px] w-[65%]">
           {/* <Bar data={data} options={options} /> */}
+          {/* footer */}
+          <div className="flex gap-x-3 items-center py-4 px-3 bg-light-subBg dark:bg-subBg">
+            <div>
+              <TextField.Root
+                size="1"
+                radius="small"
+                placeholder="Search the users..."
+              />
+            </div>
+            <div className="">
+              <Select.Root
+                size={"1"}
+                onValueChange={(batchId) => {
+                  setPage(1);
+                  if (batchId === "none") return setSelectBatch(null);
+                  setSelectBatch(batchId);
+                }}
+              >
+                <Select.Trigger radius="small" placeholder="By Batch" />
+                <Select.Content position="popper">
+                  <Select.Group>
+                    <Select.Item value={"none"}>All</Select.Item>
+                    {batches?.map((b) => (
+                      <Select.Item key={b.id} value={b.id}>
+                        {b.name}
+                      </Select.Item>
+                    ))}
+                  </Select.Group>
+                </Select.Content>
+              </Select.Root>
+            </div>
+          </div>
+          {/* table */}
           <table className="w-full text-xs text-left rtl:text-right rounded-lg">
             <thead className="">
-              <tr className="border-b border-light-borderGray dark:border-borderGray text-light-font02 dark:text-font02 bg-light-subBg dark:bg-subBg">
+              <tr className="border-b border-light-borderGray dark:border-borderGray text-light-font02 dark:text-font02">
                 <th scope="col" className="pl-4 py-3">
                   <div className="flex items-center">
                     <input
@@ -145,6 +195,8 @@ const UserManagement = () => {
                       type="checkbox"
                       value=""
                       className="w-[14px] h-[14px]"
+                      onClick={selectAllForDelete}
+                      checked={usersForDelete.length === users.length}
                     />
                   </div>
                 </th>
@@ -184,10 +236,12 @@ const UserManagement = () => {
                         type="checkbox"
                         value=""
                         className="w-[14px] h-[14px]"
+                        checked={usersForDelete.some((u) => u === user.id)}
+                        onClick={() => selectForDelete(user.id)}
                       />
                     </div>
                   </td>
-                  <td className="py-2">{index + 1}</td>
+                  <td className="py-2">{index + (page - 1) * pageSize + 1}</td>
                   <td className="py-2">
                     {user.firstName + " " + user.lastName}
                   </td>
@@ -199,7 +253,7 @@ const UserManagement = () => {
                     )}
                   </td>
                   <td className="pr-6 py-2">{user.userName}</td>
-                  <td className="pr-6 py-2">{user.role}</td>
+                  <td className="pr-6 py-2">{capitalize(user.role)}</td>
                   <td className="pr-6 py-2">Active</td>
                   <td className="pl-0 py-2">
                     <div className="flex flex-row gap-x-4">
@@ -211,9 +265,11 @@ const UserManagement = () => {
               ))}
             </tbody>
           </table>
+
+          {/* footer */}
           <div className="flex justify-between items-center py-3 bg-light-subBg dark:bg-subBg mt-auto">
             <span className="text-light-font01 text-xs dark:text-font01 pl-3">
-              {users.length} rows selected
+              {usersForDelete.length} rows selected
             </span>
             <span className="text-light-font01 text-xs dark:text-font01 ml-auto mr-4">
               Page {page} of {Math.ceil(totalRecords / pageSize)}
@@ -236,7 +292,7 @@ const UserManagement = () => {
             </div>
           </div>
         </div>
-        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray p-3 min-w-[250px] w-[35%] max-h-[500px] flex justify-center">
+        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray p-3 min-w-[250px] w-[35%] min-h-[470px] flex justify-center">
           <Pie data={pieChartData} options={pieChartOptions} />
         </div>
       </div>

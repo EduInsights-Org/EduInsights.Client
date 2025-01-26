@@ -102,12 +102,10 @@ const instituteSlice = createSlice({
         addUser.fulfilled,
         (state, action: PayloadAction<{ data: AddUsersResponse }>) => {
           state.message = action.payload.data;
-          console.log(action);
           state.status = RequestState.SUCCEEDED;
         }
       )
-      .addCase(addUser.rejected, (state, action) => {
-        console.log(action.payload);
+      .addCase(addUser.rejected, (state) => {
         state.status = RequestState.FAILED;
       })
       .addCase(getUsers.pending, (state) => {
@@ -182,7 +180,7 @@ export const getUsers = createAsyncThunk(
     pageSize,
   }: {
     instituteId?: string;
-    batchId?: string;
+    batchId?: string | null;
     page: number;
     pageSize: number;
   }) => {

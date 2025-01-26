@@ -9,3 +9,11 @@ function getCrossItems<Role>(a: Role[], b: Role[]): Role[] {
     return b.includes(element);
   });
 }
+
+export function capitalize(word: string): string {
+  return word
+    .replace(/_/g, " ") // Replace underscores with spaces
+    .split(" ") // Split the sentence into words
+    .map((w) => w.charAt(0).toUpperCase() + w.slice(1).toLowerCase()) // Capitalize each word
+    .join(" ");
+}
