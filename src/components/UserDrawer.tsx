@@ -8,7 +8,6 @@ import {
   addUser,
   AddUsersResponse,
   CreateUserPayload,
-  getUsers,
 } from "../slices/userSlice";
 import { useToast } from "../context/ToastContext";
 import ToastContainer from "./ToastContainer";
@@ -21,6 +20,7 @@ import {
   XCircleIcon,
 } from "@heroicons/react/16/solid";
 import { useState } from "react";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
 interface UserDrawerProps {
   open: boolean;
@@ -113,31 +113,19 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
       password: "123321",
       role,
     };
-    dispatch(addUser(user))
-      .then((result) => {
-        const isResponseSuccess = result.payload.success as boolean;
-        const responseMessage = result.payload.message as string;
-        addToast({
-          id: "1",
-          message: responseMessage,
-          type: "success",
-          duration: 50000,
-          swipeDirection: "right",
-        });
-
-        isResponseSuccess && resetFields();
-        dispatch(getUsers());
-      })
-      .catch((error) => {
-        console.log(error);
-        addToast({
-          id: "1",
-          message: "Error when adding the user",
-          type: "error",
-          duration: 50000,
-          swipeDirection: "right",
-        });
+    dispatch(addUser(user)).then((result) => {
+      const isResponseSuccess = result.payload.success as boolean;
+      const responseMessage = result.payload.message as string;
+      addToast({
+        id: "1",
+        message: responseMessage,
+        type: isResponseSuccess ? "success" : "warning",
+        duration: 5000,
+        swipeDirection: "right",
       });
+
+      isResponseSuccess && resetFields();
+    });
   };
 
   const checkValidation = (): boolean => {
@@ -191,6 +179,13 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
           >
             Add Users
           </Drawer.Title>
+
+          {batchId === null && (
+            <span className="flex items-center gap-x-2 px-4 py-2 text-xs font-medium rounded-sm text-[#bd5622] dark:text-[#df985d] bg-[#fdf0d9] dark:bg-[#301f13]">
+              <InformationCircleIcon className="h-4" />
+              Please Select a Batch before adding Users
+            </span>
+          )}
         </div>
       </Drawer.Header>
       <Drawer.Body

@@ -16,7 +16,7 @@ import {
 } from "@heroicons/react/16/solid";
 import { usePopUp } from "../../context/PopUpContext";
 import { useTheme } from "../../context/ThemeContext";
-import { selectBatch } from "../../slices/batchSlice";
+import { resetBatchStore, selectBatch } from "../../slices/batchSlice";
 import { Avatar } from "@radix-ui/themes";
 import BatchForm from "../../components/BatchForm";
 const roles: Role[] = [Role.SuperAdmin];
@@ -61,7 +61,10 @@ const SideBar = () => {
 
   const handleLogout = async () => {
     const result = await dispatch(logout());
-    if (logout.fulfilled.match(result)) dispatch(resetAuth());
+    if (logout.fulfilled.match(result)) {
+      dispatch(resetAuth());
+      dispatch(resetBatchStore());
+    }
   };
 
   const handleDelete = () => {

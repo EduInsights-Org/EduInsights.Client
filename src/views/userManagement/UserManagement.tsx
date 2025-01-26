@@ -17,7 +17,8 @@ import {
   ArcElement,
 } from "chart.js";
 import { useAppDispatch, useAppSelector } from "../../slices/store";
-import { getUsers } from "../../slices/userSlice";
+import { getRoleDistribution, getUsers } from "../../slices/userSlice";
+import { Role } from "../../utils/types";
 
 ChartJS.register(
   CategoryScale,
@@ -54,32 +55,6 @@ const options = {
   },
 };
 
-const pieChartData = {
-  labels: ["Super admin", "Admin", "Lecture", "Data entry", "Student"],
-  datasets: [
-    {
-      label: "Role",
-      data: [12, 19, 3, 5, 2],
-      backgroundColor: [
-        "rgba(30, 92, 199)",
-        "rgba(56, 118, 225)",
-        "rgba(100, 148, 232)",
-        "rgba(144, 179, 238)",
-        "rgba(189, 209, 245)",
-      ],
-      borderColor: [
-        "rgba(30, 92, 199)",
-        "rgba(56, 118, 225)",
-        "rgba(100, 148, 232)",
-        "rgba(144, 179, 238)",
-        "rgba(189, 209, 245)",
-      ],
-
-      borderWidth: 1,
-    },
-  ],
-};
-
 const pieChartOptions = {
   responsive: true,
   plugins: {
@@ -96,18 +71,69 @@ const pieChartOptions = {
 const UserManagement = () => {
   const dispatch = useAppDispatch();
 
-  const users = useAppSelector((state) => state.user.users);
+  const [page, setPage] = useState(1);
 
-  const [enabled, setEnabled] = useState(true);
+  const instituteId = useAppSelector((state) => state.institute.institute!.id);
+  const batchId = useAppSelector((state) => state.batch.selectedBatchId!);
+  const users = useAppSelector((state) => state.user.paginatedResponse.data);
+  const roleDistribution = useAppSelector(
+    (state) => state.user.roleDistribution
+  );
+  const totalRecords = useAppSelector(
+    (state) => state.user.paginatedResponse.totalRecords
+  );
+  const pageSize = useAppSelector(
+    (state) => state.user.paginatedResponse.pageSize
+  );
 
   useEffect(() => {
-    dispatch(getUsers());
-  }, []);
+    dispatch(getUsers({ instituteId, page, pageSize }));
+    dispatch(getRoleDistribution({ instituteId }));
+  }, [instituteId, batchId, page, pageSize]);
+
+  const handlePreviousPage = () => {
+    if (page > 1) {
+      setPage((prevPage) => prevPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
+
+  const pieChartData = {
+    labels: ["Super admin", "Admin", "Data entry", "Student"],
+    datasets: [
+      {
+        label: "Role",
+        data: [
+          roleDistribution.superAdmin,
+          roleDistribution.admin,
+          roleDistribution.dataEntry,
+          roleDistribution.student,
+        ],
+        backgroundColor: [
+          "#003f5c",
+          "#58508d",
+          "#bc5090",
+          "#ff6361",
+          "#ffa600",
+        ],
+        // borderColor: [
+        //   "rgba(30, 92, 199)",
+        //   "rgba(56, 118, 225)",
+        //   "rgba(100, 148, 232)",
+        //   "rgba(144, 179, 238)",
+        // ],
+        borderWidth: 0,
+      },
+    ],
+  };
 
   return (
     <main>
       <div className="flex justify-between flex-row-reverse gap-x-2">
-        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[600px] w-[65%]">
+        <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[600px] w-[65%]">
           {/* <Bar data={data} options={options} /> */}
           <table className="w-full text-xs text-left rtl:text-right rounded-lg">
             <thead className="">
@@ -121,6 +147,9 @@ const UserManagement = () => {
                       className="w-[14px] h-[14px]"
                     />
                   </div>
+                </th>
+                <th scope="col" className="py-2">
+                  Id
                 </th>
                 <th scope="col" className="py-2">
                   Name
@@ -158,10 +187,17 @@ const UserManagement = () => {
                       />
                     </div>
                   </td>
+                  <td className="py-2">{index + 1}</td>
                   <td className="py-2">
                     {user.firstName + " " + user.lastName}
                   </td>
-                  <td className="pl-6 py-2">{user.indexNumber === null ? <>N/A</>: <>{user.indexNumber}</>}</td>
+                  <td className="pl-6 py-2">
+                    {user.indexNumber === null ? (
+                      <>N/A</>
+                    ) : (
+                      <>{user.indexNumber}</>
+                    )}
+                  </td>
                   <td className="pr-6 py-2">{user.userName}</td>
                   <td className="pr-6 py-2">{user.role}</td>
                   <td className="pr-6 py-2">Active</td>
@@ -173,26 +209,34 @@ const UserManagement = () => {
                   </td>
                 </tr>
               ))}
-              <tr className="bg-light-subBg dark:bg-subBg">
-                <td colSpan={7} className="py-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-font01 pl-3">2 rows selected</span>
-
-                    <div className="flex justify-end gap-x-4 flex-row pr-4">
-                      <button className="border border-light-borderGray dark:border-borderGray p-1 rounded-md">
-                        <ChevronLeftIcon className="h-3 w-3 text-light-font01 dark:text-font01" />
-                      </button>
-                      <button className="border border-light-borderGray dark:border-borderGray p-1 rounded-md">
-                        <ChevronRightIcon className="h-3 w-3 text-light-font01 dark:text-font01" />
-                      </button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
             </tbody>
           </table>
+          <div className="flex justify-between items-center py-3 bg-light-subBg dark:bg-subBg mt-auto">
+            <span className="text-light-font01 text-xs dark:text-font01 pl-3">
+              {users.length} rows selected
+            </span>
+            <span className="text-light-font01 text-xs dark:text-font01 ml-auto mr-4">
+              Page {page} of {Math.ceil(totalRecords / pageSize)}
+            </span>
+            <div className="flex justify-end gap-x-4 flex-row pr-2">
+              <button
+                className="border border-light-borderGray dark:border-borderGray p-1 rounded-md"
+                onClick={handlePreviousPage}
+                disabled={page === 1}
+              >
+                <ChevronLeftIcon className="h-3 w-3 text-light-font01 dark:text-font01" />
+              </button>
+              <button
+                className="border border-light-borderGray dark:border-borderGray p-1 rounded-md"
+                onClick={handleNextPage}
+                disabled={users.length < pageSize}
+              >
+                <ChevronRightIcon className="h-3 w-3 text-light-font01 dark:text-font01" />
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray p-3 min-w-[250px] w-[35%] h-fit flex justify-center">
+        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray p-3 min-w-[250px] w-[35%] max-h-[500px] flex justify-center">
           <Pie data={pieChartData} options={pieChartOptions} />
         </div>
       </div>

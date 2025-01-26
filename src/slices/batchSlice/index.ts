@@ -34,6 +34,9 @@ const batchSlice = createSlice({
     selectBatch(state, action: PayloadAction<string>) {
       state.selectedBatchId = action.payload;
     },
+    resetBatchStore(state) {
+      (state.batches = null), (state.selectedBatchId = null);
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -100,5 +103,5 @@ export const createBatch = createAsyncThunk(
   }
 );
 
-export const { selectBatch } = batchSlice.actions;
+export const { selectBatch, resetBatchStore } = batchSlice.actions;
 export default batchSlice.reducer;

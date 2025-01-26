@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppConfig } from "../../config/config";
 import { AxiosPrivateService } from "../../utils/apiService";
-import { RequestState } from "../../utils/types";
+import { RequestState, Role } from "../../utils/types";
 
 export interface CreateUserPayload {
   firstName: string;
@@ -31,22 +31,49 @@ interface User {
   userName: string;
   email: string;
   indexNumber: string | null;
-  role: string;
+  role: Role;
 }
+
+interface PaginatedResponse {
+  data: User[];
+  totalRecords: number;
+  currentPage: number;
+  pageSize: number;
+}
+
+interface GetRoleDistributionResponse {
+  superAdmin: number;
+  admin: number;
+  dataEntry: number;
+  student: number;
+}
+
 interface UserState {
   status: RequestState;
   user: User | null;
-  users: User[] | [];
   message: AddUsersResponse | null;
   error: string | null;
+  paginatedResponse: PaginatedResponse;
+  roleDistribution: GetRoleDistributionResponse;
 }
 
 const initialState: UserState = {
   status: RequestState.IDLE,
   error: null,
   user: null,
-  users: [],
   message: null,
+  paginatedResponse: {
+    currentPage: 0,
+    data: [],
+    pageSize: 10,
+    totalRecords: 0,
+  },
+  roleDistribution: {
+    superAdmin: 0,
+    admin: 0,
+    dataEntry: 0,
+    student: 0,
+  },
 };
 
 const instituteSlice = createSlice({
@@ -75,10 +102,12 @@ const instituteSlice = createSlice({
         addUser.fulfilled,
         (state, action: PayloadAction<{ data: AddUsersResponse }>) => {
           state.message = action.payload.data;
+          console.log(action);
           state.status = RequestState.SUCCEEDED;
         }
       )
-      .addCase(addUser.rejected, (state) => {
+      .addCase(addUser.rejected, (state, action) => {
+        console.log(action.payload);
         state.status = RequestState.FAILED;
       })
       .addCase(getUsers.pending, (state) => {
@@ -86,12 +115,28 @@ const instituteSlice = createSlice({
       })
       .addCase(
         getUsers.fulfilled,
-        (state, action: PayloadAction<{ data: User[] }>) => {
-          state.users = action.payload.data;
+        (state, action: PayloadAction<{ data: PaginatedResponse }>) => {
+          state.paginatedResponse = action.payload.data;
           state.status = RequestState.SUCCEEDED;
         }
       )
       .addCase(getUsers.rejected, (state) => {
+        state.status = RequestState.FAILED;
+      })
+      .addCase(getRoleDistribution.pending, (state) => {
+        state.status = RequestState.LOADING;
+      })
+      .addCase(
+        getRoleDistribution.fulfilled,
+        (
+          state,
+          action: PayloadAction<{ data: GetRoleDistributionResponse }>
+        ) => {
+          state.roleDistribution = action.payload.data;
+          state.status = RequestState.SUCCEEDED;
+        }
+      )
+      .addCase(getRoleDistribution.rejected, (state) => {
         state.status = RequestState.FAILED;
       });
   },
@@ -115,10 +160,41 @@ export const addMultipleUsers = createAsyncThunk(
 
 export const addUser = createAsyncThunk(
   "user/addUser",
-  async (user: CreateUserPayload) => {
+  async (user: CreateUserPayload, { rejectWithValue }) => {
+    try {
+      const response = await AxiosPrivateService.getInstance().post(
+        AppConfig.serviceUrls.user,
+        user
+      );
+      return response.data;
+    } catch (error: any) {
+      return rejectWithValue(error.response?.data || "Failed to add user");
+    }
+  }
+);
+
+export const getUsers = createAsyncThunk(
+  "user/getUsers",
+  async ({
+    instituteId,
+    batchId,
+    page,
+    pageSize,
+  }: {
+    instituteId?: string;
+    batchId?: string;
+    page: number;
+    pageSize: number;
+  }) => {
     return new Promise<any>((resolve, reject) => {
+      const params = new URLSearchParams();
+      if (instituteId) params.append("instituteId", instituteId);
+      if (batchId) params.append("batchId", batchId);
+      params.append("page", page.toString());
+      params.append("pageSize", pageSize.toString());
+
       AxiosPrivateService.getInstance()
-        .post(AppConfig.serviceUrls.user, user)
+        .get(`${AppConfig.serviceUrls.user}?${params.toString()}`)
         .then((response) => {
           resolve(response.data);
         })
@@ -129,18 +205,26 @@ export const addUser = createAsyncThunk(
   }
 );
 
-export const getUsers = createAsyncThunk("user/getUsers", async () => {
-  return new Promise<any>((resolve, reject) => {
-    AxiosPrivateService.getInstance()
-      .get(AppConfig.serviceUrls.user)
-      .then((response) => {
-        resolve(response.data);
-      })
-      .catch((error) => {
-        reject(error);
-      });
-  });
-});
+export const getRoleDistribution = createAsyncThunk(
+  "user/getRoleDistribution",
+  async ({ instituteId }: { instituteId: string }) => {
+    return new Promise<any>((resolve, reject) => {
+      const params = new URLSearchParams();
+      params.append("instituteId", instituteId);
+
+      AxiosPrivateService.getInstance()
+        .get(
+          `${AppConfig.serviceUrls.user}role-distribution?${params.toString()}`
+        )
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+);
 
 export const {} = instituteSlice.actions;
 export default instituteSlice.reducer;
