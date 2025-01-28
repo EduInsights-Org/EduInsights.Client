@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppConfig } from "../../config/config";
-import { AxiosPrivateService } from "../../utils/apiService";
-import { RequestState } from "../../utils/types";
+import { AppConfig } from "@config/config";
+import { AxiosPrivateService } from "@utils/apiService";
+import { RequestState } from "@utils/types";
 
 export interface Batch {
   name: string;

@@ -16,10 +16,10 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
-import { useAppDispatch, useAppSelector } from "../../slices/store";
-import { getRoleDistribution, getUsers } from "../../slices/userSlice";
+import { useAppDispatch, useAppSelector } from "@slices/store";
+import { getRoleDistribution, getUsers } from "@slices/userSlice";
 import { Select, TextField } from "@radix-ui/themes";
-import { capitalize } from "../../utils/utils";
+import { capitalize } from "@utils/utils";
 
 ChartJS.register(
   CategoryScale,

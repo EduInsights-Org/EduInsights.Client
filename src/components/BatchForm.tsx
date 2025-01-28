@@ -7,7 +7,7 @@ import {
   Input,
   Label,
 } from "@headlessui/react";
-import clsx from "clsx";
+import { clsx } from "clsx";
 import { BatchCreatePayload, createBatch } from "../slices/batchSlice";
 import { useAppDispatch, useAppSelector } from "../slices/store";
 import { useState } from "react";

@@ -1,10 +1,10 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppConfig } from "../../config/config";
+import { AppConfig } from "@config/config";
 import {
   AxiosPrivateService,
   AxiosPublicService,
-} from "../../utils/apiService";
-import { RequestState } from "../../utils/types";
+} from "@utils/apiService";
+import { RequestState } from "@utils/types";
 
 interface BasicInfo {
   firstName: string;

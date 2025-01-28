@@ -1,9 +1,9 @@
 import { matchPath, useLocation, useMatches } from "react-router-dom";
 import { getActiveRouteDetails } from "../../route";
-import { Role } from "../../utils/types";
+import { Role } from "@utils/types";
 import LinkItem from "../LinkItem";
-import { RootState, useAppDispatch, useAppSelector } from "../../slices/store";
-import { logout, resetAuth } from "../../slices/authSlice";
+import { RootState, useAppDispatch, useAppSelector } from "@slices/store";
+import { logout, resetAuth } from "@slices/authSlice";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import {
   BellAlertIcon,
@@ -14,11 +14,11 @@ import {
   SunIcon,
   ArrowLeftStartOnRectangleIcon,
 } from "@heroicons/react/16/solid";
-import { usePopUp } from "../../context/PopUpContext";
-import { useTheme } from "../../context/ThemeContext";
-import { resetBatchStore, selectBatch } from "../../slices/batchSlice";
+import { usePopUp } from "@context/PopUpContext";
+import { useTheme } from "@context/ThemeContext";
+import { resetBatchStore, selectBatch } from "@slices/batchSlice";
 import { Avatar } from "@radix-ui/themes";
-import BatchForm from "../../components/BatchForm";
+import BatchForm from "@components/BatchForm";
 const roles: Role[] = [Role.SuperAdmin];
 
 function useRouteMatch(patterns: readonly string[]) {
