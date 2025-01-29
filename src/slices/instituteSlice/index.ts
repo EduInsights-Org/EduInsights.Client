@@ -7,7 +7,7 @@ interface Institute {
   name: string;
   id: string;
 }
-interface InstituteState {
+export interface InstituteState {
   status: RequestState;
   institute: Institute | null;
   error: string | null;

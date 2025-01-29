@@ -48,7 +48,7 @@ interface GetRoleDistributionResponse {
   student: number;
 }
 
-interface UserState {
+export interface UserState {
   status: RequestState;
   user: User | null;
   message: AddUsersResponse | null;

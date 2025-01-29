@@ -1,7 +1,6 @@
 import { Field, Label, Input, Select } from "@headlessui/react";
 import { ChevronDownIcon } from "@radix-ui/themes";
 import clsx from "clsx";
-import { Drawer } from "rsuite";
 import { useAppDispatch, useAppSelector } from "../slices/store";
 import {
   addMultipleUsers,
@@ -21,6 +20,7 @@ import {
 } from "@heroicons/react/16/solid";
 import { useState } from "react";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { Drawer } from "rsuite";
 
 interface UserDrawerProps {
   open: boolean;

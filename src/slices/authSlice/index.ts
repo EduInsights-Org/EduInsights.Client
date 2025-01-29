@@ -1,9 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppConfig } from "@config/config";
-import {
-  AxiosPrivateService,
-  AxiosPublicService,
-} from "@utils/apiService";
+import { AxiosPrivateService, AxiosPublicService } from "@utils/apiService";
 import { RequestState } from "@utils/types";
 
 interface BasicInfo {
@@ -11,7 +8,7 @@ interface BasicInfo {
   lastName: string;
   userName: string;
 }
-interface AuthState {
+export interface AuthState {
   loginStatus: RequestState;
   registerStatus: RequestState;
   logoutStatus: RequestState;

@@ -11,7 +11,7 @@ export interface BatchCreatePayload {
   name: string;
   instituteId: string;
 }
-interface BatchState {
+export interface BatchState {
   status: RequestState;
   createStatus: RequestState;
   batches: Batch[] | null;
