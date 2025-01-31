@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, ReactNode } from "react";
-import ToastContainer from "../components/ToastContainer";
+import { createContext, useContext, useState, ReactNode } from "react";
+import ToastContainer from "@components/ToastContainer";
 
 export type Toast = {
   id: string;

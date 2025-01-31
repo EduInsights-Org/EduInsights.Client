@@ -8,13 +8,13 @@ import {
   Label,
 } from "@headlessui/react";
 import { clsx } from "clsx";
-import { BatchCreatePayload, createBatch } from "../slices/batchSlice";
-import { useAppDispatch, useAppSelector } from "../slices/store";
+import { BatchCreatePayload, createBatch } from "@slices/batchSlice";
+import { useAppDispatch, useAppSelector } from "@slices/store";
 import { useState } from "react";
 
-import { RequestState } from "../utils/types";
+import { RequestState } from "@utils/types";
 import { Theme } from "@radix-ui/themes";
-import PreLoader from "./PreLoader";
+import PreLoader from "@components/PreLoader";
 
 interface ConfirmationOptions {
   message: string;

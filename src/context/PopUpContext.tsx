@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, ReactNode } from "react";
-import DefaultPopUp from "../components/DefaultPopUp";
+import DefaultPopUp from "@components/DefaultPopUp";
 
 interface PopUpOptions {
   message: string;

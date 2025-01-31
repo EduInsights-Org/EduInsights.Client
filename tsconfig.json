@@ -4,6 +4,7 @@
   "compilerOptions": {
     "jsx": "react-jsx",
     "composite": true,
+    "esModuleInterop": true,
     "noEmit": true,
     "baseUrl": ".",
     "paths": {
@@ -18,7 +19,7 @@
       "@layout/*": ["src/layout/*"],
       "@pages/*": ["src/pages/*"],
       "@utils/*": ["src/utils/*"],
-      "@view/*": ["src/view/*"]
+      "@views/*": ["src/views/*"]
     }
   },
   "include": ["src"]

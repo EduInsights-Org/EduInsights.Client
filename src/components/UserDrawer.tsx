@@ -1,18 +1,18 @@
 import { Field, Label, Input, Select } from "@headlessui/react";
 import { ChevronDownIcon } from "@radix-ui/themes";
 import clsx from "clsx";
-import { useAppDispatch, useAppSelector } from "../slices/store";
+import { useAppDispatch, useAppSelector } from "@slices/store";
 import {
   addMultipleUsers,
   addUser,
   AddUsersResponse,
   CreateUserPayload,
-} from "../slices/userSlice";
-import { useToast } from "../context/ToastContext";
-import ToastContainer from "./ToastContainer";
-import PreLoader from "./PreLoader";
-import { RequestState, Role } from "../utils/types";
-import useCSV from "../hooks/useCSV";
+} from "@slices/userSlice";
+import { useToast } from "@context/ToastContext";
+import ToastContainer from "@components/ToastContainer";
+import PreLoader from "@components/PreLoader";
+import { RequestState, Role } from "@utils/types";
+import useCSV from "@hooks/useCSV";
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,

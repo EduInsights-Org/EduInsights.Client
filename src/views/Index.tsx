@@ -1,9 +1,11 @@
 import { lazy } from "react";
 
-const Dashboard = lazy(() => import("./dashboard/Dashboard"));
-const UserManagement = lazy(() => import("./userManagement/UserManagement"));
+const Dashboard = lazy(() => import("@views/dashboard/Dashboard"));
+const UserManagement = lazy(
+  () => import("@views/userManagement/UserManagement")
+);
 const ResultManagement = lazy(
-  () => import("./resultManagement/ResultManagement")
+  () => import("@views/resultManagement/ResultManagement")
 );
 
 export const View = {

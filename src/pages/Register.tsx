@@ -1,15 +1,15 @@
-import { APP_NAME } from "../config/config";
-import logoLight from "../assets/icons/logo-light.svg";
-import logoDark from "../assets/icons/logo-dark.svg";
+import { APP_NAME } from "@config/config";
+import logoLight from "@assets/icons/logo-light.svg";
+import logoDark from "@assets/icons/logo-dark.svg";
 import { useState } from "react";
-import { RootState, useAppDispatch, useAppSelector } from "../slices/store";
-import { register } from "../slices/authSlice";
+import { RootState, useAppDispatch, useAppSelector } from "@slices/store";
+import { register } from "@slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { Field, Input, Label } from "@headlessui/react";
 import clsx from "clsx";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "@context/ThemeContext";
 import { Spinner } from "@radix-ui/themes";
-import { RequestState, Role } from "../utils/types";
+import { RequestState, Role } from "@utils/types";
 
 const Register = () => {
   const { isDarkMode } = useTheme();
