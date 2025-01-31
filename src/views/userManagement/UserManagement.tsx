@@ -18,8 +18,9 @@ import {
 } from "chart.js";
 import { useAppDispatch, useAppSelector } from "@slices/store";
 import { getRoleDistribution, getUsers } from "@slices/userSlice";
-import { Select, TextField } from "@radix-ui/themes";
+import { Badge, Select, TextField } from "@radix-ui/themes";
 import { capitalize } from "@utils/utils";
+import { Role } from "@/utils/types";
 
 ChartJS.register(
   CategoryScale,
@@ -253,7 +254,22 @@ const UserManagement = () => {
                     )}
                   </td>
                   <td className="pr-6 py-2">{user.userName}</td>
-                  <td className="pr-6 py-2">{capitalize(user.role)}</td>
+                  <td className="pr-6 py-2">
+                    <Badge
+                      size={"1"}
+                      color={
+                        user.role === Role.SuperAdmin
+                          ? "blue"
+                          : user.role === Role.Admin
+                          ? "grass"
+                          : user.role === Role.dataEntry
+                          ? "violet"
+                          : "orange"
+                      }
+                    >
+                      {capitalize(user.role)}
+                    </Badge>
+                  </td>
                   <td className="pr-6 py-2">Active</td>
                   <td className="pl-0 py-2">
                     <div className="flex flex-row gap-x-4">
