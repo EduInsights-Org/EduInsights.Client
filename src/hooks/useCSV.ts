@@ -5,10 +5,12 @@ interface UseCSVReturn {
   usersList: CSVHeaderType[] | null;
   handleCSVSelect: (
     event: React.ChangeEvent<HTMLInputElement>,
-    instituteId: string
+    instituteId: string,
+    batchId: string
   ) => void;
   error: boolean | null;
   fileName: string;
+  resetCSVFile: () => void;
 }
 
 enum CSVHeader {
@@ -29,7 +31,7 @@ interface CSVHeaderType {
   indexNumber: string;
   email: string;
   instituteId: string;
-  batchId: null;
+  batchId: string | null;
   role: string;
   password: string;
 }
@@ -42,16 +44,23 @@ const useCSV = (): UseCSVReturn => {
 
   const handleCSVSelect = (
     event: React.ChangeEvent<HTMLInputElement>,
-    instituteId: string
+    instituteId: string,
+    batchId: string
   ) => {
     const file = event.target.files?.[0];
     if (file) {
       setFileName(file.name);
-      readCSVFile(file, instituteId);
+      readCSVFile(file, instituteId, batchId);
     }
   };
 
-  const readCSVFile = (file: File, instituteId: string) => {
+  const resetCSVFile = () => {
+    setCSVData(null);
+    setUsersList(null);
+    setError(null);
+  };
+
+  const readCSVFile = (file: File, instituteId: string, batchId: string) => {
     const reader = new FileReader();
 
     reader.onload = (event) => {
@@ -67,9 +76,9 @@ const useCSV = (): UseCSVReturn => {
             userName: row[2],
             indexNumber: row[3],
             email: row[4],
-            role: row[5],
+            role: row[5].replace(/\r/g, ""),
             instituteId: instituteId,
-            batchId: null,
+            batchId: batchId,
             password: "123321",
           };
         });
@@ -118,7 +127,7 @@ const useCSV = (): UseCSVReturn => {
     return false;
   };
 
-  return { csvData, usersList, error, fileName, handleCSVSelect };
+  return { csvData, usersList, error, fileName, resetCSVFile, handleCSVSelect };
 };
 
 export default useCSV;

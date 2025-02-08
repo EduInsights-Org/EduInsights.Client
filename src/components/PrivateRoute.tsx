@@ -1,4 +1,4 @@
-import { useAppSelector } from "../slices/store";
+import { useAppSelector } from "@slices/store";
 import { Navigate, Outlet } from "react-router-dom";
 
 const PrivateRoute = () => {

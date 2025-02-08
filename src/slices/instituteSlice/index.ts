@@ -1,13 +1,13 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppConfig } from "../../config/config";
-import { AxiosPrivateService } from "../../utils/apiService";
-import { RequestState } from "../../utils/types";
+import { AppConfig } from "@config/config";
+import { AxiosPrivateService } from "@utils/apiService";
+import { RequestState } from "@utils/types";
 
 interface Institute {
   name: string;
   id: string;
 }
-interface InstituteState {
+export interface InstituteState {
   status: RequestState;
   institute: Institute | null;
   error: string | null;

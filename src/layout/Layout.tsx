@@ -1,10 +1,10 @@
 import { Outlet } from "react-router-dom";
-import Header from "./header/Header";
-import SideBar from "./sideBar/SideBar";
+import Header from "@layout/header/Header";
+import SideBar from "@layout/sideBar/SideBar";
 import { Suspense } from "react";
-import { useAppSelector } from "../slices/store";
-import { RequestState } from "../utils/types";
-import ErrorHandler from "../components/ErrorHandler";
+import { useAppSelector } from "@slices/store";
+import { RequestState } from "@utils/types";
+import ErrorHandler from "@components/ErrorHandler";
 
 const errorMessage = "Oops! Something went wrong. Please refresh the page.";
 

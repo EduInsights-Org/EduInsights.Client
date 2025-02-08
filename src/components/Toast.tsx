@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Toast as ToastType, useToast } from "../context/ToastContext";
+import { Toast as ToastType, useToast } from "@context/ToastContext";
 import clsx from "clsx";
 import {
   CheckCircleIcon,

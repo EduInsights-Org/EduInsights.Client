@@ -1,8 +1,8 @@
+import * as React from "react";
 import { NonIndexRouteObject } from "react-router-dom";
-import { View } from "./views/Index";
-import React from "react";
-import { isIncludedRole } from "./utils/utils";
-import { Role } from "../src/utils/types";
+import { View } from "@views/Index";
+import { isIncludedRole } from "@utils/utils";
+import { Role } from "@utils/types";
 import {
   DashboardIcon,
   AnalyticsIcon,
@@ -10,7 +10,7 @@ import {
   ResultManagementIcon,
   SettingsIcon,
   UserManagementIcon,
-} from "./components/icons";
+} from "@components/icons";
 
 export interface RouteObjectWithRole extends NonIndexRouteObject {
   allowRoles: Role[];
@@ -37,61 +37,71 @@ export const routes: RouteObjectWithRole[] = [
     path: "/",
     text: "Dashboard",
     icons: [
-      React.createElement(DashboardIcon, { isActive: false }), 
-      React.createElement(DashboardIcon, { isActive: true }), 
+      React.createElement(DashboardIcon, { isActive: false }),
+      React.createElement(DashboardIcon, { isActive: true }),
     ],
     element: React.createElement(View.Dashboard),
-    allowRoles: [Role.SUPER_ADMIN],
+    allowRoles: [Role.SuperAdmin],
   },
   {
     path: "/user-management",
     text: "User Management",
     icons: [
-      React.createElement(UserManagementIcon, { isActive: false }), 
-      React.createElement(UserManagementIcon, { isActive: true }), 
+      React.createElement(UserManagementIcon, { isActive: false }),
+      React.createElement(UserManagementIcon, { isActive: true }),
     ],
     element: React.createElement(View.UserManagement),
-    allowRoles: [Role.SUPER_ADMIN],
+    allowRoles: [Role.SuperAdmin],
   },
   {
     path: "/result-management",
     text: "Result Management",
     icons: [
-      React.createElement(ResultManagementIcon, { isActive: false }), 
-      React.createElement(ResultManagementIcon, { isActive: true }), 
+      React.createElement(ResultManagementIcon, { isActive: false }),
+      React.createElement(ResultManagementIcon, { isActive: true }),
     ],
-    element: React.createElement(View.UserManagement),
-    allowRoles: [Role.SUPER_ADMIN],
+    element: React.createElement(View.ResultManagement),
+    allowRoles: [Role.SuperAdmin],
+  },
+  {
+    path: "/subjects-semesters",
+    text: "Subjects & Semesters",
+    icons: [
+      React.createElement(ResultManagementIcon, { isActive: false }),
+      React.createElement(ResultManagementIcon, { isActive: true }),
+    ],
+    element: React.createElement(View.ResultManagement),
+    allowRoles: [Role.SuperAdmin],
   },
   {
     path: "/analytics",
     text: "Analytics",
     icons: [
-      React.createElement(AnalyticsIcon, { isActive: false }), 
-      React.createElement(AnalyticsIcon, { isActive: true }), 
+      React.createElement(AnalyticsIcon, { isActive: false }),
+      React.createElement(AnalyticsIcon, { isActive: true }),
     ],
     element: React.createElement(View.UserManagement),
-    allowRoles: [Role.SUPER_ADMIN],
+    allowRoles: [Role.SuperAdmin],
   },
   {
     path: "/audit-logs",
     text: "Audit Logs",
     icons: [
-      React.createElement(AuditLogsIcon, { isActive: false }), 
-      React.createElement(AuditLogsIcon, { isActive: true }), 
+      React.createElement(AuditLogsIcon, { isActive: false }),
+      React.createElement(AuditLogsIcon, { isActive: true }),
     ],
     element: React.createElement(View.UserManagement),
-    allowRoles: [Role.SUPER_ADMIN],
+    allowRoles: [Role.SuperAdmin],
   },
   {
     path: "/settings",
     text: "Settings",
     icons: [
-      React.createElement(SettingsIcon, { isActive: false }), 
-      React.createElement(SettingsIcon, { isActive: true }), 
+      React.createElement(SettingsIcon, { isActive: false }),
+      React.createElement(SettingsIcon, { isActive: true }),
     ],
     element: React.createElement(View.UserManagement),
-    allowRoles: [Role.SUPER_ADMIN],
+    allowRoles: [Role.SuperAdmin],
   },
 ];
 

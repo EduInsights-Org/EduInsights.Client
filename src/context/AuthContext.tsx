@@ -5,23 +5,23 @@ import {
   useEffect,
   SetStateAction,
 } from "react";
-import { useAppDispatch } from "../slices/store";
-import { getUserInfo, refreshAccessToken } from "../slices/authSlice";
-import { AxiosPrivateService, AxiosPublicService } from "../utils/apiService";
-import PreLoader from "../components/PreLoader";
-import { getInstituteById } from "../slices/instituteSlice";
+import { useAppDispatch } from "@slices/store";
+import { getUserInfo, refreshAccessToken } from "@slices/authSlice";
+import { AxiosPrivateService, AxiosPublicService } from "@utils/apiService";
+import PreLoader from "@components/PreLoader";
+import { getInstituteById } from "@slices/instituteSlice";
 import {
   Batch,
   getBatchesByInstituteId,
   selectBatch,
-} from "../slices/batchSlice";
+} from "@slices/batchSlice";
 
 interface AuthType {
   user: string | null;
   accessToken: string | null;
 }
 
-interface AuthContextType {
+export interface AuthContextType {
   auth: AuthType | null;
   setAuth: React.Dispatch<SetStateAction<AuthType | null>>;
 }

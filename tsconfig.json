@@ -1,7 +1,26 @@
 {
-  "files": [],
-  "references": [
-    { "path": "./tsconfig.app.json" },
-    { "path": "./tsconfig.node.json" }
-  ]
+  // "files": [],
+  // "references": [{ "path": "./tsconfig.node.json" }],
+  "compilerOptions": {
+    "jsx": "react-jsx",
+    "composite": true,
+    "esModuleInterop": true,
+    "noEmit": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"],
+      "@components/*": ["src/components/*"],
+      "@assets/*": ["src/assets/*"],
+      "@slices/*": ["src/slices/*"],
+      "@app/*": ["src/app/*"],
+      "@hooks/*": ["src/hooks/*"],
+      "@config/*": ["src/config/*"],
+      "@context/*": ["src/context/*"],
+      "@layout/*": ["src/layout/*"],
+      "@pages/*": ["src/pages/*"],
+      "@utils/*": ["src/utils/*"],
+      "@views/*": ["src/views/*"]
+    }
+  },
+  "include": ["src"]
 }

@@ -10,7 +10,7 @@ import Register from "../pages/Register";
 import { RootState, useAppSelector } from "../slices/store";
 import PreLoader from "../components/PreLoader";
 
-const roles: Role[] = [Role.SUPER_ADMIN];
+const roles: Role[] = [Role.SuperAdmin];
 
 const AppHandler: React.FC = () => {
   const authStatus = useAppSelector((state: RootState) => state.auth.status);

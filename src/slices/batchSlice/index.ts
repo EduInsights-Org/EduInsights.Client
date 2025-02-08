@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppConfig } from "../../config/config";
-import { AxiosPrivateService } from "../../utils/apiService";
-import { RequestState } from "../../utils/types";
+import { AppConfig } from "@config/config";
+import { AxiosPrivateService } from "@utils/apiService";
+import { RequestState } from "@utils/types";
 
 export interface Batch {
   name: string;
@@ -11,7 +11,7 @@ export interface BatchCreatePayload {
   name: string;
   instituteId: string;
 }
-interface BatchState {
+export interface BatchState {
   status: RequestState;
   createStatus: RequestState;
   batches: Batch[] | null;
@@ -33,6 +33,9 @@ const batchSlice = createSlice({
   reducers: {
     selectBatch(state, action: PayloadAction<string>) {
       state.selectedBatchId = action.payload;
+    },
+    resetBatchStore(state) {
+      (state.batches = null), (state.selectedBatchId = null);
     },
   },
   extraReducers: (builder) => {
@@ -100,5 +103,5 @@ export const createBatch = createAsyncThunk(
   }
 );
 
-export const { selectBatch } = batchSlice.actions;
+export const { selectBatch, resetBatchStore } = batchSlice.actions;
 export default batchSlice.reducer;

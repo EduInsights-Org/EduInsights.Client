@@ -4,7 +4,7 @@ import {
   PencilIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -16,6 +16,11 @@ import {
   Legend,
   ArcElement,
 } from "chart.js";
+import { useAppDispatch, useAppSelector } from "@slices/store";
+import { getRoleDistribution, getUsers } from "@slices/userSlice";
+import { Badge, Select, TextField } from "@radix-ui/themes";
+import { capitalize } from "@utils/utils";
+import { Role } from "@/utils/types";
 
 ChartJS.register(
   CategoryScale,
@@ -52,32 +57,6 @@ const options = {
   },
 };
 
-const pieChartData = {
-  labels: ["Super admin", "Admin", "Lecture", "Data entry", "Student"],
-  datasets: [
-    {
-      label: "Role",
-      data: [12, 19, 3, 5, 2],
-      backgroundColor: [
-        "rgba(30, 92, 199)",
-        "rgba(56, 118, 225)",
-        "rgba(100, 148, 232)",
-        "rgba(144, 179, 238)",
-        "rgba(189, 209, 245)",
-      ],
-      borderColor: [
-        "rgba(30, 92, 199)",
-        "rgba(56, 118, 225)",
-        "rgba(100, 148, 232)",
-        "rgba(144, 179, 238)",
-        "rgba(189, 209, 245)",
-      ],
-
-      borderWidth: 1,
-    },
-  ],
-};
-
 const pieChartOptions = {
   responsive: true,
   plugins: {
@@ -92,16 +71,124 @@ const pieChartOptions = {
 };
 
 const UserManagement = () => {
-  const [enabled, setEnabled] = useState(true);
+  const dispatch = useAppDispatch();
 
+  const [page, setPage] = useState(1);
+  const [selectBatch, setSelectBatch] = useState<string | null>(null);
+  const [usersForDelete, setUsersForDelete] = useState<string[]>([]);
+
+  const instituteId = useAppSelector((state) => state.institute.institute!.id);
+  const batches = useAppSelector((state) => state.batch.batches);
+  const users = useAppSelector((state) => state.user.paginatedResponse.data);
+  const roleDistribution = useAppSelector(
+    (state) => state.user.roleDistribution
+  );
+  const totalRecords = useAppSelector(
+    (state) => state.user.paginatedResponse.totalRecords
+  );
+  const pageSize = useAppSelector(
+    (state) => state.user.paginatedResponse.pageSize
+  );
+
+  useEffect(() => {
+    dispatch(getUsers({ instituteId, batchId: selectBatch, page, pageSize }));
+    dispatch(getRoleDistribution({ instituteId }));
+  }, [instituteId, selectBatch, page, pageSize]);
+
+  const handlePreviousPage = () => {
+    if (page > 1) {
+      setPage((prevPage) => prevPage - 1);
+    }
+  };
+
+  const handleNextPage = () => {
+    setPage((prevPage) => prevPage + 1);
+  };
+
+  const pieChartData = {
+    labels: ["Super admin", "Admin", "Data entry", "Student"],
+    datasets: [
+      {
+        label: "Role",
+        data: [
+          roleDistribution.superAdmin,
+          roleDistribution.admin,
+          roleDistribution.dataEntry,
+          roleDistribution.student,
+        ],
+        backgroundColor: [
+          "#003f5c",
+          "#58508d",
+          "#bc5090",
+          "#ff6361",
+          "#ffa600",
+        ],
+        // borderColor: [
+        //   "rgba(30, 92, 199)",
+        //   "rgba(56, 118, 225)",
+        //   "rgba(100, 148, 232)",
+        //   "rgba(144, 179, 238)",
+        // ],
+        borderWidth: 0,
+      },
+    ],
+  };
+
+  const selectAllForDelete = () => {
+    if (usersForDelete.length === users.length) return setUsersForDelete([]);
+    setUsersForDelete(users.map((i) => i.id));
+  };
+
+  const selectForDelete = (userId: string) => {
+    setUsersForDelete((prevUsers) => {
+      if (prevUsers.includes(userId)) {
+        return prevUsers.filter((id) => id !== userId);
+      } else {
+        return [...prevUsers, userId];
+      }
+    });
+  };
   return (
     <main>
       <div className="flex justify-between flex-row-reverse gap-x-2">
-        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[600px] w-[65%]">
+        <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[600px] w-[65%]">
           {/* <Bar data={data} options={options} /> */}
+          {/* footer */}
+          <div className="flex gap-x-3 items-center py-4 px-3 bg-light-subBg dark:bg-subBg">
+            <div>
+              <TextField.Root
+                size="1"
+                radius="small"
+                placeholder="Search the users..."
+              />
+            </div>
+            <div className="">
+              <Select.Root
+                size={"1"}
+                onValueChange={(batchId) => {
+                  setPage(1);
+                  if (batchId === "none") return setSelectBatch(null);
+                  setSelectBatch(batchId);
+                }}
+              >
+                <Select.Trigger radius="small" placeholder="By Batch" />
+                <Select.Content position="popper">
+                  <Select.Group>
+                    <Select.Item value={"none"}>All</Select.Item>
+                    {batches?.map((b) => (
+                      <Select.Item key={b.id} value={b.id}>
+                        {b.name}
+                      </Select.Item>
+                    ))}
+                  </Select.Group>
+                </Select.Content>
+              </Select.Root>
+            </div>
+          </div>
+          {/* table */}
           <table className="w-full text-xs text-left rtl:text-right rounded-lg">
             <thead className="">
-              <tr className="border-b border-light-borderGray dark:border-borderGray text-light-font02 dark:text-font02 bg-light-subBg dark:bg-subBg">
+              <tr className="border-b border-light-borderGray dark:border-borderGray text-light-font02 dark:text-font02">
                 <th scope="col" className="pl-4 py-3">
                   <div className="flex items-center">
                     <input
@@ -109,8 +196,13 @@ const UserManagement = () => {
                       type="checkbox"
                       value=""
                       className="w-[14px] h-[14px]"
+                      onClick={selectAllForDelete}
+                      checked={usersForDelete.length === users.length}
                     />
                   </div>
+                </th>
+                <th scope="col" className="py-2">
+                  Id
                 </th>
                 <th scope="col" className="py-2">
                   Name
@@ -133,8 +225,11 @@ const UserManagement = () => {
               </tr>
             </thead>
             <tbody>
-              {[1, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1].map((_) => (
-                <tr className="border-light-borderGray dark:border-borderGray">
+              {users.map((user, index) => (
+                <tr
+                  key={index}
+                  className="border-light-borderGray dark:border-borderGray"
+                >
                   <td className="pl-4 py-2">
                     <div className="flex items-center">
                       <input
@@ -142,13 +237,39 @@ const UserManagement = () => {
                         type="checkbox"
                         value=""
                         className="w-[14px] h-[14px]"
+                        checked={usersForDelete.some((u) => u === user.id)}
+                        onClick={() => selectForDelete(user.id)}
                       />
                     </div>
                   </td>
-                  <td className="py-2">Arun deshan</td>
-                  <td className="pl-6 py-2">18APC3535</td>
-                  <td className="pr-6 py-2">arun68</td>
-                  <td className="pr-6 py-2">Student</td>
+                  <td className="py-2">{index + (page - 1) * pageSize + 1}</td>
+                  <td className="py-2">
+                    {user.firstName + " " + user.lastName}
+                  </td>
+                  <td className="pl-6 py-2">
+                    {user.indexNumber === null ? (
+                      <>N/A</>
+                    ) : (
+                      <>{user.indexNumber}</>
+                    )}
+                  </td>
+                  <td className="pr-6 py-2">{user.userName}</td>
+                  <td className="pr-6 py-2">
+                    <Badge
+                      size={"1"}
+                      color={
+                        user.role === Role.SuperAdmin
+                          ? "blue"
+                          : user.role === Role.Admin
+                          ? "grass"
+                          : user.role === Role.dataEntry
+                          ? "violet"
+                          : "orange"
+                      }
+                    >
+                      {capitalize(user.role)}
+                    </Badge>
+                  </td>
                   <td className="pr-6 py-2">Active</td>
                   <td className="pl-0 py-2">
                     <div className="flex flex-row gap-x-4">
@@ -158,26 +279,36 @@ const UserManagement = () => {
                   </td>
                 </tr>
               ))}
-              <tr className="bg-light-subBg dark:bg-subBg">
-                <td colSpan={7} className="py-3">
-                  <div className="flex justify-between items-center">
-                    <span className="text-font01 pl-3">2 rows selected</span>
-
-                    <div className="flex justify-end gap-x-4 flex-row pr-4">
-                      <button className="border border-light-borderGray dark:border-borderGray p-1 rounded-md">
-                        <ChevronLeftIcon className="h-3 w-3 text-light-font01 dark:text-font01" />
-                      </button>
-                      <button className="border border-light-borderGray dark:border-borderGray p-1 rounded-md">
-                        <ChevronRightIcon className="h-3 w-3 text-light-font01 dark:text-font01" />
-                      </button>
-                    </div>
-                  </div>
-                </td>
-              </tr>
             </tbody>
           </table>
+
+          {/* footer */}
+          <div className="flex justify-between items-center py-3 bg-light-subBg dark:bg-subBg mt-auto">
+            <span className="text-light-font01 text-xs dark:text-font01 pl-3">
+              {usersForDelete.length} rows selected
+            </span>
+            <span className="text-light-font01 text-xs dark:text-font01 ml-auto mr-4">
+              Page {page} of {Math.ceil(totalRecords / pageSize)}
+            </span>
+            <div className="flex justify-end gap-x-4 flex-row pr-2">
+              <button
+                className="border border-light-borderGray dark:border-borderGray p-1 rounded-md"
+                onClick={handlePreviousPage}
+                disabled={page === 1}
+              >
+                <ChevronLeftIcon className="h-3 w-3 text-light-font01 dark:text-font01" />
+              </button>
+              <button
+                className="border border-light-borderGray dark:border-borderGray p-1 rounded-md"
+                onClick={handleNextPage}
+                disabled={users.length < pageSize}
+              >
+                <ChevronRightIcon className="h-3 w-3 text-light-font01 dark:text-font01" />
+              </button>
+            </div>
+          </div>
         </div>
-        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray p-3 min-w-[250px] w-[35%] h-fit flex justify-center">
+        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray p-3 min-w-[250px] w-[35%] min-h-[470px] flex justify-center">
           <Pie data={pieChartData} options={pieChartOptions} />
         </div>
       </div>

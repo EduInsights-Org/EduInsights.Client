@@ -1,22 +1,22 @@
 import { useState } from "react";
-import logoLight from "../assets/icons/logo-light.svg";
-import logoDark from "../assets/icons/logo-dark.svg";
-import { APP_NAME } from "../config/config";
-import { login } from "../slices/authSlice";
-import { RootState, useAppDispatch, useAppSelector } from "../slices/store";
-import { AxiosPrivateService, AxiosPublicService } from "../utils/apiService";
-import useAuth from "../hooks/useAuth";
+import logoLight from "@assets/icons/logo-light.svg";
+import logoDark from "@assets/icons/logo-dark.svg";
+import { APP_NAME } from "@config/config";
+import { login } from "@slices/authSlice";
+import { RootState, useAppDispatch, useAppSelector } from "@slices/store";
+import { AxiosPrivateService, AxiosPublicService } from "@utils/apiService";
+import useAuth from "@hooks/useAuth";
 import { Field, Input, Label } from "@headlessui/react";
 import clsx from "clsx";
-import { useTheme } from "../context/ThemeContext";
+import { useTheme } from "@context/ThemeContext";
 import { Spinner } from "@radix-ui/themes";
-import { RequestState } from "../utils/types";
-import { getInstituteById } from "../slices/instituteSlice";
+import { RequestState } from "@utils/types";
+import { getInstituteById } from "@slices/instituteSlice";
 import {
   Batch,
   getBatchesByInstituteId,
   selectBatch,
-} from "../slices/batchSlice";
+} from "@slices/batchSlice";
 
 const Login = () => {
   const { isDarkMode } = useTheme();
@@ -44,7 +44,7 @@ const Login = () => {
 
       if (login.fulfilled.match(result)) {
         const token = result.payload.accessToken;
-        const instituteId = result.payload.userInfo.instituteId;
+        const instituteId = result.payload.data.userInfo.instituteId;
         new AxiosPrivateService(token);
 
         setAuth((prev: any) => ({
@@ -65,7 +65,7 @@ const Login = () => {
           throw new Error("Failed to fetch batches");
         }
 
-        const batches = batchesResult.payload as Batch[];
+        const batches = batchesResult.payload.data as Batch[];
 
         if (batches.length > 0) {
           dispatch(selectBatch(batches[0].id));

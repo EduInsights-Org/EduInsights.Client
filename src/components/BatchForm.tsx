@@ -7,14 +7,14 @@ import {
   Input,
   Label,
 } from "@headlessui/react";
-import clsx from "clsx";
-import { BatchCreatePayload, createBatch } from "../slices/batchSlice";
-import { useAppDispatch, useAppSelector } from "../slices/store";
+import { clsx } from "clsx";
+import { BatchCreatePayload, createBatch } from "@slices/batchSlice";
+import { useAppDispatch, useAppSelector } from "@slices/store";
 import { useState } from "react";
 
-import { RequestState } from "../utils/types";
+import { RequestState } from "@utils/types";
 import { Theme } from "@radix-ui/themes";
-import PreLoader from "./PreLoader";
+import PreLoader from "@components/PreLoader";
 
 interface ConfirmationOptions {
   message: string;
@@ -43,7 +43,7 @@ const BatchForm = ({ message, onConfirm, onCancel }: ConfirmationOptions) => {
   return (
     <Dialog open={true} onClose={onCancel} className="relative z-50">
       <div className="fixed inset-0 flex w-screen items-center justify-center p-4 bg-black/70">
-        <DialogPanel className="max-w-lg space-y-4 border-[1px] border-light-borderGray dark:border-borderGray bg-light-mainBg dark:bg-mainBg p-8 rounded-md min-w-[32rem] shadow-lg">
+        <DialogPanel className="max-w-lg space-y-4 border-[1px] border-light-borderGray dark:border-borderGray bg-light-mainBg dark:bg-mainBg p-8 rounded-sm min-w-[32rem] shadow-lg">
           <DialogTitle className="font-bold text-light-font01 dark:text-font01">
             {message}
           </DialogTitle>
@@ -65,7 +65,7 @@ const BatchForm = ({ message, onConfirm, onCancel }: ConfirmationOptions) => {
 
           <div className="flex justify-end gap-x-4">
             <button
-              className="flex justify-center items-center rounded-md px-5 py-2 text-xs font-bold text-light-font01 dark:text-font01 border-[1px] border-light-borderGray dark:border-borderGray"
+              className="p-2 bg-light-mainBg border-[1px] border-light-borderGray dark:border-borderGray dark:bg-mainBg rounded-sm px-3 py-3 w-24 h-8 flex items-center justify-center text-xs font-medium leading-none text-black dark:text-white"
               onClick={onCancel}
             >
               Cancel
@@ -73,7 +73,7 @@ const BatchForm = ({ message, onConfirm, onCancel }: ConfirmationOptions) => {
 
             <button
               onClick={handleCreateBatch}
-              className="flex justify-center items-center rounded-md bg-primaryLight px-5 py-2 text-xs font-bold text-light-mainBg hover:bg-primaryDark"
+              className="p-2 bg-black dark:bg-white hover:dark:bg-white/90 rounded-sm px-3 py-3 w-24 h-8 flex items-center justify-center hover:bg-black/90 text-xs font-medium leading-none text-white dark:text-black"
             >
               {batchCreateStatus === RequestState.LOADING ? (
                 <Theme>

@@ -1,17 +1,14 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppConfig } from "../../config/config";
-import {
-  AxiosPrivateService,
-  AxiosPublicService,
-} from "../../utils/apiService";
-import { RequestState } from "../../utils/types";
+import { AppConfig } from "@config/config";
+import { AxiosPrivateService, AxiosPublicService } from "@utils/apiService";
+import { RequestState } from "@utils/types";
 
 interface BasicInfo {
   firstName: string;
   lastName: string;
   userName: string;
 }
-interface AuthState {
+export interface AuthState {
   loginStatus: RequestState;
   registerStatus: RequestState;
   logoutStatus: RequestState;
@@ -29,6 +26,7 @@ interface RegisterPayload {
   userName: string;
   instituteName: string;
   password: string;
+  role: string;
 }
 
 interface LoginPayload {
@@ -104,7 +102,6 @@ const authSlice = createSlice({
       })
       .addCase(refreshAccessToken.fulfilled, (state, action) => {
         state.isAuthenticated = true;
-        console.log(action.payload.data);
         state.accessToken = action.payload.data.accessToken;
       })
       .addCase(refreshAccessToken.rejected, (state) => {
@@ -130,7 +127,14 @@ const authSlice = createSlice({
 export const register = createAsyncThunk(
   "auth/register",
   async (
-    { firstName, lastName, userName, password, instituteName }: RegisterPayload,
+    {
+      firstName,
+      lastName,
+      userName,
+      password,
+      instituteName,
+      role,
+    }: RegisterPayload,
     { rejectWithValue }
   ) => {
     return AxiosPublicService.getInstance()
@@ -142,6 +146,7 @@ export const register = createAsyncThunk(
           userName,
           password,
           instituteName,
+          role,
         })
       )
       .then((response) => response.data)

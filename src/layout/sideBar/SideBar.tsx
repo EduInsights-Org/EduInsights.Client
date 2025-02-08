@@ -1,9 +1,9 @@
 import { matchPath, useLocation, useMatches } from "react-router-dom";
 import { getActiveRouteDetails } from "../../route";
-import { Role } from "../../utils/types";
+import { Role } from "@utils/types";
 import LinkItem from "../LinkItem";
-import { RootState, useAppDispatch, useAppSelector } from "../../slices/store";
-import { logout, resetAuth } from "../../slices/authSlice";
+import { RootState, useAppDispatch, useAppSelector } from "@slices/store";
+import { logout, resetAuth } from "@slices/authSlice";
 import { Menu, MenuButton, MenuItem, MenuItems } from "@headlessui/react";
 import {
   BellAlertIcon,
@@ -14,12 +14,12 @@ import {
   SunIcon,
   ArrowLeftStartOnRectangleIcon,
 } from "@heroicons/react/16/solid";
-import { usePopUp } from "../../context/PopUpContext";
-import { useTheme } from "../../context/ThemeContext";
-import { selectBatch } from "../../slices/batchSlice";
+import { usePopUp } from "@context/PopUpContext";
+import { useTheme } from "@context/ThemeContext";
+import { resetBatchStore, selectBatch } from "@slices/batchSlice";
 import { Avatar } from "@radix-ui/themes";
-import BatchForm from "../../components/BatchForm";
-const roles: Role[] = [Role.SUPER_ADMIN];
+import BatchForm from "@components/BatchForm";
+const roles: Role[] = [Role.SuperAdmin];
 
 function useRouteMatch(patterns: readonly string[]) {
   const { pathname } = useLocation();
@@ -61,7 +61,10 @@ const SideBar = () => {
 
   const handleLogout = async () => {
     const result = await dispatch(logout());
-    if (logout.fulfilled.match(result)) dispatch(resetAuth());
+    if (logout.fulfilled.match(result)) {
+      dispatch(resetAuth());
+      dispatch(resetBatchStore());
+    }
   };
 
   const handleDelete = () => {
@@ -119,7 +122,7 @@ const SideBar = () => {
         >
           <div className="flex flex-col p-1 gap-y-1 font-light">
             {batches?.map((b) => (
-              <MenuItem>
+              <MenuItem key={b.id}>
                 <button
                   className={`flex w-full px-2 py-2 text-xs dark:text-grayfont text-light-black rounded-md hover:bg-light-hoverBg dark:hover:bg-hoverBg
                     ${

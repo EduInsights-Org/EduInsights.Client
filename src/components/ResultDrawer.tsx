@@ -1,6 +1,10 @@
-import { Field, Label, Input, Select } from "@headlessui/react";
-import { CheckIcon, ExclamationCircleIcon } from "@heroicons/react/16/solid";
-import { CheckCircleIcon } from "@heroicons/react/24/solid";
+import { Field, Input, Select } from "@headlessui/react";
+import { CheckIcon } from "@heroicons/react/16/solid";
+import {
+  InformationCircleIcon,
+  PuzzlePieceIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@radix-ui/themes";
 import clsx from "clsx";
 import { Drawer } from "rsuite";
@@ -25,122 +29,32 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
             Add Results
           </Drawer.Title>
 
-          <button
-            onClick={() => setOpen(false)}
-            className="p-2 bg-primaryLight rounded-full hover:bg-primaryDark"
-          >
-            <CheckIcon className="h-5 w-5 text-white" />
-          </button>
+          {true === null && (
+            <span className="flex items-center gap-x-2 px-4 py-2 text-xs font-medium rounded-sm text-[#bd5622] dark:text-[#df985d] bg-[#fdf0d9] dark:bg-[#301f13]">
+              <InformationCircleIcon className="h-4" />
+              Please Select a Batch before adding Users
+            </span>
+          )}
         </div>
       </Drawer.Header>
       <Drawer.Body
-        className="bg-light-mainBg dark:bg-mainBg"
+        className="flex flex-col bg-light-mainBg dark:bg-mainBg"
         style={{ paddingTop: 0, paddingLeft: 40, paddingRight: 40 }}
       >
-        <div className="flex gap-x-2 justify-between">
-          <Field className="w-full">
-            <Label className="text-xs font-light text-light-font02 dark:text-font02">
-              First Name
-            </Label>
-            <Input
-              // onChange={(e) => setUser(e.target.value)}
-              // value={user}
-              id="username"
-              type="text"
-              required
-              className={clsx(
-                "ring-1 ring-inset mt-1 mb-3 block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
-                "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
-              )}
-            />
-          </Field>
-          <Field className="w-full">
-            <Label className="text-xs font-light text-light-font02 dark:text-font02">
-              Last Name
-            </Label>
-            <Input
-              // onChange={(e) => setUser(e.target.value)}
-              // value={user}
-              id="username"
-              type="text"
-              required
-              className={clsx(
-                "ring-1 ring-inset mt-1 mb-3 block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
-                "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
-              )}
-            />
-          </Field>
-        </div>
-
-        <div className="flex gap-x-2 justify-between">
-          <Field className="w-full">
-            <Label className="text-xs font-light text-light-font02 dark:text-font02">
-              User Name
-            </Label>
-            <Input
-              // onChange={(e) => setUser(e.target.value)}
-              // value={user}
-              id="username"
-              type="text"
-              required
-              className={clsx(
-                "ring-1 ring-inset mt-1 mb-3 block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
-                "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
-              )}
-            />
-          </Field>
-          <Field className="w-full">
-            <Label className="text-xs font-light text-light-font02 dark:text-font02">
-              Index Number
-            </Label>
-            <Input
-              // onChange={(e) => setUser(e.target.value)}
-              // value={user}
-              id="username"
-              type="text"
-              required
-              className={clsx(
-                "ring-1 ring-inset mt-1 mb-3 block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
-                "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
-              )}
-            />
-          </Field>
-        </div>
-
-        <div className="flex gap-x-2 justify-between">
-          <Field className="w-full">
-            <Label className="text-xs font-light text-light-font02 dark:text-font02">
-              Email
-            </Label>
-            <Input
-              // onChange={(e) => setUser(e.target.value)}
-              // value={user}
-              id="username"
-              type="text"
-              required
-              className={clsx(
-                "ring-1 ring-inset mt-1 block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
-                "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
-              )}
-            />
-          </Field>
-          <Field className="w-full">
-            <Label className="text-xs font-light text-light-font02 dark:text-font02">
-              Role
-            </Label>
+        <div className="flex gap-x-2 justify-between mb-3">
+          <Field className="w-1/2">
             <div className="relative">
               <Select
                 className={clsx(
                   "ring-1 ring-inset appearance-none mt-1 block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
                   "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01",
-                  // Make the text of each option black on Windows
                   "*:text-black"
                 )}
               >
-                <option value="Student">Student</option>
-                <option value="super_admin">Super admin</option>
-                <option value="admin">Admin</option>
-                <option value="data_entry">Data entry</option>
+                <option value="SUPER_ADMIN"> Select Semester</option>
+                <option value="SUPER_ADMIN"> Year I Sem I</option>
+                <option value="SUPER_ADMIN"> Year I Sem II</option>
+                <option value="SUPER_ADMIN"> Year II Sem I</option>
               </Select>
               <ChevronDownIcon
                 className="group pointer-events-none absolute top-4 right-2.5 size-2 fill-light-font02 dark:fill-font02"
@@ -150,7 +64,137 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
           </Field>
         </div>
 
-        <div className="h-[1px] bg-light-borderGray dark:bg-borderGray my-8" />
+        {false ? (
+          <div className="flex gap-x-2 justify-start items-end">
+            <Field className="w-1/2">
+              <Input
+                id="batchName"
+                placeholder="Semester"
+                type="text"
+                required
+                className={clsx(
+                  "ring-1 ring-inset block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                  "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
+                )}
+              />
+            </Field>
+            <div className="flex ml-auto gap-x-2">
+              <button className="bg-transparent rounded-full h-8 w-8 flex items-center justify-center font-medium text-light-font02 dark:text-font02 border-[1px] border-light-borderGray dark:border-borderGray">
+                <CheckIcon className="size-5" />
+              </button>
+              <button className="bg-transparent rounded-full h-8 w-8 flex items-center justify-center font-medium text-light-font02 dark:text-font02 border-[1px] border-light-borderGray dark:border-borderGray">
+                <XMarkIcon className="size-5" />
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button className="p-2 gap-x-1 bg-transparent rounded-full px-3 py-3 w-32 h-8 flex items-center justify-center text-xs font-medium leading-none text-light-font02 dark:text-font02 border-[1px] border-light-borderGray dark:border-borderGray">
+            <PuzzlePieceIcon className="size-4" />
+            Add Semester
+          </button>
+        )}
+
+        <div className="h-[1px] bg-light-borderGray dark:bg-borderGray my-6" />
+
+        <div className="flex gap-x-2 justify-between mb-3">
+          <Field className="w-1/2">
+            <div className="relative">
+              <Select
+                className={clsx(
+                  "ring-1 ring-inset appearance-none mt-1 block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                  "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01",
+                  "*:text-black"
+                )}
+              >
+                <option value="SUPER_ADMIN"> Select Subject</option>
+                <option value="SUPER_ADMIN"> 18/19 FOC</option>
+                <option value="ADMIN">19/20 FOC</option>
+                <option value="ADMIN">19/20 FOC</option>
+                <option value="ADMIN">19/20 FOC</option>
+              </Select>
+              <ChevronDownIcon
+                className="group pointer-events-none absolute top-4 right-2.5 size-2 fill-light-font02 dark:fill-font02"
+                aria-hidden="true"
+              />
+            </div>
+          </Field>
+        </div>
+
+        {true ? (
+          <div className="flex gap-x-2 justify-start items-end">
+            <Field className="w-1/2">
+              <Input
+                id="batchName"
+                placeholder="Subject Name"
+                type="text"
+                required
+                className={clsx(
+                  "ring-1 ring-inset block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                  "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
+                )}
+              />
+            </Field>
+            <div className="flex ml-auto gap-x-2">
+              <button className="bg-transparent rounded-full h-8 w-8 flex items-center justify-center font-medium text-light-font02 dark:text-font02 border-[1px] border-light-borderGray dark:border-borderGray">
+                <CheckIcon className="size-5" />
+              </button>
+              <button className="bg-transparent rounded-full h-8 w-8 flex items-center justify-center font-medium text-light-font02 dark:text-font02 border-[1px] border-light-borderGray dark:border-borderGray">
+                <XMarkIcon className="size-5" />
+              </button>
+            </div>
+          </div>
+        ) : (
+          <button className="p-2 gap-x-1 bg-transparent rounded-full px-3 py-3 w-32 h-8 flex items-center justify-center text-xs font-medium leading-none text-light-font02 dark:text-font02 border-[1px] border-light-borderGray dark:border-borderGray">
+            <PuzzlePieceIcon className="size-4" />
+            Add Subject
+          </button>
+        )}
+
+        <div className="h-[1px] bg-light-borderGray dark:bg-borderGray my-6" />
+
+        <div className="flex gap-x-2 justify-between">
+          <Field className="w-1/2">
+            <Input
+              id="batchName"
+              placeholder="Index Number"
+              type="text"
+              required
+              className={clsx(
+                "ring-1 ring-inset block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
+              )}
+            />
+          </Field>
+          <Field className="w-1/2">
+            <div className="relative">
+              <Select
+                className={clsx(
+                  "ring-1 ring-inset appearance-none block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                  "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01",
+                  "*:text-black"
+                )}
+              >
+                <option value="SUPER_ADMIN"> Select Grade</option>
+                <option value="ADMIN">A</option>
+                <option value="ADMIN">A+</option>
+                <option value="ADMIN">A-</option>
+                <option value="ADMIN">B</option>
+                <option value="ADMIN">B+</option>
+                <option value="ADMIN">B-</option>
+              </Select>
+              <ChevronDownIcon
+                className="group pointer-events-none absolute top-4 right-2.5 size-2 fill-light-font02 dark:fill-font02"
+                aria-hidden="true"
+              />
+            </div>
+          </Field>
+        </div>
+
+        <button className="p-2 mt-auto bg-black dark:bg-white hover:dark:bg-white/90 rounded-sm px-3 py-3 w-24 h-8 flex items-center justify-center hover:bg-black/90 text-xs ml-auto font-medium leading-none text-white dark:text-black">
+          Add Result
+        </button>
+
+        <div className="h-[1px] bg-light-borderGray dark:bg-borderGray my-6" />
 
         <div className="flex gap-x-2 justify-between">
           <label
@@ -185,29 +229,9 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
           </label>
         </div>
 
-        <div className="flex items-center gap-x-2 mt-6 border rounded-md bg-[#e9f6eb] dark:bg-[#192d23] border-[#45855f] dark:border-[#59aa77] px-2 py-4">
-          <CheckCircleIcon className="h-10 w-10 dark:text-[#59aa77] text-[#45855f]" />
-          <div className="flex flex-col gap-y-1">
-            <span className="text-sm font-semibold leading-none dark:text-[#59aa77] text-[#45855f]">
-              Document Name.csv
-            </span>
-            <span className="flex gap-x-2 items-center text-xs leading-none dark:text-[#59aa77] text-[#45855f]">
-              Ready to save
-            </span>
-          </div>
-        </div>
-
-        <div className="flex items-center gap-x-2 mt-6 border rounded-md bg-[#fdf0d9] dark:bg-[#301f13] dark:border-[#df985d] border-[#bd5622] px-2 py-4">
-          <ExclamationCircleIcon className="h-10 w-10 text-[#bd5622] dark:text-[#df985d]" />
-          <div className="flex flex-col gap-y-1">
-            <span className="text-sm font-semibold leading-none text-[#bd5622] dark:text-[#df985d]">
-              Document Name.csv
-            </span>
-            <span className="flex gap-x-2 items-center text-xs leading-none text-[#bd5622] dark:text-[#df985d]">
-              Invalid data found
-            </span>
-          </div>
-        </div>
+        <button className="p-2 mt-auto bg-black dark:bg-white hover:dark:bg-white/90 rounded-sm px-3 py-3 w-24 h-8 flex items-center justify-center hover:bg-black/90 text-xs ml-auto font-medium leading-none text-white dark:text-black">
+          Add Results
+        </button>
       </Drawer.Body>
     </Drawer>
   );
