@@ -64,6 +64,16 @@ export const routes: RouteObjectWithRole[] = [
     allowRoles: [Role.SuperAdmin],
   },
   {
+    path: "/subjects-semesters",
+    text: "Subjects & Semesters",
+    icons: [
+      React.createElement(ResultManagementIcon, { isActive: false }),
+      React.createElement(ResultManagementIcon, { isActive: true }),
+    ],
+    element: React.createElement(View.ResultManagement),
+    allowRoles: [Role.SuperAdmin],
+  },
+  {
     path: "/analytics",
     text: "Analytics",
     icons: [
