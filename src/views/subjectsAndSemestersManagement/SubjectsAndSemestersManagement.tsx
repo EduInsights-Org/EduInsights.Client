@@ -1,11 +1,12 @@
 import TabsManagement from "@/components/TabsManagement/TabsManagement";
+import { ITab } from "@/utils/types";
 import {
   Subjects,
   Semesters,
 } from "@views/subjectsAndSemestersManagement/Tabs";
 
 const SubjectsAndSemestersManagement = () => {
-  const tabs = [
+  const tabs: ITab[] = [
     {
       id: "subject",
       label: "Subject",
@@ -35,7 +36,7 @@ const SubjectsAndSemestersManagement = () => {
   ];
 
   return (
-    <div className="border rounded-md h-full p-4">
+    <div className="border border-light-borderGray dark:border-borderGray rounded-md h-full p-2 px-4">
       <TabsManagement tabs={tabs} />
     </div>
   );

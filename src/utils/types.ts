@@ -1,3 +1,5 @@
+import { ReactElement } from "react";
+
 export enum Role {
   SuperAdmin = "SUPER_ADMIN",
   Admin = "ADMIN",
@@ -10,4 +12,11 @@ export enum RequestState {
   LOADING = "loading",
   SUCCEEDED = "succeeded",
   FAILED = "failed",
+}
+
+export interface ITab {
+  id: string;
+  label: string;
+  content: JSX.Element;
+  action: ReactElement;
 }
