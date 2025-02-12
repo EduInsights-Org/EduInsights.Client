@@ -8,8 +8,8 @@ import { useNavigate } from "react-router-dom";
 import { Field, Input, Label } from "@headlessui/react";
 import clsx from "clsx";
 import { useTheme } from "@context/ThemeContext";
-import { Spinner } from "@radix-ui/themes";
 import { RequestState, Role } from "@utils/types";
+import AppButton from "@/components/AppButton";
 
 const Register = () => {
   const { isDarkMode } = useTheme();
@@ -178,13 +178,13 @@ const Register = () => {
           <span className="font-light text-red-500 text-xs">{error}</span>
         )}
 
-        <button className="flex justify-center items-center rounded-md bg-primaryLight py-3 mt-12 px-4 text-xs font-bold text-light-mainBg min-h-10 hover:bg-primaryDark">
-          {registerStatus === RequestState.LOADING ? (
-            <Spinner size="1" />
-          ) : (
-            <>Create an account</>
-          )}
-        </button>
+        <AppButton
+          title="Create an account"
+          variant="fill"
+          isLoading={registerStatus === RequestState.LOADING}
+          onClick={() => {}}
+          className="mt-12 py-5 font-bold"
+        />
 
         <span className="pt-4 text-light-font02 dark:text-font02 text-xs">
           Already have an account?&nbsp;

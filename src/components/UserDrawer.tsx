@@ -10,7 +10,6 @@ import {
 } from "@slices/userSlice";
 import { useToast } from "@context/ToastContext";
 import ToastContainer from "@components/ToastContainer";
-import PreLoader from "@components/PreLoader";
 import { RequestState, Role } from "@utils/types";
 import useCSV from "@hooks/useCSV";
 import {
@@ -21,8 +20,8 @@ import {
 import { useState } from "react";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { Drawer } from "rsuite";
-import AppButton from "./AppButton";
-import AppDivider from "./AppDivider";
+import AppButton from "@components/AppButton";
+import AppDivider from "@components/AppDivider";
 
 interface UserDrawerProps {
   open: boolean;

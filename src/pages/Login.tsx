@@ -9,7 +9,6 @@ import useAuth from "@hooks/useAuth";
 import { Field, Input, Label } from "@headlessui/react";
 import clsx from "clsx";
 import { useTheme } from "@context/ThemeContext";
-import { Spinner } from "@radix-ui/themes";
 import { RequestState } from "@utils/types";
 import { getInstituteById } from "@slices/instituteSlice";
 import {
@@ -17,6 +16,7 @@ import {
   getBatchesByInstituteId,
   selectBatch,
 } from "@slices/batchSlice";
+import AppButton from "@/components/AppButton";
 
 const Login = () => {
   const { isDarkMode } = useTheme();
@@ -138,13 +138,13 @@ const Login = () => {
           <span className="font-light text-red-500 text-xs">{error}</span>
         )}
 
-        <button className="flex justify-center items-center rounded-md bg-primaryLight py-3 mt-12 px-4 text-xs font-bold text-light-mainBg min-h-10 hover:bg-primaryDark">
-          {loginStatus === RequestState.LOADING ? (
-            <Spinner size="1" />
-          ) : (
-            <>Login</>
-          )}
-        </button>
+        <AppButton
+          title="Login"
+          variant="fill"
+          isLoading={loginStatus === RequestState.LOADING}
+          onClick={() => {}}
+          className="mt-12 py-5 font-bold"
+        />
 
         <span className="pt-4 text-light-font02 dark:text-font02 text-xs">
           Don't have an account?&nbsp;

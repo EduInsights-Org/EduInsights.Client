@@ -9,7 +9,7 @@ import { ChevronDownIcon } from "@radix-ui/themes";
 import clsx from "clsx";
 import { Drawer } from "rsuite";
 import AppDivider from "@components/AppDivider";
-import AppButton from "./AppButton";
+import AppButton from "@components/AppButton";
 
 interface ResultDrawerProps {
   open: boolean;

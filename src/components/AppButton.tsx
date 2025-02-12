@@ -19,7 +19,7 @@ const AppButton = ({
   return (
     <button
       className={clsx(
-        "p-2 rounded-sm px-3 py-3 w-28 h-8 flex items-center justify-center text-xs font-medium leading-none transition",
+        "p-3 rounded-md min-w-24 h-8 flex items-center justify-center text-xs font-medium leading-none transition",
         {
           "bg-black text-white hover:bg-black/90 dark:bg-white dark:text-black hover:dark:bg-white/90":
             variant === "fill",
