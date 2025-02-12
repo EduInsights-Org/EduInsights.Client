@@ -1,3 +1,4 @@
+import AppButton from "@/components/AppButton";
 import useDrawerDetails from "@/hooks/useDrawerDetails";
 
 const Header = () => {
@@ -11,12 +12,11 @@ const Header = () => {
         </span>
       </div>
       {component && (
-        <button
+        <AppButton
+          title={drawerTitle}
+          variant="fill"
           onClick={() => handleOpenDrawer()}
-          className="p-2 bg-black dark:bg-white hover:dark:bg-white/90 rounded-sm px-3 py-3 w-24 h-8 flex items-center justify-center hover:bg-black/90 text-xs font-medium leading-none text-white dark:text-black"
-        >
-          {drawerTitle}
-        </button>
+        />
       )}
       {component}
     </div>

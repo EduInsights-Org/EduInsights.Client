@@ -8,6 +8,8 @@ import {
 import { ChevronDownIcon } from "@radix-ui/themes";
 import clsx from "clsx";
 import { Drawer } from "rsuite";
+import AppDivider from "@components/AppDivider";
+import AppButton from "./AppButton";
 
 interface ResultDrawerProps {
   open: boolean;
@@ -94,7 +96,7 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
           </button>
         )}
 
-        <div className="h-[1px] bg-light-borderGray dark:bg-borderGray my-6" />
+        <AppDivider className="my-6" />
 
         <div className="flex gap-x-2 justify-between mb-3">
           <Field className="w-1/2">
@@ -150,7 +152,7 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
           </button>
         )}
 
-        <div className="h-[1px] bg-light-borderGray dark:bg-borderGray my-6" />
+        <AppDivider className="my-6" />
 
         <div className="flex gap-x-2 justify-between">
           <Field className="w-1/2">
@@ -190,11 +192,14 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
           </Field>
         </div>
 
-        <button className="p-2 mt-auto bg-black dark:bg-white hover:dark:bg-white/90 rounded-sm px-3 py-3 w-24 h-8 flex items-center justify-center hover:bg-black/90 text-xs ml-auto font-medium leading-none text-white dark:text-black">
-          Add Result
-        </button>
+        <AppButton
+          title="Add Result"
+          variant="fill"
+          onClick={() => {}}
+          className="ml-auto mt-auto"
+        />
 
-        <div className="h-[1px] bg-light-borderGray dark:bg-borderGray my-6" />
+        <AppDivider className="my-6" />
 
         <div className="flex gap-x-2 justify-between">
           <label
@@ -229,9 +234,12 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
           </label>
         </div>
 
-        <button className="p-2 mt-auto bg-black dark:bg-white hover:dark:bg-white/90 rounded-sm px-3 py-3 w-24 h-8 flex items-center justify-center hover:bg-black/90 text-xs ml-auto font-medium leading-none text-white dark:text-black">
-          Add Results
-        </button>
+        <AppButton
+          title="Add Results"
+          variant="fill"
+          onClick={() => {}}
+          className="ml-auto mt-auto"
+        />
       </Drawer.Body>
     </Drawer>
   );

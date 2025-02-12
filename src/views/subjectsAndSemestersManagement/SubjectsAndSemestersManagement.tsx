@@ -1,3 +1,4 @@
+import AppButton from "@/components/AppButton";
 import TabsManagement from "@/components/TabsManagement/TabsManagement";
 import { ITab } from "@/utils/types";
 import {
@@ -12,12 +13,11 @@ const SubjectsAndSemestersManagement = () => {
       label: "Subject",
       content: <Subjects />,
       action: (
-        <button
-          className="p-2 bg-black dark:bg-white hover:dark:bg-white/90 rounded-sm px-3 py-3 w-28 h-8 flex items-center justify-center hover:bg-black/90 text-xs font-medium leading-none text-white dark:text-black"
-          onClick={() => alert("Subject action button clicked!")}
-        >
-          Add Subject
-        </button>
+        <AppButton
+          title="Add Subject"
+          variant="fill"
+          onClick={() => console.log("Arun")}
+        />
       ),
     },
     {
@@ -25,12 +25,11 @@ const SubjectsAndSemestersManagement = () => {
       label: "Semester",
       content: <Semesters />,
       action: (
-        <button
-          className="p-2 bg-black dark:bg-white hover:dark:bg-white/90 rounded-sm px-3 py-3 w-28 h-8 flex items-center justify-center hover:bg-black/90 text-xs font-medium leading-none text-white dark:text-black"
-          onClick={() => alert("Subject action button clicked!")}
-        >
-          Add Semesters
-        </button>
+        <AppButton
+          title="Add Semester"
+          variant="fill"
+          onClick={() => console.log("Arun")}
+        />
       ),
     },
   ];
