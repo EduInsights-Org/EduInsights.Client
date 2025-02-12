@@ -29,7 +29,7 @@ const Layout = () => {
         <Header />
 
         {/* <!-- ===== View Content Start ===== --> */}
-        <main className="flex-1 px-5 overflow-y-auto">
+        <main className="flex-1 px-5 overflow-y-auto pb-4">
           <Suspense fallback={<h1>Loading</h1>}>
             <Outlet />
           </Suspense>

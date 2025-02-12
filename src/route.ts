@@ -10,7 +10,6 @@ import {
   ResultManagementIcon,
   SettingsIcon,
   UserManagementIcon,
-  BookIcon,
 } from "@components/icons";
 
 export interface RouteObjectWithRole extends NonIndexRouteObject {
@@ -68,8 +67,8 @@ export const routes: RouteObjectWithRole[] = [
     path: "/subjects-semesters",
     text: "Subjects & Semesters",
     icons: [
-      React.createElement(BookIcon, { isActive: false }),
-      React.createElement(BookIcon, { isActive: true }),
+      React.createElement(ResultManagementIcon, { isActive: false }),
+      React.createElement(ResultManagementIcon, { isActive: true }),
     ],
     element: React.createElement(View.SubjectsAndSemestersManagement),
     allowRoles: [Role.SuperAdmin],
