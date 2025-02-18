@@ -1,5 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
+import clsx from "clsx";
 
 export interface TableColumn<T> {
   key?: keyof T | string;
@@ -109,8 +110,11 @@ const AppTable = <T,>({
 
             return (
               <tr
-                key={index}
-                className="border-light-borderGray dark:border-borderGray"
+                key={id}
+                className={clsx(
+                  "border-light-borderGray dark:border-borderGray",
+                  selectedIds.has(id) ? "bg-light-subBg dark:bg-subBg" : ""
+                )}
               >
                 {checkboxSelection && (
                   <td className="pl-2">
@@ -139,7 +143,7 @@ const AppTable = <T,>({
           })}
         </tbody>
       </table>
-      <div className="flex justify-between items-center py-3 bg-light-subBg dark:bg-subBg mt-auto">
+      <div className="border-t border-light-borderGray dark:border-borderGray flex justify-between items-center py-3 bg-light-subBg dark:bg-subBg mt-auto">
         <span className="text-light-font01 text-xs dark:text-font01 pl-3">
           {selectedIds.size} rows selected
         </span>
