@@ -1,6 +1,7 @@
 import { ChevronLeftIcon, ChevronRightIcon } from "@heroicons/react/24/outline";
 import { useState } from "react";
 import clsx from "clsx";
+import AppSkeleton from "@components/AppSkeleton";
 
 export interface TableColumn<T> {
   key?: keyof T | string;
@@ -11,6 +12,7 @@ export interface TableColumn<T> {
 interface TableProps<T> {
   data: T[];
   columns: TableColumn<T>[];
+  loading?: boolean;
   checkboxSelection?: boolean;
   onSelect?: (selectedItems: T[]) => void;
   pagination?: {
@@ -23,6 +25,7 @@ interface TableProps<T> {
 const AppTable = <T,>({
   data,
   columns,
+  loading,
   checkboxSelection = false,
   onSelect,
   pagination: { handlePagination, pageSize, totalRecords },
@@ -118,24 +121,36 @@ const AppTable = <T,>({
               >
                 {checkboxSelection && (
                   <td className="pl-2">
-                    <div className="flex items-center">
-                      <input
-                        id="link-checkbox"
-                        type="checkbox"
-                        value=""
-                        className="w-[14px] h-[14px]"
-                        checked={selectedIds.has(id)}
-                        onClick={() => handleCheckboxChange(item)}
-                      />
-                    </div>
+                    {loading ? (
+                      <AppSkeleton width="w-3" />
+                    ) : (
+                      <div className="flex items-center">
+                        <input
+                          id="link-checkbox"
+                          type="checkbox"
+                          value=""
+                          className="w-[14px] h-[14px]"
+                          checked={selectedIds.has(id)}
+                          onClick={() => handleCheckboxChange(item)}
+                        />
+                      </div>
+                    )}
                   </td>
                 )}
-                <td className="pl-2">{index + 1}</td>
+                <td className="pl-2">
+                  {loading ? <AppSkeleton /> : <>{index + 1}</>}
+                </td>
                 {columns.map((column) => (
                   <td className="py-2" key={String(column.key)}>
-                    {column.render
-                      ? column.render(item)
-                      : (item[column.key as keyof T] as React.ReactNode)}
+                    {loading ? (
+                      <AppSkeleton />
+                    ) : (
+                      <>
+                        {column.render
+                          ? column.render(item)
+                          : (item[column.key as keyof T] as React.ReactNode)}
+                      </>
+                    )}
                   </td>
                 ))}
               </tr>

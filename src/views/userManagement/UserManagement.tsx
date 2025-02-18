@@ -15,7 +15,7 @@ import { useAppDispatch, useAppSelector } from "@slices/store";
 import { getRoleDistribution, getUsers, User } from "@slices/userSlice";
 import { Badge, Select, TextField } from "@radix-ui/themes";
 import { capitalize } from "@utils/utils";
-import { Role } from "@/utils/types";
+import { RequestState, Role } from "@/utils/types";
 import AppTable, { TableColumn } from "@/components/AppTable";
 
 ChartJS.register(
@@ -75,6 +75,7 @@ const UserManagement = () => {
   const instituteId = useAppSelector((state) => state.institute.institute!.id);
   const batches = useAppSelector((state) => state.batch.batches);
   const users = useAppSelector((state) => state.user.paginatedResponse.data);
+  const usersLoading = useAppSelector((state) => state.user.status);
   const roleDistribution = useAppSelector(
     (state) => state.user.roleDistribution
   );
@@ -222,6 +223,7 @@ const UserManagement = () => {
           <AppTable
             data={users}
             columns={columns}
+            loading={usersLoading === RequestState.LOADING}
             checkboxSelection
             onSelect={handleSelect}
             pagination={{
