@@ -1,10 +1,5 @@
 import { Field, Input, Select } from "@headlessui/react";
-import { CheckIcon } from "@heroicons/react/16/solid";
-import {
-  InformationCircleIcon,
-  PuzzlePieceIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@radix-ui/themes";
 import clsx from "clsx";
 import { Drawer } from "rsuite";
@@ -43,7 +38,7 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
         className="flex flex-col bg-light-mainBg dark:bg-mainBg"
         style={{ paddingTop: 0, paddingLeft: 40, paddingRight: 40 }}
       >
-        <div className="flex gap-x-2 justify-between mb-3">
+        <div className="flex gap-x-2 justify-between">
           <Field className="w-1/2">
             <div className="relative">
               <Select
@@ -64,41 +59,7 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
               />
             </div>
           </Field>
-        </div>
 
-        {false ? (
-          <div className="flex gap-x-2 justify-start items-end">
-            <Field className="w-1/2">
-              <Input
-                id="batchName"
-                placeholder="Semester"
-                type="text"
-                required
-                className={clsx(
-                  "ring-1 ring-inset block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
-                  "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
-                )}
-              />
-            </Field>
-            <div className="flex ml-auto gap-x-2">
-              <button className="bg-transparent rounded-full h-8 w-8 flex items-center justify-center font-medium text-light-font02 dark:text-font02 border-[1px] border-light-borderGray dark:border-borderGray">
-                <CheckIcon className="size-5" />
-              </button>
-              <button className="bg-transparent rounded-full h-8 w-8 flex items-center justify-center font-medium text-light-font02 dark:text-font02 border-[1px] border-light-borderGray dark:border-borderGray">
-                <XMarkIcon className="size-5" />
-              </button>
-            </div>
-          </div>
-        ) : (
-          <button className="p-2 gap-x-1 bg-transparent rounded-full px-3 py-3 w-32 h-8 flex items-center justify-center text-xs font-medium leading-none text-light-font02 dark:text-font02 border-[1px] border-light-borderGray dark:border-borderGray">
-            <PuzzlePieceIcon className="size-4" />
-            Add Semester
-          </button>
-        )}
-
-        <AppDivider className="my-6" />
-
-        <div className="flex gap-x-2 justify-between mb-3">
           <Field className="w-1/2">
             <div className="relative">
               <Select
@@ -121,36 +82,6 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
             </div>
           </Field>
         </div>
-
-        {true ? (
-          <div className="flex gap-x-2 justify-start items-end">
-            <Field className="w-1/2">
-              <Input
-                id="batchName"
-                placeholder="Subject Name"
-                type="text"
-                required
-                className={clsx(
-                  "ring-1 ring-inset block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
-                  "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
-                )}
-              />
-            </Field>
-            <div className="flex ml-auto gap-x-2">
-              <button className="bg-transparent rounded-full h-8 w-8 flex items-center justify-center font-medium text-light-font02 dark:text-font02 border-[1px] border-light-borderGray dark:border-borderGray">
-                <CheckIcon className="size-5" />
-              </button>
-              <button className="bg-transparent rounded-full h-8 w-8 flex items-center justify-center font-medium text-light-font02 dark:text-font02 border-[1px] border-light-borderGray dark:border-borderGray">
-                <XMarkIcon className="size-5" />
-              </button>
-            </div>
-          </div>
-        ) : (
-          <button className="p-2 gap-x-1 bg-transparent rounded-full px-3 py-3 w-32 h-8 flex items-center justify-center text-xs font-medium leading-none text-light-font02 dark:text-font02 border-[1px] border-light-borderGray dark:border-borderGray">
-            <PuzzlePieceIcon className="size-4" />
-            Add Subject
-          </button>
-        )}
 
         <AppDivider className="my-6" />
 

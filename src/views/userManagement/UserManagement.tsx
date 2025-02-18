@@ -158,7 +158,7 @@ const UserManagement = () => {
       key: "id",
       header: "Actions",
       render: (item: User) => (
-        <div className="flex flex-row gap-x-4">
+        <div className="flex flex-row gap-x-4 w-fit">
           <PencilIcon
             onClick={() => alert(`Edit ${item.firstName}`)}
             className="h-3 w-3 hover:cursor-pointer text-light-font01 dark:text-font01"

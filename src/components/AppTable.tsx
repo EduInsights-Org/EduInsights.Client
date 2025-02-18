@@ -138,7 +138,11 @@ const AppTable = <T,>({
                   </td>
                 )}
                 <td className="pl-2">
-                  {loading ? <AppSkeleton /> : <>{index + 1}</>}
+                  {loading ? (
+                    <AppSkeleton />
+                  ) : (
+                    <>{index + (page - 1) * pageSize + 1}</>
+                  )}
                 </td>
                 {columns.map((column) => (
                   <td className="py-2" key={String(column.key)}>
