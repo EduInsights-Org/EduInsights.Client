@@ -222,6 +222,7 @@ const UserManagement = () => {
           <AppTable
             data={users}
             columns={columns}
+            checkboxSelection
             onSelect={handleSelect}
             pagination={{
               handlePagination,

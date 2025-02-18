@@ -10,6 +10,7 @@ export interface TableColumn<T> {
 interface TableProps<T> {
   data: T[];
   columns: TableColumn<T>[];
+  checkboxSelection?: boolean;
   onSelect?: (selectedItems: T[]) => void;
   pagination?: {
     handlePagination: (page: number) => void;
@@ -21,6 +22,7 @@ interface TableProps<T> {
 const AppTable = <T,>({
   data,
   columns,
+  checkboxSelection = false,
   onSelect,
   pagination: { handlePagination, pageSize, totalRecords },
 }: TableProps<T>) => {
@@ -77,19 +79,21 @@ const AppTable = <T,>({
       <table className="w-full text-xs text-left rtl:text-right rounded-lg">
         <thead>
           <tr className="border-b border-light-borderGray dark:border-borderGray text-light-font02 dark:text-font02">
+            {checkboxSelection && (
+              <th scope="col" className="pl-2">
+                <div className="flex items-center">
+                  <input
+                    id="link-checkbox"
+                    type="checkbox"
+                    value=""
+                    className="w-[14px] h-[14px]"
+                    onClick={handleSelectAll}
+                    checked={isAllSelected}
+                  />
+                </div>
+              </th>
+            )}
             <th scope="col" className="pl-2">
-              <div className="flex items-center">
-                <input
-                  id="link-checkbox"
-                  type="checkbox"
-                  value=""
-                  className="w-[14px] h-[14px]"
-                  onClick={handleSelectAll}
-                  checked={isAllSelected}
-                />
-              </div>
-            </th>
-            <th scope="col" className="">
               Id
             </th>
             {columns.map((column) => (
@@ -108,19 +112,21 @@ const AppTable = <T,>({
                 key={index}
                 className="border-light-borderGray dark:border-borderGray"
               >
-                <td className="pl-2">
-                  <div className="flex items-center">
-                    <input
-                      id="link-checkbox"
-                      type="checkbox"
-                      value=""
-                      className="w-[14px] h-[14px]"
-                      checked={selectedIds.has(id)}
-                      onClick={() => handleCheckboxChange(item)}
-                    />
-                  </div>
-                </td>
-                <td className="">{index + 1}</td>
+                {checkboxSelection && (
+                  <td className="pl-2">
+                    <div className="flex items-center">
+                      <input
+                        id="link-checkbox"
+                        type="checkbox"
+                        value=""
+                        className="w-[14px] h-[14px]"
+                        checked={selectedIds.has(id)}
+                        onClick={() => handleCheckboxChange(item)}
+                      />
+                    </div>
+                  </td>
+                )}
+                <td className="pl-2">{index + 1}</td>
                 {columns.map((column) => (
                   <td className="py-2" key={String(column.key)}>
                     {column.render
