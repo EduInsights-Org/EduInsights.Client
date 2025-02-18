@@ -23,7 +23,7 @@ export interface AddUsersResponse {
   message: string;
 }
 
-interface User {
+export interface User {
   name: string;
   id: string;
   firstName: string;
