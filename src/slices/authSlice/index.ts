@@ -17,6 +17,8 @@ export interface AuthState {
   userInfo: BasicInfo | null;
   userRole: string | null;
   accessToken: string | null;
+  isVerificationSent: boolean;
+  isVerified: boolean;
   error: string | null;
 }
 
@@ -43,6 +45,8 @@ const initialState: AuthState = {
   status: RequestState.IDLE,
   userRole: null,
   accessToken: null,
+  isVerificationSent: false,
+  isVerified: false,
   error: null,
 };
 
@@ -54,6 +58,12 @@ const authSlice = createSlice({
       state.isAuthenticated = false;
       state.userRole = null;
       state.accessToken = null;
+    },
+    setVerificationSent: (state, action: PayloadAction<boolean>) => {
+      state.isVerificationSent = action.payload;
+    },
+    setVerified: (state, action: PayloadAction<boolean>) => {
+      state.isVerified = action.payload;
     },
   },
   extraReducers: (builder) => {
@@ -216,5 +226,6 @@ export const getUserInfo = createAsyncThunk(
   }
 );
 
-export const { resetAuth } = authSlice.actions;
+export const { resetAuth, setVerificationSent, setVerified } =
+  authSlice.actions;
 export default authSlice.reducer;
