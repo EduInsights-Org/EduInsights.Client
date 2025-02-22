@@ -6,7 +6,7 @@ import { RequestState } from "@utils/types";
 interface BasicInfo {
   firstName: string;
   lastName: string;
-  userName: string;
+  email: string;
 }
 export interface AuthState {
   loginStatus: RequestState;
@@ -25,14 +25,14 @@ export interface AuthState {
 interface RegisterPayload {
   firstName: string;
   lastName: string;
-  userName: string;
+  email: string;
   instituteName: string;
   password: string;
   role: string;
 }
 
 interface LoginPayload {
-  userName: string;
+  email: string;
   password: string;
 }
 
@@ -140,7 +140,7 @@ export const register = createAsyncThunk(
     {
       firstName,
       lastName,
-      userName,
+      email,
       password,
       instituteName,
       role,
@@ -153,7 +153,7 @@ export const register = createAsyncThunk(
         JSON.stringify({
           firstName,
           lastName,
-          userName,
+          email,
           password,
           instituteName,
           role,
@@ -170,9 +170,9 @@ export const register = createAsyncThunk(
 
 export const login = createAsyncThunk(
   "auth/login",
-  async ({ userName, password }: LoginPayload, { rejectWithValue }) => {
+  async ({ email, password }: LoginPayload, { rejectWithValue }) => {
     return AxiosPublicService.getInstance()
-      .post(AppConfig.serviceUrls.login, JSON.stringify({ userName, password }))
+      .post(AppConfig.serviceUrls.login, JSON.stringify({ email, password }))
       .then((response) => response.data)
       .catch((error) => {
         return rejectWithValue(

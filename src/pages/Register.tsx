@@ -18,7 +18,7 @@ const Register = () => {
 
   const [firstName, setFirstName] = useState<string>("");
   const [lastName, setLastName] = useState<string>("");
-  const [user, setUser] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const [instituteName, setInstituteName] = useState<string>("");
   const [pwd, setPwd] = useState<string>("");
   const [matchPwd, setMatchPwd] = useState<string>("");
@@ -48,7 +48,7 @@ const Register = () => {
       register({
         firstName,
         lastName,
-        userName: user,
+        email,
         password: pwd,
         instituteName,
         role: Role.SuperAdmin,
@@ -81,11 +81,7 @@ const Register = () => {
 
       <div className="shadow-xl dark:shadow-mainBg border-[1px] border-light-borderGray dark:border-borderGray rounded-lg flex flex-col bg-light-mainBg dark:bg-mainBg px-8 py-12 w-[420px]">
         {!isVerificationSent ? (
-          <form
-            // onSubmit={handleEmailSubmit}
-            // className="shadow-xl dark:shadow-mainBg border-[1px] border-light-borderGray dark:border-borderGray rounded-lg flex flex-col bg-light-mainBg dark:bg-mainBg px-8 py-12 w-[420px]"
-            className="w-full flex flex-col"
-          >
+          <form onSubmit={handleSubmit} className="w-full flex flex-col">
             <span className="font-extrabold text-2xl pb-8 text-light-font01 dark:text-font01">
               Create an account
             </span>
@@ -127,11 +123,11 @@ const Register = () => {
 
             <Field>
               <Label className="text-xs font-light text-light-font02 dark:text-font02">
-                User Name
+                Email
               </Label>
               <Input
-                onChange={(e) => setUser(e.target.value)}
-                value={user}
+                onChange={(e) => setEmail(e.target.value)}
+                value={email}
                 id="username"
                 type="text"
                 required
@@ -201,8 +197,8 @@ const Register = () => {
               title="Continue"
               variant="fill"
               isLoading={registerStatus === RequestState.LOADING}
-              // onClick={() => {}}
-              onClick={() => handleEmailSubmit()}
+              onClick={() => {}}
+              // onClick={() => handleEmailSubmit()}
               className="mt-12 py-5 font-bold"
             />
 

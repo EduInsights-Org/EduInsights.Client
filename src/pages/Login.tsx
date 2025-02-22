@@ -21,7 +21,7 @@ import AppButton from "@/components/AppButton";
 const Login = () => {
   const { isDarkMode } = useTheme();
 
-  const [user, setUser] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
 
   const [password, setPwd] = useState<string>("");
 
@@ -40,7 +40,7 @@ const Login = () => {
     try {
       new AxiosPublicService();
 
-      const result = await dispatch(login({ userName: user, password }));
+      const result = await dispatch(login({ email, password }));
 
       if (login.fulfilled.match(result)) {
         const token = result.payload.accessToken;
@@ -102,11 +102,11 @@ const Login = () => {
 
         <Field>
           <Label className="text-xs font-light text-light-font02 dark:text-font02">
-            User Name
+            Email
           </Label>
           <Input
-            onChange={(e) => setUser(e.target.value)}
-            value={user}
+            onChange={(e) => setEmail(e.target.value)}
+            value={email}
             id="username"
             type="text"
             required
