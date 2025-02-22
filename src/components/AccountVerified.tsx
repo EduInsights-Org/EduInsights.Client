@@ -3,7 +3,7 @@ import verifiedBadge from "@assets/icons/verified.svg";
 
 const AccountVerified = () => {
   return (
-    <div className="shadow-xl dark:shadow-mainBg border-[1px] border-light-borderGray dark:border-borderGray rounded-lg flex flex-col bg-light-mainBg dark:bg-mainBg px-8 py-12 w-[420px]">
+    <div className="w-full flex flex-col">
       <div className="flex justify-center">
         <img
           src={verifiedBadge}
