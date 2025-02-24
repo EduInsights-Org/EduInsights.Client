@@ -15,8 +15,8 @@ import { useAppDispatch, useAppSelector } from "@slices/store";
 import { getRoleDistribution, getUsers, User } from "@slices/userSlice";
 import { Badge, Select, TextField } from "@radix-ui/themes";
 import { capitalize } from "@utils/utils";
-import { RequestState, Role } from "@/utils/types";
-import AppTable, { TableColumn } from "@/components/AppTable";
+import { RequestState, Role } from "@utils/enums";
+import AppTable, { TableColumn } from "@components/AppTable";
 
 ChartJS.register(
   CategoryScale,

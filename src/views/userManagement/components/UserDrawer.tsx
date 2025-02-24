@@ -10,7 +10,7 @@ import {
 } from "@slices/userSlice";
 import { useToast } from "@context/ToastContext";
 import ToastContainer from "@components/ToastContainer";
-import { RequestState, Role } from "@utils/types";
+import { RequestState, Role } from "@utils/enums";
 import useCSV from "@hooks/useCSV";
 import {
   CheckCircleIcon,

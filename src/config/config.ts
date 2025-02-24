@@ -24,5 +24,6 @@ export const AppConfig = {
     userInfo: ServiceBaseUrl + "/user/basic-information/",
     refreshToken: ServiceBaseUrl + "/auth/refresh",
     logout: ServiceBaseUrl + "/auth/logout",
+    email: ServiceBaseUrl + "/emails/",
   },
 };

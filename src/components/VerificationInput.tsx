@@ -7,8 +7,13 @@ import {
 } from "react";
 import clsx from "clsx";
 
-const VerificationInput = () => {
-  const [code, setCode] = useState<string[]>(Array(6).fill(""));
+interface VerificationInput {
+  code: string[];
+  setCode: (code: string[]) => void;
+}
+
+const VerificationInput = ({ code, setCode }: VerificationInput) => {
+  // const [code, setCode] = useState<string[]>(Array(6).fill(""));
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   // Initialize refs array

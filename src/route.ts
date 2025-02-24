@@ -2,7 +2,7 @@ import * as React from "react";
 import { NonIndexRouteObject } from "react-router-dom";
 import { View } from "@views/Index";
 import { isIncludedRole } from "@utils/utils";
-import { Role } from "@utils/types";
+import { Role } from "@utils/enums";
 import {
   DashboardIcon,
   AnalyticsIcon,

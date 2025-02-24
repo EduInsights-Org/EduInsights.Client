@@ -1,6 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { useMemo, useState } from "react";
-import { Role } from "@utils/types";
+import { Role } from "@utils/enums";
 import UserDrawer from "@/views/userManagement/components/UserDrawer";
 import ResultDrawer from "@/views/resultManagement/components/ResultDrawer";
 import { getActiveRouteDetails } from "@/route";

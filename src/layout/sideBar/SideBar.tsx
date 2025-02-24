@@ -1,6 +1,6 @@
 import { matchPath, useLocation, useMatches } from "react-router-dom";
 import { getActiveRouteDetails } from "../../route";
-import { Role } from "@utils/types";
+import { Role } from "@utils/enums";
 import LinkItem from "../LinkItem";
 import { RootState, useAppDispatch, useAppSelector } from "@slices/store";
 import { logout, resetAuth } from "@slices/authSlice";
@@ -220,7 +220,7 @@ const SideBar = () => {
         <div className="flex flex-col mr-auto">
           <span className="text-sm font-medium dark:text-font01 text-light-font01 leading-none">{`${user?.firstName} ${user?.lastName}`}</span>
           <span className="text-xs text-light-font02 dark:text-font02">
-            {user?.userName}
+            {user?.email}
           </span>
         </div>
         <button>

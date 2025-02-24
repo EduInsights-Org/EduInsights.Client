@@ -44,7 +44,7 @@ export const AppAuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       new AxiosPublicService();
 
       const refreshResponse = await dispatch(refreshAccessToken());
-      const { accessToken, userId } = refreshResponse.payload.data;
+      const { accessToken, userId } = refreshResponse?.payload?.data;
 
       if (!accessToken) {
         console.error("Access token is missing");
@@ -58,7 +58,7 @@ export const AppAuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       new AxiosPrivateService(accessToken);
 
       const userInfoResponse = await dispatch(getUserInfo(userId));
-      const instituteId = userInfoResponse.payload?.data.instituteId;
+      const instituteId = userInfoResponse?.payload?.data.instituteId;
 
       if (!instituteId) {
         console.error("Institute ID is missing in user info");
@@ -70,7 +70,7 @@ export const AppAuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const batchesResponse = await dispatch(
         getBatchesByInstituteId(instituteId)
       );
-      const batches = batchesResponse.payload.data as Batch[];
+      const batches = batchesResponse?.payload?.data as Batch[];
 
       if (batches?.length > 0) {
         dispatch(selectBatch(batches[0].id));

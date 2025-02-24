@@ -3,12 +3,17 @@ import logoLight from "@assets/icons/logo-light.svg";
 import logoDark from "@assets/icons/logo-dark.svg";
 import { useState } from "react";
 import { RootState, useAppDispatch, useAppSelector } from "@slices/store";
-import { register, setVerificationSent, setVerified } from "@slices/authSlice";
+import {
+  register,
+  setVerificationSent,
+  setVerified,
+  verifyEmail,
+} from "@slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import { Field, Input, Label } from "@headlessui/react";
 import clsx from "clsx";
 import { useTheme } from "@context/ThemeContext";
-import { RequestState, Role } from "@utils/types";
+import { RequestState, Role } from "@utils/enums";
 import AppButton from "@/components/AppButton";
 import VerificationInput from "@/components/VerificationInput";
 import AccountVerified from "@/components/AccountVerified";
@@ -23,10 +28,15 @@ const Register = () => {
   const [pwd, setPwd] = useState<string>("");
   const [matchPwd, setMatchPwd] = useState<string>("");
 
+  const [code, setCode] = useState<string[]>(Array(6).fill(""));
+
   const dispatch = useAppDispatch();
   const error = useAppSelector((state: RootState) => state.auth.error);
   const registerStatus = useAppSelector(
     (state: RootState) => state.auth.registerStatus
+  );
+  const emailVerifyingStatus = useAppSelector(
+    (state: RootState) => state.auth.emailVerifyingStatus
   );
   const isVerificationSent = useAppSelector(
     (state: RootState) => state.auth.isVerificationSent
@@ -34,8 +44,6 @@ const Register = () => {
   const isVerified = useAppSelector(
     (state: RootState) => state.auth.isVerified
   );
-
-  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -54,15 +62,10 @@ const Register = () => {
         role: Role.SuperAdmin,
       })
     );
-    if (register.fulfilled.match(result)) navigate("/login");
-  };
-
-  const handleEmailSubmit = async () => {
-    dispatch(setVerificationSent(true));
   };
 
   const handleVerificationSubmit = async () => {
-    dispatch(setVerified(true));
+    const result = await dispatch(verifyEmail({ code: code.join(""), email }));
   };
 
   return (
@@ -223,12 +226,11 @@ const Register = () => {
                   Verify your email
                 </span>
                 <span className="font-normal text-xs text-light-font01 dark:text-font01">
-                  We've sent a 6-digit verification code to{" "}
-                  <b>arun@gmail.com</b> Please enter it below to verify your
-                  account.
+                  We've sent a 6-digit verification code to <b>{email}</b>{" "}
+                  Please enter it below to verify your account.
                 </span>
 
-                <VerificationInput />
+                <VerificationInput code={code} setCode={setCode} />
 
                 {error && (
                   <span className="font-light text-red-500 text-xs">
@@ -239,7 +241,7 @@ const Register = () => {
                 <AppButton
                   title="Verify Email"
                   variant="fill"
-                  isLoading={registerStatus === RequestState.LOADING}
+                  isLoading={emailVerifyingStatus === RequestState.LOADING}
                   onClick={handleVerificationSubmit}
                   className="mt-12 py-5 font-bold"
                 />
