@@ -13,8 +13,7 @@ import { useAppDispatch, useAppSelector } from "@slices/store";
 import { useState } from "react";
 
 import { RequestState } from "@utils/enums";
-import { Theme } from "@radix-ui/themes";
-import PreLoader from "@components/PreLoader";
+import AppButton from "@components/AppButton";
 
 interface ConfirmationOptions {
   message: string;
@@ -64,25 +63,20 @@ const BatchForm = ({ message, onConfirm, onCancel }: ConfirmationOptions) => {
           </Description>
 
           <div className="flex justify-end gap-x-4">
-            <button
-              className="p-2 bg-light-mainBg border-[1px] border-light-borderGray dark:border-borderGray dark:bg-mainBg rounded-sm px-3 py-3 w-24 h-8 flex items-center justify-center text-xs font-medium leading-none text-black dark:text-white"
+            <AppButton
+              title="Cancel"
+              variant="outline"
               onClick={onCancel}
-            >
-              Cancel
-            </button>
+              color="transparent"
+            />
 
-            <button
-              onClick={handleCreateBatch}
-              className="p-2 bg-black dark:bg-white hover:dark:bg-white/90 rounded-sm px-3 py-3 w-24 h-8 flex items-center justify-center hover:bg-black/90 text-xs font-medium leading-none text-white dark:text-black"
-            >
-              {batchCreateStatus === RequestState.LOADING ? (
-                <Theme>
-                  <PreLoader size="small" isFullScreen={false} />
-                </Theme>
-              ) : (
-                <>Create</>
-              )}
-            </button>
+            <AppButton
+              title="Create"
+              variant="fill"
+              onClick={onCancel}
+              color="primary"
+              isLoading={batchCreateStatus === RequestState.LOADING}
+            />
           </div>
         </DialogPanel>
       </div>

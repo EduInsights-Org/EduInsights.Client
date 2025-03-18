@@ -1,7 +1,8 @@
+import { ITab } from "@/utils/types";
 import { useState } from "react";
 
 interface TabsManagementProps {
-  tabs: any;
+  tabs: ITab[];
 }
 
 function TabsManagement({ tabs }: TabsManagementProps) {

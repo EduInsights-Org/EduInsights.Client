@@ -17,6 +17,8 @@ import { Badge, Select, TextField } from "@radix-ui/themes";
 import { capitalize } from "@utils/utils";
 import { RequestState, Role } from "@utils/enums";
 import AppTable, { TableColumn } from "@components/AppTable";
+import { usePopUp } from "@/context/PopUpContext";
+import DeleteConfirmationForm from "@/components/DeleteConfirmationForm";
 
 ChartJS.register(
   CategoryScale,
@@ -68,6 +70,7 @@ const pieChartOptions = {
 
 const UserManagement = () => {
   const dispatch = useAppDispatch();
+  const { showPopUp, hidePopUp } = usePopUp();
 
   const [page, setPage] = useState(1);
   const [selectBatch, setSelectBatch] = useState<string | null>(null);
@@ -133,7 +136,7 @@ const UserManagement = () => {
         <>{item.indexNumber === null ? <>N/A</> : <>{item.indexNumber}</>}</>
       ),
     },
-    { key: "userName", header: "Username" },
+    { key: "email", header: "Email" },
     {
       key: "role",
       header: "Role",
@@ -160,11 +163,11 @@ const UserManagement = () => {
       render: (item: User) => (
         <div className="flex flex-row gap-x-4 w-fit">
           <PencilIcon
-            onClick={() => alert(`Edit ${item.firstName}`)}
+            onClick={() => handleDeleteUser()}
             className="h-3 w-3 hover:cursor-pointer text-light-font01 dark:text-font01"
           />
           <TrashIcon
-            onClick={() => alert(`Edit ${item.lastName}`)}
+            onClick={() => showCustomPopup(item.id)}
             className="h-3 w-3 hover:cursor-pointer text-light-font01 dark:text-font01"
           />
         </div>
@@ -180,6 +183,25 @@ const UserManagement = () => {
     dispatch(
       getUsers({ instituteId, batchId: selectBatch, page: _page, pageSize })
     );
+  };
+
+  const showCustomPopup = (userId: string) => {
+    showPopUp({
+      message: "Are you sure you want to delete this user?",
+      onConfirm: handleDeleteUser,
+      onCancel: handleDeleteUser,
+      render: (message, onConfirm, onCancel) => (
+        <DeleteConfirmationForm
+          message={message}
+          onConfirm={onConfirm}
+          onCancel={onCancel}
+        />
+      ),
+    });
+  };
+
+  const handleDeleteUser = () => {
+    // alert(`Delete user with id: ${userId}`);
   };
 
   return (
