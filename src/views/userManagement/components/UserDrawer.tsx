@@ -10,8 +10,7 @@ import {
 } from "@slices/userSlice";
 import { useToast } from "@context/ToastContext";
 import ToastContainer from "@components/ToastContainer";
-import PreLoader from "@components/PreLoader";
-import { RequestState, Role } from "@utils/types";
+import { RequestState, Role } from "@utils/enums";
 import useCSV from "@hooks/useCSV";
 import {
   CheckCircleIcon,
@@ -21,6 +20,8 @@ import {
 import { useState } from "react";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { Drawer } from "rsuite";
+import AppButton from "@components/AppButton";
+import AppDivider from "@components/AppDivider";
 
 interface UserDrawerProps {
   open: boolean;
@@ -347,18 +348,15 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
           </Field>
         </div>
 
-        <button
+        <AppButton
+          title="Add User"
+          variant="fill"
           onClick={() => handleCreateUser()}
-          className="p-2 bg-black dark:bg-white hover:dark:bg-white/90 rounded-sm px-3 py-3 w-24 h-8 flex items-center justify-center hover:bg-black/90 text-xs ml-auto mt-auto font-medium leading-none text-white dark:text-black"
-        >
-          {createUsersState === RequestState.LOADING ? (
-            <PreLoader size="small" isFullScreen={false} />
-          ) : (
-            <>Add User</>
-          )}
-        </button>
+          isLoading={createUsersState === RequestState.LOADING}
+          className="ml-auto mt-auto"
+        />
 
-        <div className="h-[1px] bg-light-borderGray dark:bg-borderGray my-8" />
+        <AppDivider className="my-8" />
 
         <div
           className={clsx(
@@ -444,16 +442,14 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
           )}
         </div>
 
-        <button
+        <AppButton
+          title="Add Users"
+          variant="fill"
           onClick={() => handleCreateUsers()}
-          className="p-2 bg-black dark:bg-white hover:dark:bg-white/90 rounded-sm px-3 py-3 w-24 h-8 flex items-center justify-center hover:bg-black/90 text-xs ml-auto mt-auto font-medium leading-none text-white dark:text-black"
-        >
-          {createUsersState === RequestState.LOADING ? (
-            <PreLoader size="small" isFullScreen={false} />
-          ) : (
-            <>Add Users</>
-          )}
-        </button>
+          isLoading={createUsersState === RequestState.LOADING}
+          className="ml-auto mt-auto"
+        />
+
         <ToastContainer />
       </Drawer.Body>
     </Drawer>

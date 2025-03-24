@@ -36,7 +36,7 @@ const PreLoader: React.FC<PreLoaderProps> = ({
           strokeWidth="5"
           strokeLinecap="round"
           strokeLinejoin="round"
-          className="text-primaryLight"
+          className="text-light-font02 dark:text-font02"
         ></path>
       </svg>
     </div>

@@ -7,9 +7,16 @@ const UserManagement = lazy(
 const ResultManagement = lazy(
   () => import("@views/resultManagement/ResultManagement")
 );
+const SubjectsAndSemestersManagement = lazy(
+  () =>
+    import(
+      "@views/subjectsAndSemestersManagement/SubjectsAndSemestersManagement"
+    )
+);
 
 export const View = {
   Dashboard,
   UserManagement,
   ResultManagement,
+  SubjectsAndSemestersManagement,
 };

@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppConfig } from "@config/config";
 import { AxiosPrivateService } from "@utils/apiService";
-import { RequestState, Role } from "@utils/types";
+import { RequestState, Role } from "@utils/enums";
 
 export interface CreateUserPayload {
   firstName: string;
@@ -23,7 +23,7 @@ export interface AddUsersResponse {
   message: string;
 }
 
-interface User {
+export interface User {
   name: string;
   id: string;
   firstName: string;

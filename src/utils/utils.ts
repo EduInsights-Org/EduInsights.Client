@@ -1,4 +1,4 @@
-import { Role } from "@utils/types";
+import { Role } from "@utils/enums";
 
 export const isIncludedRole = (a: Role[], b: Role[]): boolean => {
   return [...getCrossItems(a, b), ...getCrossItems(b, a)].length > 0;

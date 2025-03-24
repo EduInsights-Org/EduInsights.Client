@@ -1,7 +1,7 @@
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 import Error from "../pages/404";
 import { getActiveRoutesV2, routes } from "../route";
-import { RequestState, Role } from "../utils/types";
+import { RequestState, Role } from "@utils/enums";
 import Layout from "../layout/Layout";
 import PrivateRoute from "../components/PrivateRoute";
 import PublicRoute from "../components/PublicRoute";

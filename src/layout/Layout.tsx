@@ -3,7 +3,7 @@ import Header from "@layout/header/Header";
 import SideBar from "@layout/sideBar/SideBar";
 import { Suspense } from "react";
 import { useAppSelector } from "@slices/store";
-import { RequestState } from "@utils/types";
+import { RequestState } from "@utils/enums";
 import ErrorHandler from "@components/ErrorHandler";
 
 const errorMessage = "Oops! Something went wrong. Please refresh the page.";
@@ -29,7 +29,7 @@ const Layout = () => {
         <Header />
 
         {/* <!-- ===== View Content Start ===== --> */}
-        <main className="flex-1 px-5 overflow-y-auto">
+        <main className="flex-1 px-5 pb-4 min-w-[1200px]">
           <Suspense fallback={<h1>Loading</h1>}>
             <Outlet />
           </Suspense>

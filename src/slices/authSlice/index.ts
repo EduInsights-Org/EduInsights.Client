@@ -1,48 +1,68 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppConfig } from "@config/config";
 import { AxiosPrivateService, AxiosPublicService } from "@utils/apiService";
-import { RequestState } from "@utils/types";
+import { ErrorCode, RequestState } from "@utils/enums";
 
 interface BasicInfo {
   firstName: string;
   lastName: string;
-  userName: string;
+  email: string;
 }
 export interface AuthState {
   loginStatus: RequestState;
   registerStatus: RequestState;
+  emailVerifyingStatus: RequestState;
+  sendVerificationCodeStatus: RequestState;
   logoutStatus: RequestState;
   status: RequestState;
   isAuthenticated: boolean;
   userInfo: BasicInfo | null;
   userRole: string | null;
   accessToken: string | null;
+  isVerificationSent: boolean;
+  isVerified: boolean;
+  errorCode: ErrorCode | null;
   error: string | null;
 }
 
 interface RegisterPayload {
   firstName: string;
   lastName: string;
-  userName: string;
+  email: string;
   instituteName: string;
   password: string;
   role: string;
 }
 
 interface LoginPayload {
-  userName: string;
+  email: string;
   password: string;
+}
+interface VerifyEmailPayload {
+  email: string;
+  code: string;
+}
+
+interface ErrorResponse {
+  message: string;
+  statusCode: number;
+  errorCode: ErrorCode;
 }
 
 const initialState: AuthState = {
   loginStatus: RequestState.IDLE,
   registerStatus: RequestState.IDLE,
   logoutStatus: RequestState.IDLE,
+  emailVerifyingStatus: RequestState.IDLE,
+  sendVerificationCodeStatus: RequestState.IDLE,
   isAuthenticated: false,
   userInfo: null,
   status: RequestState.IDLE,
   userRole: null,
   accessToken: null,
+  isVerificationSent: false,
+  isVerified: false,
+  errorCode: null,
   error: null,
 };
 
@@ -55,6 +75,15 @@ const authSlice = createSlice({
       state.userRole = null;
       state.accessToken = null;
     },
+    setVerificationSent: (state, action: PayloadAction<boolean>) => {
+      state.isVerificationSent = action.payload;
+    },
+    setVerified: (state, action: PayloadAction<boolean>) => {
+      state.isVerified = action.payload;
+    },
+    resetErrorMessage: (state) => {
+      state.error = null;
+    },
   },
   extraReducers: (builder) => {
     builder
@@ -62,11 +91,36 @@ const authSlice = createSlice({
         state.registerStatus = RequestState.LOADING;
       })
       .addCase(register.fulfilled, (state) => {
+        state.isVerificationSent = true;
         state.registerStatus = RequestState.SUCCEEDED;
       })
       .addCase(register.rejected, (state, action) => {
         state.error = action.payload as string;
         state.registerStatus = RequestState.FAILED;
+      })
+
+      .addCase(verifyEmail.pending, (state) => {
+        state.emailVerifyingStatus = RequestState.LOADING;
+      })
+      .addCase(verifyEmail.fulfilled, (state) => {
+        state.isVerified = true;
+        state.emailVerifyingStatus = RequestState.SUCCEEDED;
+      })
+      .addCase(verifyEmail.rejected, (state, action) => {
+        state.error = action.payload as string;
+        state.emailVerifyingStatus = RequestState.FAILED;
+      })
+
+      .addCase(sendVerificationCode.pending, (state) => {
+        state.sendVerificationCodeStatus = RequestState.LOADING;
+      })
+      .addCase(sendVerificationCode.fulfilled, (state) => {
+        state.isVerificationSent = true;
+        state.sendVerificationCodeStatus = RequestState.SUCCEEDED;
+      })
+      .addCase(sendVerificationCode.rejected, (state, action) => {
+        state.error = action.payload as string;
+        state.sendVerificationCodeStatus = RequestState.FAILED;
       })
 
       .addCase(login.pending, (state) => {
@@ -80,7 +134,9 @@ const authSlice = createSlice({
         state.status = RequestState.SUCCEEDED;
       })
       .addCase(login.rejected, (state, action) => {
-        state.error = action.payload as string;
+        const errorResponse = action.payload as ErrorResponse;
+        state.error = errorResponse.message;
+        state.errorCode = errorResponse.errorCode;
         state.loginStatus = RequestState.FAILED;
       })
 
@@ -130,7 +186,7 @@ export const register = createAsyncThunk(
     {
       firstName,
       lastName,
-      userName,
+      email,
       password,
       instituteName,
       role,
@@ -143,7 +199,7 @@ export const register = createAsyncThunk(
         JSON.stringify({
           firstName,
           lastName,
-          userName,
+          email,
           password,
           instituteName,
           role,
@@ -160,9 +216,40 @@ export const register = createAsyncThunk(
 
 export const login = createAsyncThunk(
   "auth/login",
-  async ({ userName, password }: LoginPayload, { rejectWithValue }) => {
+  async ({ email, password }: LoginPayload, { rejectWithValue }) => {
     return AxiosPublicService.getInstance()
-      .post(AppConfig.serviceUrls.login, JSON.stringify({ userName, password }))
+      .post(AppConfig.serviceUrls.login, JSON.stringify({ email, password }))
+      .then((response) => response.data)
+      .catch((error) => {
+        return rejectWithValue(error.response.data);
+      });
+  }
+);
+
+export const sendVerificationCode = createAsyncThunk(
+  "auth/sendVerificationCode",
+  async ({ email }: { email: string }, { rejectWithValue }) => {
+    const params = new URLSearchParams();
+    params.append("email", email);
+    return AxiosPublicService.getInstance()
+      .post(`${AppConfig.serviceUrls.email}send-verification-code?${params}`)
+      .then((response) => response.data)
+      .catch((error) => {
+        return rejectWithValue(
+          error.response?.data?.message || error.message || "An error occurred"
+        );
+      });
+  }
+);
+
+export const verifyEmail = createAsyncThunk(
+  "auth/verifyEmail",
+  async ({ email, code }: VerifyEmailPayload, { rejectWithValue }) => {
+    return AxiosPublicService.getInstance()
+      .post(
+        AppConfig.serviceUrls.email + "verify-email",
+        JSON.stringify({ email, code })
+      )
       .then((response) => response.data)
       .catch((error) => {
         return rejectWithValue(
@@ -216,5 +303,10 @@ export const getUserInfo = createAsyncThunk(
   }
 );
 
-export const { resetAuth } = authSlice.actions;
+export const {
+  resetAuth,
+  setVerificationSent,
+  setVerified,
+  resetErrorMessage,
+} = authSlice.actions;
 export default authSlice.reducer;

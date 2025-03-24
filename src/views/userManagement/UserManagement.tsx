@@ -1,9 +1,4 @@
-import {
-  ChevronLeftIcon,
-  ChevronRightIcon,
-  PencilIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import {
@@ -17,10 +12,13 @@ import {
   ArcElement,
 } from "chart.js";
 import { useAppDispatch, useAppSelector } from "@slices/store";
-import { getRoleDistribution, getUsers } from "@slices/userSlice";
+import { getRoleDistribution, getUsers, User } from "@slices/userSlice";
 import { Badge, Select, TextField } from "@radix-ui/themes";
 import { capitalize } from "@utils/utils";
-import { Role } from "@/utils/types";
+import { RequestState, Role } from "@utils/enums";
+import AppTable, { TableColumn } from "@components/AppTable";
+import { usePopUp } from "@/context/PopUpContext";
+import DeleteConfirmationForm from "@/components/DeleteConfirmationForm";
 
 ChartJS.register(
   CategoryScale,
@@ -72,14 +70,15 @@ const pieChartOptions = {
 
 const UserManagement = () => {
   const dispatch = useAppDispatch();
+  const { showPopUp, hidePopUp } = usePopUp();
 
   const [page, setPage] = useState(1);
   const [selectBatch, setSelectBatch] = useState<string | null>(null);
-  const [usersForDelete, setUsersForDelete] = useState<string[]>([]);
 
   const instituteId = useAppSelector((state) => state.institute.institute!.id);
   const batches = useAppSelector((state) => state.batch.batches);
   const users = useAppSelector((state) => state.user.paginatedResponse.data);
+  const usersLoading = useAppSelector((state) => state.user.status);
   const roleDistribution = useAppSelector(
     (state) => state.user.roleDistribution
   );
@@ -94,16 +93,6 @@ const UserManagement = () => {
     dispatch(getUsers({ instituteId, batchId: selectBatch, page, pageSize }));
     dispatch(getRoleDistribution({ instituteId }));
   }, [instituteId, selectBatch, page, pageSize]);
-
-  const handlePreviousPage = () => {
-    if (page > 1) {
-      setPage((prevPage) => prevPage - 1);
-    }
-  };
-
-  const handleNextPage = () => {
-    setPage((prevPage) => prevPage + 1);
-  };
 
   const pieChartData = {
     labels: ["Super admin", "Admin", "Data entry", "Student"],
@@ -134,26 +123,92 @@ const UserManagement = () => {
     ],
   };
 
-  const selectAllForDelete = () => {
-    if (usersForDelete.length === users.length) return setUsersForDelete([]);
-    setUsersForDelete(users.map((i) => i.id));
+  const columns: TableColumn<User>[] = [
+    {
+      key: "name",
+      header: "Name",
+      render: (item: User) => <> {item.firstName + " " + item.lastName}</>,
+    },
+    {
+      key: "indexNumber",
+      header: "Index Number",
+      render: (item: User) => (
+        <>{item.indexNumber === null ? <>N/A</> : <>{item.indexNumber}</>}</>
+      ),
+    },
+    { key: "email", header: "Email" },
+    {
+      key: "role",
+      header: "Role",
+      render: (item: User) => (
+        <Badge
+          size={"1"}
+          color={
+            item.role === Role.SuperAdmin
+              ? "blue"
+              : item.role === Role.Admin
+              ? "grass"
+              : item.role === Role.dataEntry
+              ? "violet"
+              : "orange"
+          }
+        >
+          {capitalize(item.role)}
+        </Badge>
+      ),
+    },
+    {
+      key: "id",
+      header: "Actions",
+      render: (item: User) => (
+        <div className="flex flex-row gap-x-4 w-fit">
+          <PencilIcon
+            onClick={() => handleDeleteUser()}
+            className="h-3 w-3 hover:cursor-pointer text-light-font01 dark:text-font01"
+          />
+          <TrashIcon
+            onClick={() => showCustomPopup(item.id)}
+            className="h-3 w-3 hover:cursor-pointer text-light-font01 dark:text-font01"
+          />
+        </div>
+      ),
+    },
+  ];
+
+  const handleSelect = (selectedItems: User[]) => {
+    console.log("Selected Items:", selectedItems);
   };
 
-  const selectForDelete = (userId: string) => {
-    setUsersForDelete((prevUsers) => {
-      if (prevUsers.includes(userId)) {
-        return prevUsers.filter((id) => id !== userId);
-      } else {
-        return [...prevUsers, userId];
-      }
+  const handlePagination = (_page: number) => {
+    dispatch(
+      getUsers({ instituteId, batchId: selectBatch, page: _page, pageSize })
+    );
+  };
+
+  const showCustomPopup = (userId: string) => {
+    showPopUp({
+      message: "Are you sure you want to delete this user?",
+      onConfirm: handleDeleteUser,
+      onCancel: handleDeleteUser,
+      render: (message, onConfirm, onCancel) => (
+        <DeleteConfirmationForm
+          message={message}
+          onConfirm={onConfirm}
+          onCancel={onCancel}
+        />
+      ),
     });
   };
+
+  const handleDeleteUser = () => {
+    // alert(`Delete user with id: ${userId}`);
+  };
+
   return (
     <main>
       <div className="flex justify-between flex-row-reverse gap-x-2">
         <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[600px] w-[65%]">
-          {/* <Bar data={data} options={options} /> */}
-          {/* footer */}
+          {/* table header */}
           <div className="flex gap-x-3 items-center py-4 px-3 bg-light-subBg dark:bg-subBg">
             <div>
               <TextField.Root
@@ -185,129 +240,23 @@ const UserManagement = () => {
               </Select.Root>
             </div>
           </div>
-          {/* table */}
-          <table className="w-full text-xs text-left rtl:text-right rounded-lg">
-            <thead className="">
-              <tr className="border-b border-light-borderGray dark:border-borderGray text-light-font02 dark:text-font02">
-                <th scope="col" className="pl-4 py-3">
-                  <div className="flex items-center">
-                    <input
-                      id="link-checkbox"
-                      type="checkbox"
-                      value=""
-                      className="w-[14px] h-[14px]"
-                      onClick={selectAllForDelete}
-                      checked={usersForDelete.length === users.length}
-                    />
-                  </div>
-                </th>
-                <th scope="col" className="py-2">
-                  Id
-                </th>
-                <th scope="col" className="py-2">
-                  Name
-                </th>
-                <th scope="col" className="pl-6 py-2">
-                  Index Number
-                </th>
-                <th scope="col" className="pr-6 py-2">
-                  Username
-                </th>
-                <th scope="col" className="pr-6 py-2">
-                  Role
-                </th>
-                <th scope="col" className="pr-6 py-2">
-                  Status
-                </th>
-                <th scope="col" className="px-0 py-2">
-                  Action
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {users.map((user, index) => (
-                <tr
-                  key={index}
-                  className="border-light-borderGray dark:border-borderGray"
-                >
-                  <td className="pl-4 py-2">
-                    <div className="flex items-center">
-                      <input
-                        id="link-checkbox"
-                        type="checkbox"
-                        value=""
-                        className="w-[14px] h-[14px]"
-                        checked={usersForDelete.some((u) => u === user.id)}
-                        onClick={() => selectForDelete(user.id)}
-                      />
-                    </div>
-                  </td>
-                  <td className="py-2">{index + (page - 1) * pageSize + 1}</td>
-                  <td className="py-2">
-                    {user.firstName + " " + user.lastName}
-                  </td>
-                  <td className="pl-6 py-2">
-                    {user.indexNumber === null ? (
-                      <>N/A</>
-                    ) : (
-                      <>{user.indexNumber}</>
-                    )}
-                  </td>
-                  <td className="pr-6 py-2">{user.userName}</td>
-                  <td className="pr-6 py-2">
-                    <Badge
-                      size={"1"}
-                      color={
-                        user.role === Role.SuperAdmin
-                          ? "blue"
-                          : user.role === Role.Admin
-                          ? "grass"
-                          : user.role === Role.dataEntry
-                          ? "violet"
-                          : "orange"
-                      }
-                    >
-                      {capitalize(user.role)}
-                    </Badge>
-                  </td>
-                  <td className="pr-6 py-2">Active</td>
-                  <td className="pl-0 py-2">
-                    <div className="flex flex-row gap-x-4">
-                      <PencilIcon className="h-3 w-3 hover:cursor-pointer text-light-font01 dark:text-font01" />
-                      <TrashIcon className="h-3 w-3 hover:cursor-pointer text-light-font01 dark:text-font01" />
-                    </div>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
 
-          {/* footer */}
-          <div className="flex justify-between items-center py-3 bg-light-subBg dark:bg-subBg mt-auto">
-            <span className="text-light-font01 text-xs dark:text-font01 pl-3">
-              {usersForDelete.length} rows selected
-            </span>
-            <span className="text-light-font01 text-xs dark:text-font01 ml-auto mr-4">
-              Page {page} of {Math.ceil(totalRecords / pageSize)}
-            </span>
-            <div className="flex justify-end gap-x-4 flex-row pr-2">
-              <button
-                className="border border-light-borderGray dark:border-borderGray p-1 rounded-md"
-                onClick={handlePreviousPage}
-                disabled={page === 1}
-              >
-                <ChevronLeftIcon className="h-3 w-3 text-light-font01 dark:text-font01" />
-              </button>
-              <button
-                className="border border-light-borderGray dark:border-borderGray p-1 rounded-md"
-                onClick={handleNextPage}
-                disabled={users.length < pageSize}
-              >
-                <ChevronRightIcon className="h-3 w-3 text-light-font01 dark:text-font01" />
-              </button>
-            </div>
-          </div>
+          {/* table content */}
+          <AppTable
+            data={users}
+            columns={columns}
+            loading={usersLoading === RequestState.LOADING}
+            checkboxSelection
+            onSelect={handleSelect}
+            pagination={{
+              handlePagination,
+              pageSize,
+              totalRecords,
+            }}
+          />
         </div>
+
+        {/* chart */}
         <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray p-3 min-w-[250px] w-[35%] min-h-[470px] flex justify-center">
           <Pie data={pieChartData} options={pieChartOptions} />
         </div>

@@ -1,8 +1,8 @@
 import { useLocation } from "react-router-dom";
 import { useMemo, useState } from "react";
-import { Role } from "@utils/types";
-import UserDrawer from "@components/UserDrawer";
-import ResultDrawer from "@components/ResultDrawer";
+import { Role } from "@utils/enums";
+import UserDrawer from "@/views/userManagement/components/UserDrawer";
+import ResultDrawer from "@/views/resultManagement/components/ResultDrawer";
 import { getActiveRouteDetails } from "@/route";
 
 const roles: Role[] = [Role.SuperAdmin];
