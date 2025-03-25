@@ -358,7 +358,7 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
           className="ml-auto mt-auto"
         />
 
-        <AppDivider className="my-8" />
+        <AppDivider label="Or" className="my-8" />
 
         <div
           className={clsx(
