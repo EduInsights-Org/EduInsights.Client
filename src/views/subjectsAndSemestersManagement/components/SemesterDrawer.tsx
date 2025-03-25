@@ -3,7 +3,6 @@ import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@radix-ui/themes";
 import clsx from "clsx";
 import { Drawer } from "rsuite";
-import AppDivider from "@components/AppDivider";
 import AppButton from "@components/AppButton";
 
 interface SemesterDrawerProps {
