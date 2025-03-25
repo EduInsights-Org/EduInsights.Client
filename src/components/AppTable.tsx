@@ -89,9 +89,8 @@ const AppTable = <T,>({
                   <input
                     id="link-checkbox"
                     type="checkbox"
-                    value=""
                     className="w-[14px] h-[14px]"
-                    onClick={handleSelectAll}
+                    onChange={handleSelectAll}
                     checked={isAllSelected}
                   />
                 </div>
@@ -128,10 +127,9 @@ const AppTable = <T,>({
                         <input
                           id="link-checkbox"
                           type="checkbox"
-                          value=""
                           className="w-[14px] h-[14px]"
                           checked={selectedIds.has(id)}
-                          onClick={() => handleCheckboxChange(item)}
+                          onChange={() => handleCheckboxChange(item)}
                         />
                       </div>
                     )}
