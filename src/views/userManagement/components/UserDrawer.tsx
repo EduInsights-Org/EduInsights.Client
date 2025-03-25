@@ -106,7 +106,6 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
     const user: CreateUserPayload = {
       firstName,
       lastName,
-      userName,
       indexNumber,
       email,
       instituteId,

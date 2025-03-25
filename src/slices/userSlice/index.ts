@@ -6,7 +6,6 @@ import { RequestState, Role } from "@utils/enums";
 export interface CreateUserPayload {
   firstName: string;
   lastName: string;
-  userName: string;
   indexNumber?: string | null;
   email: string;
   instituteId: string;

@@ -16,7 +16,6 @@ interface UseCSVReturn {
 enum CSVHeader {
   FNAME = "firstName",
   LNAME = "lastName",
-  UNAME = "userName",
   INUMBER = "indexNumber",
   EMAIL = "email",
   INSTITUTE_ID = "instituteId",
@@ -27,7 +26,6 @@ enum CSVHeader {
 interface CSVHeaderType {
   firstName: string;
   lastName: string;
-  userName: string;
   indexNumber: string;
   email: string;
   instituteId: string;
@@ -73,10 +71,9 @@ const useCSV = (): UseCSVReturn => {
           return {
             firstName: row[0],
             lastName: row[1],
-            userName: row[2],
-            indexNumber: row[3],
-            email: row[4],
-            role: row[5].replace(/\r/g, ""),
+            indexNumber: row[2],
+            email: row[3],
+            role: row[4].replace(/\r/g, ""),
             instituteId: instituteId,
             batchId: batchId,
             password: "123321",
@@ -109,16 +106,13 @@ const useCSV = (): UseCSVReturn => {
     } else if (parsedData[0][1] !== CSVHeader.LNAME) {
       setError(true);
       return true;
-    } else if (parsedData[0][2] !== CSVHeader.UNAME) {
+    } else if (parsedData[0][2] !== CSVHeader.INUMBER) {
       setError(true);
       return true;
-    } else if (parsedData[0][3] !== CSVHeader.INUMBER) {
+    } else if (parsedData[0][3] !== CSVHeader.EMAIL) {
       setError(true);
       return true;
-    } else if (parsedData[0][4] !== CSVHeader.EMAIL) {
-      setError(true);
-      return true;
-    } else if (parsedData[0][5] !== CSVHeader.ROLE + "\r") {
+    } else if (parsedData[0][4] !== CSVHeader.ROLE + "\r") {
       setError(true);
       return true;
     }
