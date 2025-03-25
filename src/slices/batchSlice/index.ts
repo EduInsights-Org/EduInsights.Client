@@ -62,6 +62,7 @@ const batchSlice = createSlice({
         (state, action: PayloadAction<{ data: Batch }>) => {
           const batches: Batch[] = state.batches || [];
           state.batches = [...batches, action.payload.data];
+          state.selectedBatchId = action.payload.data.id;
           state.createStatus = RequestState.SUCCEEDED;
         }
       )
