@@ -1,4 +1,8 @@
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathIcon,
+  PencilIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import {
@@ -13,7 +17,7 @@ import {
 } from "chart.js";
 import { useAppDispatch, useAppSelector } from "@slices/store";
 import { getRoleDistribution, getUsers, User } from "@slices/userSlice";
-import { Badge, Select, TextField } from "@radix-ui/themes";
+import { Badge, IconButton, Select, TextField } from "@radix-ui/themes";
 import { capitalize } from "@utils/utils";
 import { RequestState, Role } from "@utils/enums";
 import AppTable, { TableColumn } from "@components/AppTable";
@@ -75,6 +79,7 @@ const UserManagement = () => {
   const [page, setPage] = useState(1);
   const [selectBatch, setSelectBatch] = useState<string | null>(null);
 
+  const user = useAppSelector((state) => state.auth.userInfo);
   const instituteId = useAppSelector((state) => state.institute.institute!.id);
   const batches = useAppSelector((state) => state.batch.batches);
   const users = useAppSelector((state) => state.user.paginatedResponse.data);
@@ -90,9 +95,17 @@ const UserManagement = () => {
   );
 
   useEffect(() => {
+    initialLoad();
+  }, [instituteId, selectBatch, page, pageSize]);
+
+  const initialLoad = () => {
     dispatch(getUsers({ instituteId, batchId: selectBatch, page, pageSize }));
     dispatch(getRoleDistribution({ instituteId }));
-  }, [instituteId, selectBatch, page, pageSize]);
+  };
+
+  const reloadTableData = () => {
+    initialLoad();
+  };
 
   const pieChartData = {
     labels: ["Super admin", "Admin", "Data entry", "Student"],
@@ -127,7 +140,12 @@ const UserManagement = () => {
     {
       key: "name",
       header: "Name",
-      render: (item: User) => <> {item.firstName + " " + item.lastName}</>,
+      render: (item: User) => {
+        const isMe: boolean = item.email === user.email;
+        const fullName = item.firstName + " " + item.lastName;
+        const displayName = isMe ? fullName + " - me" : fullName;
+        return <> {displayName}</>;
+      },
     },
     {
       key: "indexNumber",
@@ -164,12 +182,14 @@ const UserManagement = () => {
         <div className="flex flex-row gap-x-4 w-fit">
           <PencilIcon
             onClick={() => handleDeleteUser()}
-            className="h-3 w-3 hover:cursor-pointer text-light-font01 dark:text-font01"
+            className="h-3 w-3 text-light-font01 dark:text-font01"
           />
-          <TrashIcon
+          <button
+            disabled={item.email === user.email}
             onClick={() => showCustomPopup(item.id)}
-            className="h-3 w-3 hover:cursor-pointer text-light-font01 dark:text-font01"
-          />
+          >
+            <TrashIcon className="h-3 w-3 text-light-font01 dark:text-font01" />
+          </button>
         </div>
       ),
     },
@@ -207,7 +227,7 @@ const UserManagement = () => {
   return (
     <main>
       <div className="flex justify-between flex-row-reverse gap-x-2">
-        <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[600px] w-[65%]">
+        <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[600px] w-[65%] h-[500px]">
           {/* table header */}
           <div className="flex gap-x-3 items-center py-4 px-3 bg-light-subBg dark:bg-subBg">
             <div>
@@ -239,6 +259,14 @@ const UserManagement = () => {
                 </Select.Content>
               </Select.Root>
             </div>
+
+            <button
+              onClick={reloadTableData}
+              className="ml-auto text-xs text-light-font02 dark:text-font02 flex justify-center items-center gap-x-1"
+            >
+              <ArrowPathIcon className="size-3" />
+              Refresh
+            </button>
           </div>
 
           {/* table content */}
@@ -257,7 +285,7 @@ const UserManagement = () => {
         </div>
 
         {/* chart */}
-        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray p-3 min-w-[250px] w-[35%] min-h-[470px] flex justify-center">
+        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray p-3 min-w-[250px] w-[35%] h-[500px] flex justify-center">
           <Pie data={pieChartData} options={pieChartOptions} />
         </div>
       </div>

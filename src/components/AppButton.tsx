@@ -4,7 +4,7 @@ import PreLoader from "@components/PreLoader";
 interface AppButtonProps {
   title: string;
   variant: "fill" | "outline";
-  color: "primary" | "error" | "transparent";
+  color?: "primary" | "error" | "transparent";
   onClick: () => void;
   isLoading?: boolean;
   className?: string;

@@ -6,7 +6,6 @@ import { RequestState, Role } from "@utils/enums";
 export interface CreateUserPayload {
   firstName: string;
   lastName: string;
-  userName: string;
   indexNumber?: string | null;
   email: string;
   instituteId: string;
@@ -50,6 +49,8 @@ interface GetRoleDistributionResponse {
 
 export interface UserState {
   status: RequestState;
+  addMultipleUsersStatus: RequestState;
+  addUserStatus: RequestState;
   user: User | null;
   message: AddUsersResponse | null;
   error: string | null;
@@ -59,6 +60,8 @@ export interface UserState {
 
 const initialState: UserState = {
   status: RequestState.IDLE,
+  addMultipleUsersStatus: RequestState.IDLE,
+  addUserStatus: RequestState.IDLE,
   error: null,
   user: null,
   message: null,
@@ -83,30 +86,30 @@ const instituteSlice = createSlice({
   extraReducers: (builder) => {
     builder
       .addCase(addMultipleUsers.pending, (state) => {
-        state.status = RequestState.LOADING;
+        state.addMultipleUsersStatus = RequestState.LOADING;
       })
       .addCase(
         addMultipleUsers.fulfilled,
         (state, action: PayloadAction<{ data: AddUsersResponse }>) => {
           state.message = action.payload.data;
-          state.status = RequestState.SUCCEEDED;
+          state.addMultipleUsersStatus = RequestState.SUCCEEDED;
         }
       )
       .addCase(addMultipleUsers.rejected, (state) => {
-        state.status = RequestState.FAILED;
+        state.addMultipleUsersStatus = RequestState.FAILED;
       })
       .addCase(addUser.pending, (state) => {
-        state.status = RequestState.LOADING;
+        state.addUserStatus = RequestState.LOADING;
       })
       .addCase(
         addUser.fulfilled,
         (state, action: PayloadAction<{ data: AddUsersResponse }>) => {
           state.message = action.payload.data;
-          state.status = RequestState.SUCCEEDED;
+          state.addUserStatus = RequestState.SUCCEEDED;
         }
       )
       .addCase(addUser.rejected, (state) => {
-        state.status = RequestState.FAILED;
+        state.addUserStatus = RequestState.FAILED;
       })
       .addCase(getUsers.pending, (state) => {
         state.status = RequestState.LOADING;

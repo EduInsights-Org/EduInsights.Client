@@ -39,7 +39,10 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
 
   const { addToast } = useToast();
   const dispatch = useAppDispatch();
-  const createUsersState = useAppSelector((state) => state.user.status);
+  const addUserStatus = useAppSelector((state) => state.user.addUserStatus);
+  const addMultipleUsersStatus = useAppSelector(
+    (state) => state.user.addMultipleUsersStatus
+  );
   const instituteId = useAppSelector((state) => state.institute.institute!.id);
   const batchId = useAppSelector((state) => state.batch.selectedBatchId!);
 
@@ -106,7 +109,6 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
     const user: CreateUserPayload = {
       firstName,
       lastName,
-      userName,
       indexNumber,
       email,
       instituteId,
@@ -352,7 +354,7 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
           title="Add User"
           variant="fill"
           onClick={() => handleCreateUser()}
-          isLoading={createUsersState === RequestState.LOADING}
+          isLoading={addUserStatus === RequestState.LOADING}
           className="ml-auto mt-auto"
         />
 
@@ -446,7 +448,7 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
           title="Add Users"
           variant="fill"
           onClick={() => handleCreateUsers()}
-          isLoading={createUsersState === RequestState.LOADING}
+          isLoading={addMultipleUsersStatus === RequestState.LOADING}
           className="ml-auto mt-auto"
         />
 
