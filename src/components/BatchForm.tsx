@@ -73,7 +73,7 @@ const BatchForm = ({ message, onConfirm, onCancel }: ConfirmationOptions) => {
             <AppButton
               title="Create"
               variant="fill"
-              onClick={onCancel}
+              onClick={handleCreateBatch}
               color="primary"
               isLoading={batchCreateStatus === RequestState.LOADING}
             />
