@@ -1,4 +1,8 @@
-import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowPathIcon,
+  PencilIcon,
+  TrashIcon,
+} from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 import {
@@ -13,7 +17,7 @@ import {
 } from "chart.js";
 import { useAppDispatch, useAppSelector } from "@slices/store";
 import { getRoleDistribution, getUsers, User } from "@slices/userSlice";
-import { Badge, Select, TextField } from "@radix-ui/themes";
+import { Badge, IconButton, Select, TextField } from "@radix-ui/themes";
 import { capitalize } from "@utils/utils";
 import { RequestState, Role } from "@utils/enums";
 import AppTable, { TableColumn } from "@components/AppTable";
@@ -91,9 +95,17 @@ const UserManagement = () => {
   );
 
   useEffect(() => {
+    initialLoad();
+  }, [instituteId, selectBatch, page, pageSize]);
+
+  const initialLoad = () => {
     dispatch(getUsers({ instituteId, batchId: selectBatch, page, pageSize }));
     dispatch(getRoleDistribution({ instituteId }));
-  }, [instituteId, selectBatch, page, pageSize]);
+  };
+
+  const reloadTableData = () => {
+    initialLoad();
+  };
 
   const pieChartData = {
     labels: ["Super admin", "Admin", "Data entry", "Student"],
@@ -247,6 +259,14 @@ const UserManagement = () => {
                 </Select.Content>
               </Select.Root>
             </div>
+
+            <button
+              onClick={reloadTableData}
+              className="ml-auto text-xs text-light-font02 dark:text-font02 flex justify-center items-center gap-x-1"
+            >
+              <ArrowPathIcon className="size-3" />
+              Refresh
+            </button>
           </div>
 
           {/* table content */}
