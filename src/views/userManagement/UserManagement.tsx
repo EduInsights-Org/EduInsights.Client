@@ -75,6 +75,7 @@ const UserManagement = () => {
   const [page, setPage] = useState(1);
   const [selectBatch, setSelectBatch] = useState<string | null>(null);
 
+  const user = useAppSelector((state) => state.auth.userInfo);
   const instituteId = useAppSelector((state) => state.institute.institute!.id);
   const batches = useAppSelector((state) => state.batch.batches);
   const users = useAppSelector((state) => state.user.paginatedResponse.data);
@@ -127,7 +128,12 @@ const UserManagement = () => {
     {
       key: "name",
       header: "Name",
-      render: (item: User) => <> {item.firstName + " " + item.lastName}</>,
+      render: (item: User) => {
+        const isMe: boolean = item.email === user.email;
+        const fullName = item.firstName + " " + item.lastName;
+        const displayName = isMe ? fullName + " - me" : fullName;
+        return <> {displayName}</>;
+      },
     },
     {
       key: "indexNumber",
@@ -164,12 +170,14 @@ const UserManagement = () => {
         <div className="flex flex-row gap-x-4 w-fit">
           <PencilIcon
             onClick={() => handleDeleteUser()}
-            className="h-3 w-3 hover:cursor-pointer text-light-font01 dark:text-font01"
+            className="h-3 w-3 text-light-font01 dark:text-font01"
           />
-          <TrashIcon
+          <button
+            disabled={item.email === user.email}
             onClick={() => showCustomPopup(item.id)}
-            className="h-3 w-3 hover:cursor-pointer text-light-font01 dark:text-font01"
-          />
+          >
+            <TrashIcon className="h-3 w-3 text-light-font01 dark:text-font01" />
+          </button>
         </div>
       ),
     },
@@ -207,7 +215,7 @@ const UserManagement = () => {
   return (
     <main>
       <div className="flex justify-between flex-row-reverse gap-x-2">
-        <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[600px] w-[65%]">
+        <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[600px] w-[65%] h-[500px]">
           {/* table header */}
           <div className="flex gap-x-3 items-center py-4 px-3 bg-light-subBg dark:bg-subBg">
             <div>
@@ -257,7 +265,7 @@ const UserManagement = () => {
         </div>
 
         {/* chart */}
-        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray p-3 min-w-[250px] w-[35%] min-h-[470px] flex justify-center">
+        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray p-3 min-w-[250px] w-[35%] h-[500px] flex justify-center">
           <Pie data={pieChartData} options={pieChartOptions} />
         </div>
       </div>
