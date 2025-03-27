@@ -35,7 +35,7 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
         </div>
       </Drawer.Header>
       <Drawer.Body
-        className="flex flex-col bg-light-mainBg dark:bg-mainBg"
+        className="flex flex-col bg-light-mainBg dark:bg-mainBg gap-y-4"
         style={{ paddingTop: 0, paddingLeft: 40, paddingRight: 40 }}
       >
         <div className="flex gap-x-2 justify-between">
@@ -83,8 +83,6 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
           </Field>
         </div>
 
-        <AppDivider className="my-6" />
-
         <div className="flex gap-x-2 justify-between">
           <Field className="w-1/2">
             <Input
@@ -130,7 +128,7 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
           className="ml-auto mt-auto"
         />
 
-        <AppDivider className="my-6" />
+        <AppDivider label="Or" className="my-6" />
 
         <div className="flex gap-x-2 justify-between">
           <label
