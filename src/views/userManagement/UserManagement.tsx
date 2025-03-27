@@ -16,7 +16,12 @@ import {
   ArcElement,
 } from "chart.js";
 import { useAppDispatch, useAppSelector } from "@slices/store";
-import { getRoleDistribution, getUsers, User } from "@slices/userSlice";
+import {
+  getRoleDistribution,
+  getUsers,
+  resetPagination,
+  User,
+} from "@slices/userSlice";
 import { Badge, IconButton, Select, TextField } from "@radix-ui/themes";
 import { capitalize } from "@utils/utils";
 import { RequestState, Role } from "@utils/enums";
@@ -98,9 +103,13 @@ const UserManagement = () => {
     initialLoad();
   }, [instituteId, selectBatch, page, pageSize]);
 
-  const initialLoad = () => {
-    dispatch(getUsers({ instituteId, batchId: selectBatch, page, pageSize }));
-    dispatch(getRoleDistribution({ instituteId }));
+  const initialLoad = async () => {
+    const result = await dispatch(
+      getUsers({ instituteId, batchId: selectBatch, page, pageSize })
+    );
+    if (!getUsers.fulfilled.match(result)) dispatch(resetPagination());
+
+    await dispatch(getRoleDistribution({ instituteId }));
   };
 
   const reloadTableData = () => {
