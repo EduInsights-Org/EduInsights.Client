@@ -32,13 +32,13 @@ const batchSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(createSubject.pending, (state) => {
+      .addCase(createSubjects.pending, (state) => {
         state.createStatus = RequestState.LOADING;
       })
-      .addCase(createSubject.fulfilled, (state) => {
+      .addCase(createSubjects.fulfilled, (state) => {
         state.createStatus = RequestState.SUCCEEDED;
       })
-      .addCase(createSubject.rejected, (state) => {
+      .addCase(createSubjects.rejected, (state) => {
         state.createStatus = RequestState.FAILED;
       });
 
@@ -75,9 +75,9 @@ export const getAllSubjects = createAsyncThunk(
   }
 );
 
-export const createSubject = createAsyncThunk(
-  "subject/createSubject",
-  async (subjects: SubjectCreatePayload) => {
+export const createSubjects = createAsyncThunk(
+  "subject/createSubjects",
+  async (subjects: Subject[]) => {
     return new Promise<any>((resolve, reject) => {
       AxiosPrivateService.getInstance()
         .post(AppConfig.serviceUrls.subject + "multi-add", subjects)
