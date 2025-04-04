@@ -3,6 +3,7 @@ import authReducer from "@slices/authSlice";
 import instituteReducer from "@slices/instituteSlice";
 import batchReducer from "@slices/batchSlice";
 import userReducer from "@slices/userSlice";
+import subjectReducer from "@slices/subjectSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
@@ -11,6 +12,7 @@ export const store = configureStore({
     user: userReducer,
     institute: instituteReducer,
     batch: batchReducer,
+    subject: subjectReducer,
   },
 });
 

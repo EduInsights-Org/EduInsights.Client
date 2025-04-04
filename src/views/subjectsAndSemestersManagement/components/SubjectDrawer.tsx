@@ -7,16 +7,11 @@ import AppDivider from "@components/AppDivider";
 import AppButton from "@components/AppButton";
 import { useState } from "react";
 import DrawerTitle from "@/components/DrawerTitle";
+import { Subject } from "@/slices/subjectSlice";
 
 interface SubjectDrawerProps {
   open: boolean;
   setOpen: (val: boolean) => void;
-}
-
-interface Subject {
-  name: string;
-  code: string;
-  credit: string;
 }
 
 const SubjectDrawer = ({ open, setOpen }: SubjectDrawerProps) => {
