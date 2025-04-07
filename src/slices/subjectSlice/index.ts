@@ -7,6 +7,7 @@ export interface Subject {
   name: string;
   code: string;
   credit: string;
+  instituteId: string;
 }
 export interface SubjectCreatePayload {
   subjects: Subject[];
@@ -15,15 +16,27 @@ export interface SubjectCreatePayload {
 export interface SubjectState {
   status: RequestState;
   createStatus: RequestState;
-  subjects: Subject[] | null;
   error: string | null;
+  paginatedResponse: PaginatedResponse;
+}
+
+interface PaginatedResponse {
+  data: Subject[];
+  totalRecords: number;
+  currentPage: number;
+  pageSize: number;
 }
 
 const initialState: SubjectState = {
   status: RequestState.IDLE,
   createStatus: RequestState.IDLE,
   error: null,
-  subjects: null,
+  paginatedResponse: {
+    currentPage: 0,
+    data: [],
+    pageSize: 10,
+    totalRecords: 0,
+  },
 };
 
 const batchSlice = createSlice({
@@ -43,28 +56,40 @@ const batchSlice = createSlice({
       });
 
     builder
-      .addCase(getAllSubjects.pending, (state) => {
+      .addCase(getSubjects.pending, (state) => {
         state.createStatus = RequestState.LOADING;
       })
       .addCase(
-        getAllSubjects.fulfilled,
-        (state, action: PayloadAction<{ data: Subject[] }>) => {
-          state.subjects = action.payload.data;
+        getSubjects.fulfilled,
+        (state, action: PayloadAction<{ data: PaginatedResponse }>) => {
+          state.paginatedResponse = action.payload.data;
           state.createStatus = RequestState.SUCCEEDED;
         }
       )
-      .addCase(getAllSubjects.rejected, (state) => {
+      .addCase(getSubjects.rejected, (state) => {
         state.createStatus = RequestState.FAILED;
       });
   },
 });
 
-export const getAllSubjects = createAsyncThunk(
-  "subject/getAllSubjects",
-  async () => {
+export const getSubjects = createAsyncThunk(
+  "subject/getSubjects",
+  async ({
+    instituteId = "67e2bd370b72702dfca67020",
+    page = 1,
+    pageSize = 10,
+  }: {
+    instituteId?: string;
+    page?: number;
+    pageSize?: number;
+  }) => {
     return new Promise<any>((resolve, reject) => {
+      const params = new URLSearchParams();
+      params.append("instituteId", instituteId);
+      params.append("page", page.toString());
+      params.append("pageSize", pageSize.toString());
       AxiosPrivateService.getInstance()
-        .get(AppConfig.serviceUrls.subject)
+        .get(`${AppConfig.serviceUrls.subject}?${params.toString()}`)
         .then((response) => {
           resolve(response.data);
         })

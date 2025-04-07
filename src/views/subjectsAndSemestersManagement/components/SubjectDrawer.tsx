@@ -7,7 +7,7 @@ import AppButton from "@components/AppButton";
 import { useState } from "react";
 import DrawerTitle from "@/components/DrawerTitle";
 import { createSubjects, Subject } from "@/slices/subjectSlice";
-import { useAppDispatch } from "@/slices/store";
+import { useAppDispatch, useAppSelector } from "@/slices/store";
 import { useToast } from "@/context/ToastContext";
 import ToastContainer from "@/components/ToastContainer";
 
@@ -18,6 +18,7 @@ interface SubjectDrawerProps {
 
 const SubjectDrawer = ({ open, setOpen }: SubjectDrawerProps) => {
   const dispatch = useAppDispatch();
+  const instituteId = useAppSelector((state) => state.institute.institute.id);
   const { addToast } = useToast();
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [allSubjects, setAllSubjects] = useState<Subject[]>([
@@ -25,6 +26,7 @@ const SubjectDrawer = ({ open, setOpen }: SubjectDrawerProps) => {
       name: "",
       code: "",
       credit: "",
+      instituteId,
     },
   ]);
 
@@ -38,14 +40,15 @@ const SubjectDrawer = ({ open, setOpen }: SubjectDrawerProps) => {
         name: "",
         code: "",
         credit: "",
+        instituteId,
       },
     ]);
   };
 
-  const handleAddSubjects = () => {
+  const handleAddSubjects = async () => {
     if (!isValid) return;
 
-    dispatch(createSubjects(allSubjects))
+    await dispatch(createSubjects(allSubjects))
       .then(() => {
         addToast({
           id: "1",
@@ -70,6 +73,7 @@ const SubjectDrawer = ({ open, setOpen }: SubjectDrawerProps) => {
             name: "",
             code: "",
             credit: "",
+            instituteId,
           },
         ]);
       });

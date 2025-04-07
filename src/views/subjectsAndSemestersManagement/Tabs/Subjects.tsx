@@ -1,13 +1,15 @@
 import AppTable, { TableColumn } from "@/components/AppTable";
 import { useAppDispatch, useAppSelector } from "@/slices/store";
-import { getAllSubjects, Subject } from "@/slices/subjectSlice";
+import { getSubjects, Subject } from "@/slices/subjectSlice";
 import { RequestState } from "@/utils/enums";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { useEffect } from "react";
 
 const Subjects = () => {
   const dispatch = useAppDispatch();
-  const subjects = useAppSelector((state) => state.subject.subjects);
+  const subjects = useAppSelector(
+    (state) => state.subject.paginatedResponse.data
+  );
   const subjectsLoading = useAppSelector((state) => state.subject.status);
 
   const columns: TableColumn<Subject>[] = [
@@ -34,7 +36,7 @@ const Subjects = () => {
   ];
 
   useEffect(() => {
-    dispatch(getAllSubjects());
+    dispatch(getSubjects({}));
   }, []);
   return (
     <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray w-[500px] h-[500px]">
