@@ -1,5 +1,4 @@
 import { Field, Input, Select } from "@headlessui/react";
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@radix-ui/themes";
 import clsx from "clsx";
 import { Drawer } from "rsuite";
@@ -7,25 +6,27 @@ import AppDivider from "@components/AppDivider";
 import AppButton from "@components/AppButton";
 import { useState } from "react";
 import DrawerTitle from "@/components/DrawerTitle";
+import { createSubjects, Subject } from "@/slices/subjectSlice";
+import { useAppDispatch, useAppSelector } from "@/slices/store";
+import { useToast } from "@/context/ToastContext";
+import ToastContainer from "@/components/ToastContainer";
 
 interface SubjectDrawerProps {
   open: boolean;
   setOpen: (val: boolean) => void;
 }
 
-interface Subject {
-  name: string;
-  code: string;
-  credit: string;
-}
-
 const SubjectDrawer = ({ open, setOpen }: SubjectDrawerProps) => {
+  const dispatch = useAppDispatch();
+  const instituteId = useAppSelector((state) => state.institute.institute.id);
+  const { addToast } = useToast();
   const [isValid, setIsValid] = useState<boolean | null>(null);
   const [allSubjects, setAllSubjects] = useState<Subject[]>([
     {
       name: "",
       code: "",
       credit: "",
+      instituteId,
     },
   ]);
 
@@ -39,13 +40,43 @@ const SubjectDrawer = ({ open, setOpen }: SubjectDrawerProps) => {
         name: "",
         code: "",
         credit: "",
+        instituteId,
       },
     ]);
   };
 
-  const handleAddSubjects = () => {
-    // Add
-    console.log(allSubjects[0].credit.length);
+  const handleAddSubjects = async () => {
+    if (!isValid) return;
+
+    await dispatch(createSubjects(allSubjects))
+      .then(() => {
+        addToast({
+          id: "1",
+          message: "Successfully added",
+          type: "success",
+          duration: 50000,
+          swipeDirection: "right",
+        });
+      })
+      .catch((error) => {
+        addToast({
+          id: "1",
+          message: error,
+          type: "error",
+          duration: 50000,
+          swipeDirection: "right",
+        });
+      })
+      .finally(() => {
+        setAllSubjects([
+          {
+            name: "",
+            code: "",
+            credit: "",
+            instituteId,
+          },
+        ]);
+      });
   };
 
   const checkPreviousSubjectsFilled = (prev: Subject[]) => {
@@ -181,6 +212,7 @@ const SubjectDrawer = ({ open, setOpen }: SubjectDrawerProps) => {
           onClick={handleAddSubjects}
           className="ml-auto mt-auto"
         />
+        <ToastContainer />
       </Drawer.Body>
     </Drawer>
   );

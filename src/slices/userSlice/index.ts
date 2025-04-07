@@ -82,7 +82,16 @@ const initialState: UserState = {
 const instituteSlice = createSlice({
   name: "user",
   initialState,
-  reducers: {},
+  reducers: {
+    resetPagination(state) {
+      state.paginatedResponse = {
+        currentPage: 0,
+        data: [],
+        pageSize: 10,
+        totalRecords: 0,
+      };
+    },
+  },
   extraReducers: (builder) => {
     builder
       .addCase(addMultipleUsers.pending, (state) => {
@@ -227,5 +236,5 @@ export const getRoleDistribution = createAsyncThunk(
   }
 );
 
-export const {} = instituteSlice.actions;
+export const { resetPagination } = instituteSlice.actions;
 export default instituteSlice.reducer;

@@ -5,72 +5,20 @@ import {
 } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement,
-} from "chart.js";
 import { useAppDispatch, useAppSelector } from "@slices/store";
-import { getRoleDistribution, getUsers, User } from "@slices/userSlice";
+import {
+  getRoleDistribution,
+  getUsers,
+  resetPagination,
+  User,
+} from "@slices/userSlice";
 import { Badge, IconButton, Select, TextField } from "@radix-ui/themes";
 import { capitalize } from "@utils/utils";
 import { RequestState, Role } from "@utils/enums";
 import AppTable, { TableColumn } from "@components/AppTable";
 import { usePopUp } from "@/context/PopUpContext";
 import DeleteConfirmationForm from "@/components/DeleteConfirmationForm";
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  ArcElement
-);
-const data = {
-  labels: ["January", "February", "March", "April", "May", "June"],
-  datasets: [
-    {
-      label: "Sales",
-      data: [50, 60, 70, 180, 190, 200],
-      backgroundColor: "rgba(30, 92, 199, 0.6)",
-      borderColor: "rgba(30, 92, 199)",
-      borderWidth: 1,
-    },
-  ],
-};
-
-const options = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "top" as const,
-    },
-    title: {
-      display: true,
-      text: "Monthly Sales Data",
-    },
-  },
-};
-
-const pieChartOptions = {
-  responsive: true,
-  plugins: {
-    legend: {
-      position: "bottom" as const,
-    },
-    title: {
-      display: true,
-      text: "User Role Distribution",
-    },
-  },
-};
+import useCharts from "@/hooks/useCharts";
 
 const UserManagement = () => {
   const dispatch = useAppDispatch();
@@ -78,6 +26,7 @@ const UserManagement = () => {
 
   const [page, setPage] = useState(1);
   const [selectBatch, setSelectBatch] = useState<string | null>(null);
+  const { pieChartOptions } = useCharts();
 
   const user = useAppSelector((state) => state.auth.userInfo);
   const instituteId = useAppSelector((state) => state.institute.institute!.id);
@@ -98,9 +47,13 @@ const UserManagement = () => {
     initialLoad();
   }, [instituteId, selectBatch, page, pageSize]);
 
-  const initialLoad = () => {
-    dispatch(getUsers({ instituteId, batchId: selectBatch, page, pageSize }));
-    dispatch(getRoleDistribution({ instituteId }));
+  const initialLoad = async () => {
+    const result = await dispatch(
+      getUsers({ instituteId, batchId: selectBatch, page, pageSize })
+    );
+    if (!getUsers.fulfilled.match(result)) dispatch(resetPagination());
+
+    await dispatch(getRoleDistribution({ instituteId }));
   };
 
   const reloadTableData = () => {
