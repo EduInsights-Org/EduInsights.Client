@@ -54,6 +54,11 @@ export enum Role {
   Student = "STUDENT",
 }
 
+export enum SubjectType {
+  compulsory = "COMPULSORY",
+  elective = "ELECTIVE",
+}
+
 export enum RequestState {
   IDLE = "idle",
   LOADING = "loading",

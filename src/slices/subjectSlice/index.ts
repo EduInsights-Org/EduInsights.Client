@@ -8,6 +8,7 @@ export interface Subject {
   code: string;
   credit: string;
   instituteId: string;
+  type: string;
 }
 export interface SubjectCreatePayload {
   subjects: Subject[];

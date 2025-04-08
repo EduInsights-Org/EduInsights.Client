@@ -1,8 +1,10 @@
 import AppTable, { TableColumn } from "@/components/AppTable";
 import { useAppDispatch, useAppSelector } from "@/slices/store";
 import { getSubjects, Subject } from "@/slices/subjectSlice";
-import { RequestState } from "@/utils/enums";
+import { RequestState, SubjectType } from "@/utils/enums";
+import { capitalize } from "@/utils/utils";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { Badge } from "@radix-ui/themes";
 import { useEffect } from "react";
 
 const Subjects = () => {
@@ -15,7 +17,25 @@ const Subjects = () => {
   const columns: TableColumn<Subject>[] = [
     { key: "code", header: "Code" },
     { key: "name", header: "Name" },
-    { key: "credit", header: "Credit" },
+    {
+      key: "type",
+      header: "Type",
+      render: (item: Subject) => (
+        <Badge
+          size={"1"}
+          color={item.type === SubjectType.compulsory ? "blue" : "orange"}
+        >
+          {capitalize(item.type)}
+        </Badge>
+      ),
+    },
+    {
+      key: "credit",
+      header: "Credit",
+      render: (item: Subject) => (
+        <div className="flex justify-center">{item.credit}</div>
+      ),
+    },
     {
       key: "id",
       header: "Actions",
@@ -39,7 +59,7 @@ const Subjects = () => {
     dispatch(getSubjects({}));
   }, []);
   return (
-    <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray w-[500px] h-[500px]">
+    <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray w-[650px] h-[500px]">
       {subjects && (
         <AppTable
           data={subjects}
