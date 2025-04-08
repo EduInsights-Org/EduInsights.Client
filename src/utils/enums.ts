@@ -59,6 +59,18 @@ export enum SubjectType {
   elective = "ELECTIVE",
 }
 
+export enum YearType {
+  I = "I",
+  II = "II",
+  III = "III",
+  IV = "IV",
+  V = "V",
+}
+export enum SemesterType {
+  I = "I",
+  II = "II",
+}
+
 export enum RequestState {
   IDLE = "idle",
   LOADING = "loading",

@@ -6,6 +6,7 @@ import { RequestState } from "@utils/enums";
 export interface Semester {
   year: string;
   sem: string;
+  instituteId: string;
 }
 export interface SemesterCreatePayload {
   semesters: Semester[];
@@ -43,13 +44,13 @@ const batchSlice = createSlice({
   reducers: {},
   extraReducers: (builder) => {
     builder
-      .addCase(createSemesters.pending, (state) => {
+      .addCase(createSemester.pending, (state) => {
         state.createStatus = RequestState.LOADING;
       })
-      .addCase(createSemesters.fulfilled, (state) => {
+      .addCase(createSemester.fulfilled, (state) => {
         state.createStatus = RequestState.SUCCEEDED;
       })
-      .addCase(createSemesters.rejected, (state) => {
+      .addCase(createSemester.rejected, (state) => {
         state.createStatus = RequestState.FAILED;
       });
 
@@ -98,12 +99,12 @@ export const getSemesters = createAsyncThunk(
   }
 );
 
-export const createSemesters = createAsyncThunk(
-  "semester/createSemesters",
-  async (semesters: Semester[]) => {
+export const createSemester = createAsyncThunk(
+  "semester/createSemester",
+  async (semester: Semester) => {
     return new Promise<any>((resolve, reject) => {
       AxiosPrivateService.getInstance()
-        .post(AppConfig.serviceUrls.semester, semesters)
+        .post(AppConfig.serviceUrls.semester, semester)
         .then((response) => {
           resolve(response.data);
         })
