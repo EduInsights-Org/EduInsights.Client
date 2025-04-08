@@ -4,6 +4,7 @@ import instituteReducer from "@slices/instituteSlice";
 import batchReducer from "@slices/batchSlice";
 import userReducer from "@slices/userSlice";
 import subjectReducer from "@slices/subjectSlice";
+import semesterReducer from "@slices/semesterSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
@@ -13,6 +14,7 @@ export const store = configureStore({
     institute: instituteReducer,
     batch: batchReducer,
     subject: subjectReducer,
+    semester: semesterReducer,
   },
 });
 
