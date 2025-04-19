@@ -100,7 +100,11 @@ const AppTable = <T,>({
               Id
             </th>
             {columns.map((column) => (
-              <th scope="col" className="py-2" key={String(column.key)}>
+              <th
+                scope="col"
+                className="py-2 last:justify-end last:flex last:mr-2"
+                key={String(column.key)}
+              >
                 {column.header}
               </th>
             ))}
@@ -143,7 +147,10 @@ const AppTable = <T,>({
                   )}
                 </td>
                 {columns.map((column) => (
-                  <td className="py-2" key={String(column.key)}>
+                  <td
+                    className="py-2 last:justify-end last:flex last:mr-2"
+                    key={String(column.key)}
+                  >
                     {loading ? (
                       <AppSkeleton />
                     ) : (

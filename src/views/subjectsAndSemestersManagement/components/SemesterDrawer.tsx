@@ -1,5 +1,4 @@
-import { Field, Input, Select } from "@headlessui/react";
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
+import { Field, Select } from "@headlessui/react";
 import { ChevronDownIcon } from "@radix-ui/themes";
 import clsx from "clsx";
 import { Drawer } from "rsuite";
@@ -18,7 +17,7 @@ const SemesterDrawer = ({ open, setOpen }: SemesterDrawerProps) => {
         style={{ border: "none" }}
         className="bg-light-mainBg dark:bg-mainBg"
       >
-        <DrawerTitle title="Add Semester" />
+        <DrawerTitle title="Add Semester" />
       </Drawer.Header>
       <Drawer.Body
         className="flex flex-col bg-light-mainBg dark:bg-mainBg"

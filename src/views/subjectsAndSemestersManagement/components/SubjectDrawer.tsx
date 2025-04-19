@@ -10,6 +10,7 @@ import { createSubjects, Subject } from "@/slices/subjectSlice";
 import { useAppDispatch, useAppSelector } from "@/slices/store";
 import { useToast } from "@/context/ToastContext";
 import ToastContainer from "@/components/ToastContainer";
+import { SubjectType } from "@/utils/enums";
 
 interface SubjectDrawerProps {
   open: boolean;
@@ -27,6 +28,7 @@ const SubjectDrawer = ({ open, setOpen }: SubjectDrawerProps) => {
       code: "",
       credit: "",
       instituteId,
+      type: "",
     },
   ]);
 
@@ -41,6 +43,7 @@ const SubjectDrawer = ({ open, setOpen }: SubjectDrawerProps) => {
         code: "",
         credit: "",
         instituteId,
+        type: "",
       },
     ]);
   };
@@ -48,35 +51,41 @@ const SubjectDrawer = ({ open, setOpen }: SubjectDrawerProps) => {
   const handleAddSubjects = async () => {
     if (!isValid) return;
 
-    await dispatch(createSubjects(allSubjects))
-      .then(() => {
-        addToast({
-          id: "1",
-          message: "Successfully added",
-          type: "success",
-          duration: 50000,
-          swipeDirection: "right",
-        });
-      })
-      .catch((error) => {
-        addToast({
-          id: "1",
-          message: error,
-          type: "error",
-          duration: 50000,
-          swipeDirection: "right",
-        });
-      })
-      .finally(() => {
-        setAllSubjects([
-          {
-            name: "",
-            code: "",
-            credit: "",
-            instituteId,
-          },
-        ]);
+    const result = await dispatch(createSubjects(allSubjects));
+
+    if (createSubjects.fulfilled.match(result)) {
+      addToast({
+        id: "1",
+        message: "Successfully added",
+        type: "success",
+        duration: 50000,
+        swipeDirection: "right",
       });
+      resetStates();
+      return;
+    }
+
+    addToast({
+      id: "1",
+      message: "Error when adding subjects",
+      type: "error",
+      duration: 50000,
+      swipeDirection: "right",
+    });
+    resetStates();
+  };
+
+  const resetStates = () => {
+    setAllSubjects([
+      {
+        name: "",
+        code: "",
+        credit: "",
+        instituteId,
+        type: "",
+      },
+    ]);
+    setIsValid(false);
   };
 
   const checkPreviousSubjectsFilled = (prev: Subject[]) => {
@@ -187,6 +196,36 @@ const SubjectDrawer = ({ open, setOpen }: SubjectDrawerProps) => {
                     <option value="6">6</option>
                     <option value="7">7</option>
                     <option value="8">8</option>
+                  </Select>
+                  <ChevronDownIcon
+                    className="group pointer-events-none absolute top-4 right-2.5 size-2 fill-light-font02 dark:fill-font02"
+                    aria-hidden="true"
+                  />
+                </div>
+              </Field>
+              <Field className="w-1/2">
+                <div className="relative">
+                  <Select
+                    id="type"
+                    name="type"
+                    value={subject.type}
+                    onChange={(e) => {
+                      setAllSubjects((prev) => {
+                        const newSubjects = [...prev];
+                        newSubjects[index].type = e.target.value;
+                        checkPreviousSubjectsFilled(newSubjects);
+                        return newSubjects;
+                      });
+                    }}
+                    className={clsx(
+                      "ring-1 ring-inset appearance-none block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                      "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01",
+                      "*:text-black"
+                    )}
+                  >
+                    <option value="">Type</option>
+                    <option value={SubjectType.compulsory}>Compulsory</option>
+                    <option value={SubjectType.elective}>Elective</option>
                   </Select>
                   <ChevronDownIcon
                     className="group pointer-events-none absolute top-4 right-2.5 size-2 fill-light-font02 dark:fill-font02"
