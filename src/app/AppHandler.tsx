@@ -9,6 +9,7 @@ import Login from "../pages/Login";
 import Register from "../pages/Register";
 import { RootState, useAppSelector } from "../slices/store";
 import PreLoader from "../components/PreLoader";
+import useOnlineStatus from "@/hooks/useOnlineStatus";
 
 const roles: Role[] = [Role.SuperAdmin];
 
@@ -17,6 +18,8 @@ const AppHandler: React.FC = () => {
   const instituteStatus = useAppSelector(
     (state: RootState) => state.institute.status
   );
+
+  useOnlineStatus();
 
   const router = createBrowserRouter([
     {
