@@ -16,26 +16,14 @@ export interface SemesterState {
   status: RequestState;
   createStatus: RequestState;
   error: string | null;
-  paginatedResponse: PaginatedResponse;
-}
-
-interface PaginatedResponse {
-  data: Semester[];
-  totalRecords: number;
-  currentPage: number;
-  pageSize: number;
+  semesters: Semester[];
 }
 
 const initialState: SemesterState = {
   status: RequestState.IDLE,
   createStatus: RequestState.IDLE,
   error: null,
-  paginatedResponse: {
-    currentPage: 0,
-    data: [],
-    pageSize: 10,
-    totalRecords: 0,
-  },
+  semesters: [],
 };
 
 const batchSlice = createSlice({
@@ -60,8 +48,8 @@ const batchSlice = createSlice({
       })
       .addCase(
         getSemesters.fulfilled,
-        (state, action: PayloadAction<{ data: PaginatedResponse }>) => {
-          state.paginatedResponse = action.payload.data;
+        (state, action: PayloadAction<{ data: Semester[] }>) => {
+          state.semesters = action.payload.data;
           state.createStatus = RequestState.SUCCEEDED;
         }
       )
@@ -73,20 +61,10 @@ const batchSlice = createSlice({
 
 export const getSemesters = createAsyncThunk(
   "semester/getSemesters",
-  async ({
-    instituteId,
-    page = 1,
-    pageSize = 10,
-  }: {
-    instituteId: string;
-    page?: number;
-    pageSize?: number;
-  }) => {
+  async ({ instituteId }: { instituteId: string }) => {
     return new Promise<any>((resolve, reject) => {
       const params = new URLSearchParams();
       params.append("instituteId", instituteId);
-      params.append("page", page.toString());
-      params.append("pageSize", pageSize.toString());
       AxiosPrivateService.getInstance()
         .get(`${AppConfig.serviceUrls.semester}?${params.toString()}`)
         .then((response) => {
