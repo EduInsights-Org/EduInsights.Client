@@ -12,6 +12,12 @@ interface DrawerTitleProps {
 }
 
 const DrawerTitle = ({ title }: DrawerTitleProps) => {
+  const selectedBatchId = useAppSelector(
+    (state) => state.batch.selectedBatchId
+  );
+  const selectedBatch = useAppSelector((state) => state.batch.batches).find(
+    (b) => b.id === selectedBatchId
+  ).name;
   const isBatchSelected = useAppSelector((state) => state.batch.selectedBatchId)
     ? true
     : false;
@@ -29,6 +35,12 @@ const DrawerTitle = ({ title }: DrawerTitleProps) => {
         <span className="flex items-center gap-x-2 px-4 py-2 text-xs font-medium rounded-sm text-[#bd5622] dark:text-[#df985d] bg-[#fdf0d9] dark:bg-[#301f13]">
           <InformationCircleIcon className="h-4" />
           Please Select a Batch before adding Users
+        </span>
+      )}
+
+      {isBatchSelected && (
+        <span className="flex items-center gap-x-2 px-4 py-2 text-xs font-medium rounded-sm text-[#bd5622] dark:text-[#df985d] bg-[#fdf0d9] dark:bg-[#301f13]">
+          Adding to Batch: {selectedBatch}
         </span>
       )}
     </div>
