@@ -1,15 +1,12 @@
 import AppTable, { TableColumn } from "@/components/AppTable";
-import { getSemesters, Semester } from "@/slices/semesterSlice";
-import { useAppDispatch, useAppSelector } from "@/slices/store";
+import { Semester } from "@/slices/semesterSlice";
+import { useAppSelector } from "@/slices/store";
 import { RequestState } from "@/utils/enums";
 import { PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
-import { useEffect } from "react";
 
 const Semesters = () => {
-  const instituteId = useAppSelector((state) => state.institute.institute.id);
   const semestersLoading = useAppSelector((state) => state.semester.status);
   const semesters = useAppSelector((state) => state.semester.semesters);
-  const dispatch = useAppDispatch();
 
   const columns: TableColumn<Semester>[] = [
     { key: "year", header: "Year" },
@@ -33,9 +30,6 @@ const Semesters = () => {
     },
   ];
 
-  useEffect(() => {
-    dispatch(getSemesters({ instituteId }));
-  }, []);
   return (
     <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray w-[330px] h-[300px]">
       {semesters && (

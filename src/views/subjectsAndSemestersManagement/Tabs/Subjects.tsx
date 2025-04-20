@@ -55,9 +55,6 @@ const Subjects = () => {
     },
   ];
 
-  useEffect(() => {
-    dispatch(getSubjects({}));
-  }, []);
   return (
     <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray w-[650px] h-[500px]">
       {subjects && (
