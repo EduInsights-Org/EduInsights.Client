@@ -23,6 +23,7 @@ export const AppConfig = {
     batch: ServiceBaseUrl + "/batches/",
     subject: ServiceBaseUrl + "/subjects/",
     semester: ServiceBaseUrl + "/semesters/",
+    result: ServiceBaseUrl + "/results/",
     userInfo: ServiceBaseUrl + "/user/basic-information/",
     refreshToken: ServiceBaseUrl + "/auth/refresh",
     logout: ServiceBaseUrl + "/auth/logout",

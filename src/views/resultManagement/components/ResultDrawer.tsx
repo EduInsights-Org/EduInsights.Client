@@ -5,7 +5,11 @@ import { Drawer } from "rsuite";
 import AppDivider from "@components/AppDivider";
 import AppButton from "@components/AppButton";
 import DrawerTitle from "@/components/DrawerTitle";
-import { useAppSelector } from "@/slices/store";
+import { useAppDispatch, useAppSelector } from "@/slices/store";
+import { addResult } from "@/slices/resultSlice";
+import { RequestState } from "@/utils/enums";
+import { useToast } from "@/context/ToastContext";
+import ToastContainer from "@/components/ToastContainer";
 
 interface ResultDrawerProps {
   open: boolean;
@@ -14,9 +18,37 @@ interface ResultDrawerProps {
 
 const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
   const semesters = useAppSelector((state) => state.semester.semesters);
-  const subjects = useAppSelector(
-    (state) => state.subject.paginatedResponse.data
-  );
+  const subjects = useAppSelector((state) => state.subject.subjects);
+  const addResultStatus = useAppSelector((state) => state.result.createStatus);
+  const dispatch = useAppDispatch();
+  const { addToast } = useToast();
+
+  const handleSubmit = async () => {
+    const result = await dispatch(
+      addResult({
+        grade: "A",
+        indexNumber: "18APC00001",
+        subjectId: "67f37cd7ae2c746d43787c6c",
+        semesterId: "67f495053a54bf4a2c0b2cd3",
+      })
+    );
+
+    if (addResult.fulfilled.match(result)) {
+      addToast({
+        type: "success",
+        message: "Result added successfully",
+        id: "add-result-success",
+      });
+      return;
+    }
+
+    addToast({
+      type: "error",
+      message: "Error when adding result",
+      id: "add-result-error",
+    });
+    console.log("Error when adding result");
+  };
 
   return (
     <Drawer backdrop="static" open={open} onClose={() => setOpen(false)}>
@@ -119,8 +151,9 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
         <AppButton
           title="Add Result"
           variant="fill"
-          onClick={() => {}}
+          onClick={handleSubmit}
           className="ml-auto mt-auto"
+          isLoading={addResultStatus === RequestState.LOADING}
         />
 
         <AppDivider label="Or" className="my-6" />
@@ -165,6 +198,7 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
           className="ml-auto mt-auto"
         />
       </Drawer.Body>
+      <ToastContainer />
     </Drawer>
   );
 };
