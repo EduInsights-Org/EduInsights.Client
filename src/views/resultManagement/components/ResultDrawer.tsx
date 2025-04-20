@@ -5,6 +5,7 @@ import clsx from "clsx";
 import { Drawer } from "rsuite";
 import AppDivider from "@components/AppDivider";
 import AppButton from "@components/AppButton";
+import DrawerTitle from "@/components/DrawerTitle";
 
 interface ResultDrawerProps {
   open: boolean;
@@ -18,21 +19,7 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
         style={{ border: "none" }}
         className="bg-light-mainBg dark:bg-mainBg"
       >
-        <div className="flex justify-between items-center w-full">
-          <Drawer.Title
-            style={{ fontSize: "18px", fontWeight: "700" }}
-            className="text-lg font-bold text-light-font01 dark:text-font01"
-          >
-            Add Results
-          </Drawer.Title>
-
-          {true === null && (
-            <span className="flex items-center gap-x-2 px-4 py-2 text-xs font-medium rounded-sm text-[#bd5622] dark:text-[#df985d] bg-[#fdf0d9] dark:bg-[#301f13]">
-              <InformationCircleIcon className="h-4" />
-              Please Select a Batch before adding Users
-            </span>
-          )}
-        </div>
+        <DrawerTitle title="Add Results" />
       </Drawer.Header>
       <Drawer.Body
         className="flex flex-col bg-light-mainBg dark:bg-mainBg gap-y-4"
