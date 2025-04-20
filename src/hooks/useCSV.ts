@@ -100,7 +100,6 @@ const useCSV = <T extends Record<string, any>>(
 
           const headers = parsedData[0];
           const isValidHeaders = validateHeaders(headers);
-          console.log("Headers:", isValidHeaders);
 
           if (!isValidHeaders) {
             setIsValid(false);
