@@ -1,11 +1,11 @@
 import { Field, Input, Select } from "@headlessui/react";
-import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { ChevronDownIcon } from "@radix-ui/themes";
 import clsx from "clsx";
 import { Drawer } from "rsuite";
 import AppDivider from "@components/AppDivider";
 import AppButton from "@components/AppButton";
 import DrawerTitle from "@/components/DrawerTitle";
+import { useAppSelector } from "@/slices/store";
 
 interface ResultDrawerProps {
   open: boolean;
@@ -13,6 +13,11 @@ interface ResultDrawerProps {
 }
 
 const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
+  const semesters = useAppSelector((state) => state.semester.semesters);
+  const subjects = useAppSelector(
+    (state) => state.subject.paginatedResponse.data
+  );
+
   return (
     <Drawer backdrop="static" open={open} onClose={() => setOpen(false)}>
       <Drawer.Header
@@ -35,10 +40,12 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
                   "*:text-black"
                 )}
               >
-                <option value="SUPER_ADMIN"> Select Semester</option>
-                <option value="SUPER_ADMIN"> Year I Sem I</option>
-                <option value="SUPER_ADMIN"> Year I Sem II</option>
-                <option value="SUPER_ADMIN"> Year II Sem I</option>
+                <option value=""> Select Semester</option>
+                {semesters.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    Year {item.year} Sem {item.sem}
+                  </option>
+                ))}
               </Select>
               <ChevronDownIcon
                 className="group pointer-events-none absolute top-4 right-2.5 size-2 fill-light-font02 dark:fill-font02"
@@ -57,10 +64,11 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
                 )}
               >
                 <option value="SUPER_ADMIN"> Select Subject</option>
-                <option value="SUPER_ADMIN"> 18/19 FOC</option>
-                <option value="ADMIN">19/20 FOC</option>
-                <option value="ADMIN">19/20 FOC</option>
-                <option value="ADMIN">19/20 FOC</option>
+                {subjects.map((item) => (
+                  <option key={item.code} value={item.code}>
+                    {item.name}
+                  </option>
+                ))}
               </Select>
               <ChevronDownIcon
                 className="group pointer-events-none absolute top-4 right-2.5 size-2 fill-light-font02 dark:fill-font02"

@@ -15,6 +15,8 @@ import {
   getBatchesByInstituteId,
   selectBatch,
 } from "@slices/batchSlice";
+import { getSubjects } from "@/slices/subjectSlice";
+import { getSemesters } from "@/slices/semesterSlice";
 
 interface AuthType {
   user: string | null;
@@ -77,6 +79,9 @@ export const AppAuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       } else {
         console.warn("No batches found for the institute");
       }
+
+      dispatch(getSubjects({}));
+      dispatch(getSemesters({ instituteId }));
     } catch (error) {
       console.error(
         "An error occurred during the authentication process",
