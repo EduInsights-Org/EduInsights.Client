@@ -9,9 +9,7 @@ import { useEffect } from "react";
 
 const Subjects = () => {
   const dispatch = useAppDispatch();
-  const subjects = useAppSelector(
-    (state) => state.subject.paginatedResponse.data
-  );
+  const subjects = useAppSelector((state) => state.subject.subjects);
   const subjectsLoading = useAppSelector((state) => state.subject.status);
 
   const columns: TableColumn<Subject>[] = [
