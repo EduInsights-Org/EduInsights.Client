@@ -11,7 +11,7 @@ import {
 import { useToast } from "@context/ToastContext";
 import ToastContainer from "@components/ToastContainer";
 import { RequestState, Role } from "@utils/enums";
-import useCSV from "@hooks/useCSV";
+import useCSV, { CSVConfig } from "@hooks/useCSV";
 import {
   CheckCircleIcon,
   ExclamationCircleIcon,
@@ -29,13 +29,16 @@ interface UserDrawerProps {
 }
 
 const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
-  const {
-    usersList,
-    fileName,
-    error: csvFileError,
-    resetCSVFile,
-    handleCSVSelect,
-  } = useCSV();
+  interface UserData {
+    firstName: string;
+    lastName: string;
+    indexNumber: string;
+    email: string;
+    role: string;
+    instituteId: string;
+    batchId: string;
+    password: string;
+  }
 
   const { addToast } = useToast();
   const dispatch = useAppDispatch();
@@ -60,10 +63,39 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
     indexNumber: false,
     email: false,
   });
-  const [csvFileValidation, setCsvFileValidation] = useState<boolean>(false);
+
+  const userCSVConfig: CSVConfig<UserData> = {
+    headers: {
+      firstName: "firstName",
+      lastName: "lastName",
+      indexNumber: "indexNumber",
+      email: "email",
+      role: "role",
+      instituteId: "instituteId",
+      batchId: "batchId",
+      password: "password",
+    },
+    requiredHeaders: ["firstName", "lastName", "email", "role"],
+    defaultValues: {
+      password: "123321",
+      instituteId: instituteId,
+      batchId: batchId,
+    },
+    validateRow: (row) => {
+      return row.email.includes("@");
+    },
+  };
+
+  const {
+    parsedData: usersList,
+    error: csvFileError,
+    fileName,
+    handleCSVSelect,
+    resetCSVFile,
+  } = useCSV<UserData>(userCSVConfig);
 
   const handleCreateUsers = () => {
-    if (!usersList) return setCsvFileValidation(true);
+    if (!usersList) return;
     dispatch(addMultipleUsers(usersList)).then((result) => {
       const responseMessage = result.payload.data as AddUsersResponse;
       const isAllAreSuccessfullyAdded: boolean =
@@ -365,14 +397,14 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
             "flex gap-x-2 justify-between w-full h-56 border-[1px] rounded-md",
             {
               "border-light-borderGray dark:border-borderGray border-dashed":
-                csvFileValidation === false && csvFileError === null,
-              "border-red-500 border-dashed": csvFileValidation === true,
-              "border-[#bd5622] dark:border-[#df985d]": csvFileError === true,
-              "border-[#45855f] dark:border-[#59aa77]": csvFileError === false,
+                csvFileError === null && usersList === null,
+              "border-[#bd5622] dark:border-[#df985d]": csvFileError,
+              "border-[#45855f] dark:border-[#59aa77]":
+                usersList && csvFileError === null,
             }
           )}
         >
-          {csvFileError === null ? (
+          {csvFileError === null && usersList === null ? (
             <label
               form="dropzone-file"
               className="flex flex-col items-center justify-center w-full cursor-pointer bg-light-subBg dark:bg-subBg hover:bg-light-mainBg dark:hover:bg-mainBg rounded-md"
@@ -406,8 +438,7 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
                 accept=".csv"
                 className="hidden"
                 onChange={(e) => {
-                  setCsvFileValidation(false);
-                  handleCSVSelect(e, instituteId, batchId);
+                  handleCSVSelect(e);
                 }}
               />
             </label>
@@ -422,7 +453,7 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
                       {fileName}
                     </span>
                     <span className="flex gap-x-2 items-center text-xs leading-none text-[#bd5622] dark:text-[#df985d]">
-                      Invalid data found
+                      {csvFileError}
                     </span>
                   </div>
                 </div>
