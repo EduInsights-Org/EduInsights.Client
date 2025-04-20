@@ -4,6 +4,12 @@ import clsx from "clsx";
 import { Drawer } from "rsuite";
 import AppButton from "@components/AppButton";
 import DrawerTitle from "@/components/DrawerTitle";
+import { createSemester, Semester } from "@/slices/semesterSlice";
+import { useState } from "react";
+import { useAppDispatch, useAppSelector } from "@/slices/store";
+import { useToast } from "@/context/ToastContext";
+import { SemesterType, YearType } from "@/utils/enums";
+import ToastContainer from "@/components/ToastContainer";
 
 interface SemesterDrawerProps {
   open: boolean;
@@ -11,6 +17,49 @@ interface SemesterDrawerProps {
 }
 
 const SemesterDrawer = ({ open, setOpen }: SemesterDrawerProps) => {
+  const dispatch = useAppDispatch();
+  const instituteId = useAppSelector((state) => state.institute.institute.id);
+  const { addToast } = useToast();
+  const [formData, setFormData] = useState<Semester>({
+    year: "",
+    sem: "",
+    instituteId: instituteId,
+  });
+
+  const onSubmitSemester = async () => {
+    const result = await dispatch(createSemester(formData));
+
+    if (createSemester.fulfilled.match(result)) {
+      addToast({
+        id: "1",
+        message: "Successfully added",
+        type: "success",
+        duration: 50000,
+        swipeDirection: "right",
+      });
+      resetStates();
+
+      return;
+    }
+
+    addToast({
+      id: "1",
+      message: "Error when adding semester",
+      type: "error",
+      duration: 50000,
+      swipeDirection: "right",
+    });
+    resetStates();
+  };
+
+  const resetStates = () => {
+    setFormData({
+      year: "",
+      sem: "",
+      instituteId: instituteId,
+    });
+  };
+
   return (
     <Drawer backdrop="static" open={open} onClose={() => setOpen(false)}>
       <Drawer.Header
@@ -32,13 +81,23 @@ const SemesterDrawer = ({ open, setOpen }: SemesterDrawerProps) => {
                   "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01",
                   "*:text-black"
                 )}
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    year: e.target.value,
+                  }));
+                }}
+                value={formData.year}
+                required
+                name="year"
+                id="year"
               >
-                <option value="SUPER_ADMIN"> Select Year</option>
-                <option value="ADMIN">Year I</option>
-                <option value="ADMIN">Year II</option>
-                <option value="ADMIN">Year III</option>
-                <option value="ADMIN">Year IV</option>
-                <option value="ADMIN">Year V</option>
+                <option value=""> Select Year</option>
+                <option value={YearType.I}>Year {YearType.I}</option>
+                <option value={YearType.II}>Year {YearType.II}</option>
+                <option value={YearType.III}>Year {YearType.III}</option>
+                <option value={YearType.IV}>Year {YearType.IV}</option>
+                <option value={YearType.V}>Year {YearType.V}</option>
               </Select>
               <ChevronDownIcon
                 className="group pointer-events-none absolute top-4 right-2.5 size-2 fill-light-font02 dark:fill-font02"
@@ -54,10 +113,24 @@ const SemesterDrawer = ({ open, setOpen }: SemesterDrawerProps) => {
                   "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01",
                   "*:text-black"
                 )}
+                onChange={(e) => {
+                  setFormData((prev) => ({
+                    ...prev,
+                    sem: e.target.value,
+                  }));
+                }}
+                value={formData.sem}
+                required
+                name="sem"
+                id="sem"
               >
-                <option value="SUPER_ADMIN"> Select Semester</option>
-                <option value="ADMIN">Semester I</option>
-                <option value="ADMIN">Semester II</option>
+                <option value="">Select Semester</option>
+                <option value={SemesterType.I}>
+                  Semester {SemesterType.I}
+                </option>
+                <option value={SemesterType.II}>
+                  Semester {SemesterType.II}
+                </option>
               </Select>
               <ChevronDownIcon
                 className="group pointer-events-none absolute top-4 right-2.5 size-2 fill-light-font02 dark:fill-font02"
@@ -70,9 +143,10 @@ const SemesterDrawer = ({ open, setOpen }: SemesterDrawerProps) => {
         <AppButton
           title="Add Semester"
           variant="fill"
-          onClick={() => {}}
+          onClick={onSubmitSemester}
           className="ml-auto mt-auto"
         />
+        <ToastContainer />
       </Drawer.Body>
     </Drawer>
   );
