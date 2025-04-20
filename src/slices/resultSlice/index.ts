@@ -4,10 +4,12 @@ import { AxiosPrivateService } from "@utils/apiService";
 import { RequestState } from "@utils/enums";
 
 export interface Result {
-  semesterId: string;
-  subjectId: string;
-  studentId: string;
+  semester: string;
+  subjectName: string;
+  subjectCode: string;
+  indexNumber: string;
   grade: string;
+  batch: string;
 }
 
 interface CreateResultPayload {
@@ -64,14 +66,15 @@ const batchSlice = createSlice({
   },
 });
 
-export const getResults = createAsyncThunk(
-  "result/getResults",
-  async ({ instituteId }: { instituteId: string }) => {
+export const getResults = createAsyncThunk("result/getResults", async () =>
+  // { instituteId }: { instituteId: string }
+  {
     return new Promise<any>((resolve, reject) => {
-      const params = new URLSearchParams();
-      params.append("instituteId", instituteId);
+      // const params = new URLSearchParams();
+      // params.append("instituteId", instituteId);
       AxiosPrivateService.getInstance()
-        .get(`${AppConfig.serviceUrls.result}?${params.toString()}`)
+        // .get(`${AppConfig.serviceUrls.result}?${params.toString()}`)
+        .get(`${AppConfig.serviceUrls.result}`)
         .then((response) => {
           resolve(response.data);
         })
