@@ -65,11 +65,11 @@ const batchSlice = createSlice({
 export const getSubjects = createAsyncThunk(
   "subject/getSubjects",
   async ({
-    instituteId = "67e2bd370b72702dfca67020",
+    instituteId,
     page = 1,
     pageSize = 10,
   }: {
-    instituteId?: string;
+    instituteId: string;
     page?: number;
     pageSize?: number;
   }) => {

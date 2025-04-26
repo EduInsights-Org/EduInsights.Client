@@ -80,7 +80,7 @@ export const AppAuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         console.warn("No batches found for the institute");
       }
 
-      dispatch(getSubjects({}));
+      dispatch(getSubjects({ instituteId }));
       dispatch(getSemesters({ instituteId }));
     } catch (error) {
       console.error(
