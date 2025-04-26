@@ -12,11 +12,12 @@ export interface Result {
   batch: string;
 }
 
-interface CreateResultPayload {
+export interface CreateResultPayload {
   indexNumber: string;
   grade: string;
   subjectId: string;
   semesterId: string;
+  instituteId: string;
 }
 
 export interface ResultState {

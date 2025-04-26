@@ -4,6 +4,7 @@ import { AxiosPrivateService } from "@utils/apiService";
 import { RequestState } from "@utils/enums";
 
 export interface Subject {
+  id: string;
   name: string;
   code: string;
   credit: string;

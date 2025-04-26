@@ -1,6 +1,7 @@
 import AppTable, { TableColumn } from "@/components/AppTable";
 import { getResults, Result } from "@/slices/resultSlice";
 import { useAppDispatch, useAppSelector } from "@/slices/store";
+import { Subject } from "@/slices/subjectSlice";
 import {
   ArrowPathIcon,
   PencilIcon,
@@ -28,6 +29,71 @@ const ResultManagement = () => {
     {
       key: "grade",
       header: "Grade",
+      render: (result) => {
+        const gradeColorMap: Record<
+          string,
+          | "gray"
+          | "gold"
+          | "bronze"
+          | "brown"
+          | "yellow"
+          | "amber"
+          | "orange"
+          | "tomato"
+          | "red"
+          | "ruby"
+          | "crimson"
+          | "pink"
+          | "plum"
+          | "purple"
+          | "violet"
+          | "iris"
+          | "indigo"
+          | "blue"
+          | "cyan"
+          | "teal"
+          | "jade"
+          | "green"
+          | "grass"
+          | "lime"
+          | "mint"
+          | "sky"
+        > = {
+          "A+": "indigo",
+          A: "iris",
+          "A-": "violet",
+          "B+": "purple",
+          B: "plum",
+          "B-": "pink",
+          "C+": "crimson",
+          C: "ruby",
+          "C-": "red",
+          "D+": "tomato",
+          D: "orange",
+          "D-": "amber",
+          E: "brown",
+        };
+
+        return (
+          <div className="flex justify-center">
+            <Badge size={"1"} color={gradeColorMap[result.grade] || "gray"}>
+              {result.grade}
+            </Badge>
+          </div>
+        );
+      },
+    },
+    {
+      key: "id",
+      header: "Actions",
+      render: () => (
+        <div className="flex flex-row gap-x-4 w-fit">
+          <PencilIcon className="h-3 w-3 text-light-font01 dark:text-font01" />
+          <button>
+            <TrashIcon className="h-3 w-3 text-light-font01 dark:text-font01" />
+          </button>
+        </div>
+      ),
     },
   ];
 

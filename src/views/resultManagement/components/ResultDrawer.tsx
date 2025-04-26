@@ -6,30 +6,71 @@ import AppDivider from "@components/AppDivider";
 import AppButton from "@components/AppButton";
 import DrawerTitle from "@/components/DrawerTitle";
 import { useAppDispatch, useAppSelector } from "@/slices/store";
-import { addResult } from "@/slices/resultSlice";
+import { addResult, CreateResultPayload } from "@/slices/resultSlice";
 import { RequestState } from "@/utils/enums";
 import { useToast } from "@/context/ToastContext";
 import ToastContainer from "@/components/ToastContainer";
+import useCSV, { CSVConfig } from "@/hooks/useCSV";
+import AppDragDropArea from "@/components/AppDragDropArea";
+import { useState } from "react";
 
 interface ResultDrawerProps {
   open: boolean;
   setOpen: (val: boolean) => void;
 }
+interface ResultCSVConfig {
+  indexNumber: string;
+  grade: string;
+  semesterId?: string;
+  subjectId?: string;
+  instituteId: string;
+}
 
 const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
   const semesters = useAppSelector((state) => state.semester.semesters);
   const subjects = useAppSelector((state) => state.subject.subjects);
+  const instituteId = useAppSelector((state) => state.institute.institute.id);
   const addResultStatus = useAppSelector((state) => state.result.createStatus);
   const dispatch = useAppDispatch();
   const { addToast } = useToast();
 
+  const [semester, setSemester] = useState<string>("");
+  const [subject, setSubject] = useState<string>("");
+  const [grade, setGrade] = useState<string>("");
+  const [indexNumber, setIndexNumber] = useState<string>("");
+
+  const userCSVConfig: CSVConfig<ResultCSVConfig> = {
+    headers: {
+      indexNumber: "indexNumber",
+      grade: "grade",
+      semesterId: "",
+      subjectId: "",
+      instituteId: "",
+    },
+    requiredHeaders: ["indexNumber", "grade"],
+    defaultValues: {
+      semesterId: semester,
+      subjectId: subject,
+      instituteId: instituteId,
+    },
+  };
+
+  const {
+    parsedData,
+    error: csvFileError,
+    fileName,
+    handleCSVSelect,
+    resetCSVFile,
+  } = useCSV<CreateResultPayload>(userCSVConfig);
+
   const handleSubmit = async () => {
     const result = await dispatch(
       addResult({
-        grade: "A",
-        indexNumber: "18APC00001",
-        subjectId: "67f37cd7ae2c746d43787c6c",
-        semesterId: "67f495053a54bf4a2c0b2cd3",
+        grade: grade,
+        indexNumber: indexNumber,
+        subjectId: subject,
+        semesterId: semester,
+        instituteId: instituteId,
       })
     );
 
@@ -47,7 +88,6 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
       message: "Error when adding result",
       id: "add-result-error",
     });
-    console.log("Error when adding result");
   };
 
   return (
@@ -63,6 +103,7 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
         style={{ paddingTop: 0, paddingLeft: 40, paddingRight: 40 }}
       >
         <div className="flex gap-x-2 justify-between">
+          {/* semester */}
           <Field className="w-1/2">
             <div className="relative">
               <Select
@@ -71,6 +112,7 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
                   "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01",
                   "*:text-black"
                 )}
+                onChange={(e) => setSemester(e.target.value)}
               >
                 <option value=""> Select Semester</option>
                 {semesters.map((item) => (
@@ -86,6 +128,7 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
             </div>
           </Field>
 
+          {/* subject */}
           <Field className="w-1/2">
             <div className="relative">
               <Select
@@ -94,10 +137,11 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
                   "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01",
                   "*:text-black"
                 )}
+                onChange={(e) => setSubject(e.target.value)}
               >
-                <option value="SUPER_ADMIN"> Select Subject</option>
+                <option value="">Select Subject</option>
                 {subjects.map((item) => (
-                  <option key={item.code} value={item.code}>
+                  <option key={item.code} value={item.id}>
                     {item.name}
                   </option>
                 ))}
@@ -111,9 +155,10 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
         </div>
 
         <div className="flex gap-x-2 justify-between">
+          {/* indexNumber */}
           <Field className="w-1/2">
             <Input
-              id="batchName"
+              id="indexNumber"
               placeholder="Index Number"
               type="text"
               required
@@ -121,8 +166,11 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
                 "ring-1 ring-inset block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
                 "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
               )}
+              onChange={(e) => setIndexNumber(e.target.value)}
             />
           </Field>
+
+          {/* grade */}
           <Field className="w-1/2">
             <div className="relative">
               <Select
@@ -131,14 +179,22 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
                   "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01",
                   "*:text-black"
                 )}
+                onChange={(e) => setGrade(e.target.value)}
               >
-                <option value="SUPER_ADMIN"> Select Grade</option>
-                <option value="ADMIN">A</option>
-                <option value="ADMIN">A+</option>
-                <option value="ADMIN">A-</option>
-                <option value="ADMIN">B</option>
-                <option value="ADMIN">B+</option>
-                <option value="ADMIN">B-</option>
+                <option value=""> Select Grade</option>
+                <option value="A+">A+</option>
+                <option value="A">A</option>
+                <option value="A-">A-</option>
+                <option value="B+">B</option>
+                <option value="B">B+</option>
+                <option value="B-">B-</option>
+                <option value="C+">C+</option>
+                <option value="C">C</option>
+                <option value="C-">C-</option>
+                <option value="D+">D+</option>
+                <option value="D">D</option>
+                <option value="D-">D-</option>
+                <option value="E">E</option>
               </Select>
               <ChevronDownIcon
                 className="group pointer-events-none absolute top-4 right-2.5 size-2 fill-light-font02 dark:fill-font02"
@@ -156,40 +212,67 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
           isLoading={addResultStatus === RequestState.LOADING}
         />
 
-        <AppDivider label="Or" className="my-6" />
+        <AppDivider label="Or" className="mb-4 mt-6" />
 
-        <div className="flex gap-x-2 justify-between">
-          <label
-            form="dropzone-file"
-            className="flex flex-col items-center justify-center w-full h-56 border-[1.8px] border-light-borderGray dark:border-borderGray border-dashed rounded-md cursor-pointer bg-light-subBg dark:bg-subBg hover:bg-light-mainBg dark:hover:bg-mainBg"
-          >
-            <div className="flex flex-col items-center justify-center pt-5 pb-6">
-              <svg
-                className="w-8 h-8 mb-2 text-light-font02 dark:text-font02"
-                aria-hidden="true"
-                xmlns="http://www.w3.org/2000/svg"
-                fill="none"
-                viewBox="0 0 20 16"
+        <div className="flex gap-x-2 justify-between mb-1">
+          {/* semester */}
+          <Field className="w-1/2">
+            <div className="relative">
+              <Select
+                className={clsx(
+                  "ring-1 ring-inset appearance-none mt-1 block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                  "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01",
+                  "*:text-black"
+                )}
+                onChange={(e) => setSemester(e.target.value)}
               >
-                <path
-                  stroke="currentColor"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth="2"
-                  d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                />
-              </svg>
-              <p className="text-sm text-light-font02 dark:text-font02">
-                <span className="font-semibold">Click to upload</span> or drag
-                and drop
-              </p>
-              <p className="text-xs text-light-font02 dark:text-font02">
-                CSV file
-              </p>
+                <option value=""> Select Semester</option>
+                {semesters.map((item) => (
+                  <option key={item.id} value={item.id}>
+                    Year {item.year} Sem {item.sem}
+                  </option>
+                ))}
+              </Select>
+              <ChevronDownIcon
+                className="group pointer-events-none absolute top-4 right-2.5 size-2 fill-light-font02 dark:fill-font02"
+                aria-hidden="true"
+              />
             </div>
-            <input id="dropzone-file" type="file" className="hidden" />
-          </label>
+          </Field>
+
+          {/* subject */}
+          <Field className="w-1/2">
+            <div className="relative">
+              <Select
+                className={clsx(
+                  "ring-1 ring-inset appearance-none mt-1 block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
+                  "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01",
+                  "*:text-black"
+                )}
+                onChange={(e) => setSubject(e.target.value)}
+              >
+                <option value="">Select Subject</option>
+                {subjects.map((item) => (
+                  <option key={item.code} value={item.id}>
+                    {item.name}
+                  </option>
+                ))}
+              </Select>
+              <ChevronDownIcon
+                className="group pointer-events-none absolute top-4 right-2.5 size-2 fill-light-font02 dark:fill-font02"
+                aria-hidden="true"
+              />
+            </div>
+          </Field>
         </div>
+
+        <AppDragDropArea
+          csvFileError={csvFileError}
+          dataList={parsedData}
+          fileName={fileName}
+          handleCSVSelect={handleCSVSelect}
+          resetCSVFile={resetCSVFile}
+        />
 
         <AppButton
           title="Add Results"
