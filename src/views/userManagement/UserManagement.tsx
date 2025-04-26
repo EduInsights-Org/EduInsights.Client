@@ -26,7 +26,7 @@ const UserManagement = () => {
 
   const [page, setPage] = useState(1);
   const [selectBatch, setSelectBatch] = useState<string | null>(null);
-  const { pieChartOptions } = useCharts();
+  const { pieChartOptions } = useCharts("User Role Distribution");
 
   const user = useAppSelector((state) => state.auth.userInfo);
   const instituteId = useAppSelector((state) => state.institute.institute!.id);
@@ -53,11 +53,15 @@ const UserManagement = () => {
     );
     if (!getUsers.fulfilled.match(result)) dispatch(resetPagination());
 
-    await dispatch(getRoleDistribution({ instituteId }));
+    handleGetRoleDistribution();
   };
 
   const reloadTableData = () => {
     initialLoad();
+  };
+
+  const handleGetRoleDistribution = async () => {
+    await dispatch(getRoleDistribution({ instituteId }));
   };
 
   const pieChartData = {
@@ -238,7 +242,16 @@ const UserManagement = () => {
         </div>
 
         {/* chart */}
-        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray p-3 min-w-[250px] w-[35%] h-[500px] flex justify-center">
+        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[250px] w-[35%] h-[500px] flex flex-col">
+          <div className="flex items-center py-4 px-3 bg-light-subBg dark:bg-subBg">
+            <button
+              onClick={handleGetRoleDistribution}
+              className="ml-auto text-xs text-light-font02 dark:text-font02 flex justify-center items-center gap-x-1"
+            >
+              <ArrowPathIcon className="size-3" />
+              Refresh
+            </button>
+          </div>
           <Pie data={pieChartData} options={pieChartOptions} />
         </div>
       </div>
