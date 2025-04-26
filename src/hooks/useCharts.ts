@@ -20,7 +20,7 @@ ChartJS.register(
   ArcElement
 );
 
-const useCharts = () => {
+const useCharts = (chartTitle: string) => {
   const pieChartOptions = {
     responsive: true,
     plugins: {
@@ -29,7 +29,7 @@ const useCharts = () => {
       },
       title: {
         display: true,
-        text: "User Role Distribution",
+        text: chartTitle,
       },
     },
   };

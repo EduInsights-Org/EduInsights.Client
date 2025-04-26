@@ -1,7 +1,7 @@
 import AppTable, { TableColumn } from "@/components/AppTable";
-import { getResults, Result } from "@/slices/resultSlice";
+import useCharts from "@/hooks/useCharts";
+import { getGradeDistribution, getResults, Result } from "@/slices/resultSlice";
 import { useAppDispatch, useAppSelector } from "@/slices/store";
-import { Subject } from "@/slices/subjectSlice";
 import {
   ArrowPathIcon,
   PencilIcon,
@@ -9,10 +9,16 @@ import {
 } from "@heroicons/react/24/outline";
 import { Badge } from "@radix-ui/themes";
 import { useEffect } from "react";
+import { Pie } from "react-chartjs-2";
 
 const ResultManagement = () => {
   const dispatch = useAppDispatch();
+  const { pieChartOptions } = useCharts("Grade Distribution");
   const results = useAppSelector((state) => state.result.results);
+  const instituteId = useAppSelector((state) => state.institute.institute.id);
+  const gradeDistribution = useAppSelector(
+    (state) => state.result.gradeDistribution
+  );
 
   const columns: TableColumn<Result>[] = [
     {
@@ -100,35 +106,114 @@ const ResultManagement = () => {
   const handleGetResults = async () => {
     dispatch(getResults());
   };
+
+  const handleGetGradeDistribution = async () => {
+    await dispatch(getGradeDistribution({ instituteId }));
+  };
+
   useEffect(() => {
     handleGetResults();
-  }, []);
+    handleGetGradeDistribution();
+  }, [instituteId]);
+
+  const pieChartData = {
+    labels: [
+      "A+",
+      "A",
+      "A-",
+      "B+",
+      "B",
+      "B-",
+      "C+",
+      "C",
+      "C-",
+      "D+",
+      "D",
+      "D-",
+      "E",
+    ],
+    datasets: [
+      {
+        label: "Grade Distribution",
+        data: [
+          gradeDistribution.aPlus,
+          gradeDistribution.a,
+          gradeDistribution.aMinus,
+          gradeDistribution.bPlus,
+          gradeDistribution.b,
+          gradeDistribution.bMinus,
+          gradeDistribution.cPlus,
+          gradeDistribution.c,
+          gradeDistribution.cMinus,
+          gradeDistribution.dPlus,
+          gradeDistribution.d,
+          gradeDistribution.dMinus,
+          gradeDistribution.e,
+        ],
+        backgroundColor: [
+          "#003f5c", // A+
+          "#58508d", // A
+          "#bc5090", // A-
+          "#ff6361", // B+
+          "#ffa600", // B
+          "#6a2135", // B-
+          "#9b59b6", // C+
+          "#3498db", // C
+          "#2ecc71", // C-
+          "#f1c40f", // D+
+          "#e67e22", // D
+          "#e74c3c", // D-
+          "#95a5a6", // E
+        ],
+        borderWidth: 0,
+      },
+    ],
+  };
+
   return (
-    <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray w-[730px] h-[500px]">
-      <div className="flex gap-x-3 items-center py-4 px-3 bg-light-subBg dark:bg-subBg">
-        <button
-          onClick={handleGetResults}
-          className="ml-auto text-xs text-light-font02 dark:text-font02 flex justify-center items-center gap-x-1"
-        >
-          <ArrowPathIcon className="size-3" />
-          Refresh
-        </button>
+    <main>
+      <div className="flex justify-between flex-row-reverse gap-x-2">
+        <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[600px] w-[65%] h-[500px]">
+          <div className="flex gap-x-3 items-center py-4 px-3 bg-light-subBg dark:bg-subBg">
+            <button
+              onClick={handleGetResults}
+              className="ml-auto text-xs text-light-font02 dark:text-font02 flex justify-center items-center gap-x-1"
+            >
+              <ArrowPathIcon className="size-3" />
+              Refresh
+            </button>
+          </div>
+          {results && (
+            <AppTable
+              data={results}
+              columns={columns}
+              // loading={subjectsLoading === RequestState.LOADING}
+              checkboxSelection
+              // onSelect={handleSelect}
+              pagination={{
+                handlePagination: () => {},
+                pageSize: 10,
+                totalRecords: 2,
+              }}
+            />
+          )}
+        </div>
+
+        {/* chart */}
+        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[250px] w-[35%] h-[500px] flex flex-col">
+          <div className="flex items-center py-4 px-3 bg-light-subBg dark:bg-subBg">
+            <button
+              onClick={handleGetGradeDistribution}
+              className="ml-auto text-xs text-light-font02 dark:text-font02 flex justify-center items-center gap-x-1"
+            >
+              <ArrowPathIcon className="size-3" />
+              Refresh
+            </button>
+          </div>
+          <Pie data={pieChartData} options={pieChartOptions} />
+        </div>
       </div>
-      {results && (
-        <AppTable
-          data={results}
-          columns={columns}
-          // loading={subjectsLoading === RequestState.LOADING}
-          checkboxSelection
-          // onSelect={handleSelect}
-          pagination={{
-            handlePagination: () => {},
-            pageSize: 10,
-            totalRecords: 2,
-          }}
-        />
-      )}
-    </div>
+    </main>
   );
 };
 

@@ -12,6 +12,22 @@ export interface Result {
   batch: string;
 }
 
+export interface GradeDistributionResponse {
+  aPlus: number;
+  a: number;
+  aMinus: number;
+  bPlus: number;
+  b: number;
+  bMinus: number;
+  cPlus: number;
+  c: number;
+  cMinus: number;
+  dPlus: number;
+  d: number;
+  dMinus: number;
+  e: number;
+}
+
 export interface CreateResultPayload {
   indexNumber: string;
   grade: string;
@@ -25,6 +41,7 @@ export interface ResultState {
   createStatus: RequestState;
   error: string | null;
   results: Result[];
+  gradeDistribution: GradeDistributionResponse;
 }
 
 const initialState: ResultState = {
@@ -32,6 +49,21 @@ const initialState: ResultState = {
   createStatus: RequestState.IDLE,
   error: null,
   results: [],
+  gradeDistribution: {
+    aPlus: 0,
+    a: 0,
+    aMinus: 0,
+    bPlus: 0,
+    b: 0,
+    bMinus: 0,
+    cPlus: 0,
+    c: 0,
+    cMinus: 0,
+    dPlus: 0,
+    d: 0,
+    dMinus: 0,
+    e: 0,
+  },
 };
 
 const batchSlice = createSlice({
@@ -64,6 +96,22 @@ const batchSlice = createSlice({
       .addCase(getResults.rejected, (state) => {
         state.createStatus = RequestState.FAILED;
       });
+
+    builder
+      .addCase(getGradeDistribution.pending, (state) => {
+        state.createStatus = RequestState.LOADING;
+      })
+      .addCase(
+        getGradeDistribution.fulfilled,
+        (state, action: PayloadAction<{ data: GradeDistributionResponse }>) => {
+          state.gradeDistribution = action.payload.data;
+          state.createStatus = RequestState.SUCCEEDED;
+          console.log(state.gradeDistribution);
+        }
+      )
+      .addCase(getGradeDistribution.rejected, (state) => {
+        state.createStatus = RequestState.FAILED;
+      });
   },
 });
 
@@ -92,6 +140,29 @@ export const addResult = createAsyncThunk(
     return new Promise<any>((resolve, reject) => {
       AxiosPrivateService.getInstance()
         .post(AppConfig.serviceUrls.result, result)
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+);
+
+export const getGradeDistribution = createAsyncThunk(
+  "result/getGradeDistribution",
+  async ({ instituteId }: { instituteId: string }) => {
+    return new Promise<any>((resolve, reject) => {
+      const params = new URLSearchParams();
+      params.append("instituteId", instituteId);
+
+      AxiosPrivateService.getInstance()
+        .get(
+          `${
+            AppConfig.serviceUrls.result
+          }grade-distribution?${params.toString()}`
+        )
         .then((response) => {
           resolve(response.data);
         })
