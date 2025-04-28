@@ -1,3 +1,5 @@
+import { LABEL_COLOR_LIST } from "@/utils/constant";
+
 interface ChartOptionsProps {
   responsive?: boolean;
   position?: "top" | "bottom" | "left" | "right";
@@ -6,28 +8,15 @@ interface ChartOptionsProps {
 
 interface ChartDataProps {
   labels: string[];
-  dataset: number[];
+  dataset: number[] | string[];
   datasetLabel: string;
 }
 
-const colors = [
-  "#003f5c",
-  "#58508d",
-  "#bc5090",
-  "#ff6361",
-  "#ffa600",
-  "#2f4b7c",
-  "#a05195",
-  "#d45087",
-  "#f95d6a",
-  "#ff7c43",
-];
-
 const useChart = () => {
   const getChartColors = (size: number): string[] => {
-    const repeatedColors = [...colors];
+    const repeatedColors = [...LABEL_COLOR_LIST];
     while (repeatedColors.length < size) {
-      repeatedColors.push(...colors);
+      repeatedColors.push(...LABEL_COLOR_LIST);
     }
 
     return repeatedColors.slice(0, size);
