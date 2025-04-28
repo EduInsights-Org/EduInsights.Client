@@ -159,14 +159,17 @@ const Dashboard = () => {
           <AppStatCard
             icon={PresentationChartBarIcon}
             subTitle="Current GPA"
-            value={3.53}
+            value={(
+              batchGPAInfo.reduce((acc, item) => acc + item.averageGpa, 0) /
+              batchGPAInfo.length
+            ).toFixed(2)}
           />
           {batchGPAInfo.map((item) => (
             <AppStatCard
               key={item.batchName}
               mainTitle={item.batchName}
               subTitle="Current GPA"
-              value={item.averageGpa}
+              value={item.averageGpa.toFixed(2)}
             />
           ))}
         </div>
