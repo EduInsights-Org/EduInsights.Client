@@ -19,6 +19,7 @@ import { useTheme } from "@context/ThemeContext";
 import { resetBatchStore, selectBatch } from "@slices/batchSlice";
 import { Avatar } from "@radix-ui/themes";
 import BatchForm from "@components/BatchForm";
+import { getStudentByBatch } from "@/slices/studentSlice";
 const roles: Role[] = [Role.SuperAdmin];
 
 function useRouteMatch(patterns: readonly string[]) {
@@ -92,6 +93,7 @@ const SideBar = () => {
 
   const handleSelectBatch = (batchId: string) => {
     dispatch(selectBatch(batchId));
+    dispatch(getStudentByBatch(batchId));
   };
 
   return (

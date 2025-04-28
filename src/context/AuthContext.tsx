@@ -17,6 +17,7 @@ import {
 } from "@slices/batchSlice";
 import { getSubjects } from "@/slices/subjectSlice";
 import { getSemesters } from "@/slices/semesterSlice";
+import { getStudentByBatch } from "@/slices/studentSlice";
 
 interface AuthType {
   user: string | null;
@@ -82,6 +83,7 @@ export const AppAuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       dispatch(getSubjects({ instituteId }));
       dispatch(getSemesters({ instituteId }));
+      dispatch(getStudentByBatch(batches[0].id));
     } catch (error) {
       console.error(
         "An error occurred during the authentication process",
