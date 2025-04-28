@@ -4,7 +4,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
-import { Bar, Pie } from "react-chartjs-2";
+import { Pie } from "react-chartjs-2";
 import { useAppDispatch, useAppSelector } from "@slices/store";
 import {
   getRoleDistribution,
@@ -12,13 +12,12 @@ import {
   resetPagination,
   User,
 } from "@slices/userSlice";
-import { Badge, IconButton, Select, TextField } from "@radix-ui/themes";
+import { Badge, Select, TextField } from "@radix-ui/themes";
 import { capitalize } from "@utils/utils";
 import { RequestState, Role } from "@utils/enums";
 import AppTable, { TableColumn } from "@components/AppTable";
 import { usePopUp } from "@/context/PopUpContext";
 import DeleteConfirmationForm from "@/components/DeleteConfirmationForm";
-import useCharts from "@/hooks/useCharts";
 
 const UserManagement = () => {
   const dispatch = useAppDispatch();
@@ -26,7 +25,6 @@ const UserManagement = () => {
 
   const [page, setPage] = useState(1);
   const [selectBatch, setSelectBatch] = useState<string | null>(null);
-  const { pieChartOptions } = useCharts("User Role Distribution");
 
   const user = useAppSelector((state) => state.auth.userInfo);
   const instituteId = useAppSelector((state) => state.institute.institute!.id);
@@ -62,6 +60,19 @@ const UserManagement = () => {
 
   const handleGetRoleDistribution = async () => {
     await dispatch(getRoleDistribution({ instituteId }));
+  };
+
+  const pieChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "bottom" as const,
+      },
+      title: {
+        display: true,
+        text: "User Role Distribution",
+      },
+    },
   };
 
   const pieChartData = {
