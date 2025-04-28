@@ -17,7 +17,7 @@ import {
   UsersIcon,
 } from "@heroicons/react/24/outline";
 import { Badge } from "@radix-ui/themes";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Bar, Pie } from "react-chartjs-2";
 
 const Dashboard = () => {
@@ -30,6 +30,8 @@ const Dashboard = () => {
   const studentsGPAs = useAppSelector((state) => state.result.studentsGPAs);
   const resultsStatus = useAppSelector((state) => state.result.status);
   const batchGPAInfo = useAppSelector((state) => state.result.batchGPAInfo);
+
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   const columns: TableColumn<StudentGPA>[] = [
     { key: "indexNumber", header: "Index Number" },
@@ -104,13 +106,19 @@ const Dashboard = () => {
           </div>
           {studentsGPAs && (
             <AppTable
-              data={studentsGPAs}
+              data={studentsGPAs.slice(
+                (currentPage - 1) * 10,
+                currentPage * 10
+              )}
               columns={columns}
               loading={resultsStatus === RequestState.LOADING}
               pagination={{
-                handlePagination: () => {},
+                handlePagination: (targetPage) => {
+                  if (targetPage === 1) return setCurrentPage(1);
+                  setCurrentPage(currentPage + 1);
+                },
                 pageSize: 10,
-                totalRecords: 2,
+                totalRecords: studentsGPAs.length,
               }}
             />
           )}
