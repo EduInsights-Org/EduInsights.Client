@@ -18,6 +18,7 @@ import {
 import { getSubjects } from "@/slices/subjectSlice";
 import { getSemesters } from "@/slices/semesterSlice";
 import { getStudentByBatch } from "@/slices/studentSlice";
+import { getRoleDistribution } from "@/slices/userSlice";
 
 interface AuthType {
   user: string | null;
@@ -83,6 +84,7 @@ export const AppAuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       dispatch(getSubjects({ instituteId }));
       dispatch(getSemesters({ instituteId }));
+      dispatch(getRoleDistribution({ instituteId }));
       dispatch(getStudentByBatch(batches[0].id));
     } catch (error) {
       console.error(

@@ -52,8 +52,6 @@ const UserManagement = () => {
       getUsers({ instituteId, batchId: selectBatch, page, pageSize })
     );
     if (!getUsers.fulfilled.match(result)) dispatch(resetPagination());
-
-    handleGetRoleDistribution();
   };
 
   const reloadTableData = () => {
