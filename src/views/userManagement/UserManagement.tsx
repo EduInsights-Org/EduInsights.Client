@@ -18,10 +18,12 @@ import { RequestState, Role } from "@utils/enums";
 import AppTable, { TableColumn } from "@components/AppTable";
 import { usePopUp } from "@/context/PopUpContext";
 import DeleteConfirmationForm from "@/components/DeleteConfirmationForm";
+import useChart from "@/hooks/useChart";
 
 const UserManagement = () => {
   const dispatch = useAppDispatch();
   const { showPopUp, hidePopUp } = usePopUp();
+  const { getChartOptions, setChartData } = useChart();
 
   const [page, setPage] = useState(1);
   const [selectBatch, setSelectBatch] = useState<string | null>(null);
@@ -62,47 +64,16 @@ const UserManagement = () => {
     await dispatch(getRoleDistribution({ instituteId }));
   };
 
-  const pieChartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "bottom" as const,
-      },
-      title: {
-        display: true,
-        text: "User Role Distribution",
-      },
-    },
-  };
-
-  const pieChartData = {
-    labels: ["Super admin", "Admin", "Data entry", "Student"],
-    datasets: [
-      {
-        label: "Role",
-        data: [
-          roleDistribution.superAdmin,
-          roleDistribution.admin,
-          roleDistribution.dataEntry,
-          roleDistribution.student,
-        ],
-        backgroundColor: [
-          "#003f5c",
-          "#58508d",
-          "#bc5090",
-          "#ff6361",
-          "#ffa600",
-        ],
-        // borderColor: [
-        //   "rgba(30, 92, 199)",
-        //   "rgba(56, 118, 225)",
-        //   "rgba(100, 148, 232)",
-        //   "rgba(144, 179, 238)",
-        // ],
-        borderWidth: 0,
-      },
+  const pieChartData = setChartData({
+    labels: Object.keys(Role) as Array<keyof typeof Role>,
+    datasetLabel: "Role",
+    dataset: [
+      roleDistribution.superAdmin,
+      roleDistribution.admin,
+      roleDistribution.dataEntry,
+      roleDistribution.student,
     ],
-  };
+  });
 
   const columns: TableColumn<User>[] = [
     {
@@ -263,7 +234,12 @@ const UserManagement = () => {
               Refresh
             </button>
           </div>
-          <Pie data={pieChartData} options={pieChartOptions} />
+          <Pie
+            data={pieChartData}
+            options={getChartOptions({
+              title: "User Role Distribution",
+            })}
+          />
         </div>
       </div>
     </main>
