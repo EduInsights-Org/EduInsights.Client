@@ -1,5 +1,4 @@
 import AppTable, { TableColumn } from "@/components/AppTable";
-import useCharts from "@/hooks/useCharts";
 import { getGradeDistribution, getResults, Result } from "@/slices/resultSlice";
 import { useAppDispatch, useAppSelector } from "@/slices/store";
 import {
@@ -13,7 +12,6 @@ import { Pie } from "react-chartjs-2";
 
 const ResultManagement = () => {
   const dispatch = useAppDispatch();
-  const { pieChartOptions } = useCharts("Grade Distribution");
   const results = useAppSelector((state) => state.result.results);
   const instituteId = useAppSelector((state) => state.institute.institute.id);
   const gradeDistribution = useAppSelector(
@@ -115,6 +113,19 @@ const ResultManagement = () => {
     handleGetResults();
     handleGetGradeDistribution();
   }, [instituteId]);
+
+  const pieChartOptions = {
+    responsive: true,
+    plugins: {
+      legend: {
+        position: "bottom" as const,
+      },
+      title: {
+        display: true,
+        text: "Grade Distribution",
+      },
+    },
+  };
 
   const pieChartData = {
     labels: [
