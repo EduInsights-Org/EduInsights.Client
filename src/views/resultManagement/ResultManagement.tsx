@@ -1,6 +1,8 @@
 import AppTable, { TableColumn } from "@/components/AppTable";
+import useChart from "@/hooks/useChart";
 import { getGradeDistribution, getResults, Result } from "@/slices/resultSlice";
 import { useAppDispatch, useAppSelector } from "@/slices/store";
+import { GRADE_LIST } from "@/utils/constant";
 import {
   ArrowPathIcon,
   PencilIcon,
@@ -12,6 +14,7 @@ import { Pie } from "react-chartjs-2";
 
 const ResultManagement = () => {
   const dispatch = useAppDispatch();
+  const { getChartOptions, setChartData } = useChart();
   const results = useAppSelector((state) => state.result.results);
   const instituteId = useAppSelector((state) => state.institute.institute.id);
   const gradeDistribution = useAppSelector(
@@ -114,72 +117,25 @@ const ResultManagement = () => {
     handleGetGradeDistribution();
   }, [instituteId]);
 
-  const pieChartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: "bottom" as const,
-      },
-      title: {
-        display: true,
-        text: "Grade Distribution",
-      },
-    },
-  };
-
-  const pieChartData = {
-    labels: [
-      "A+",
-      "A",
-      "A-",
-      "B+",
-      "B",
-      "B-",
-      "C+",
-      "C",
-      "C-",
-      "D+",
-      "D",
-      "D-",
-      "E",
+  const pieChartData = setChartData({
+    labels: GRADE_LIST,
+    datasetLabel: "Grade Distribution",
+    dataset: [
+      gradeDistribution.aPlus.toString(),
+      gradeDistribution.a.toString(),
+      gradeDistribution.aMinus.toString(),
+      gradeDistribution.bPlus.toString(),
+      gradeDistribution.b.toString(),
+      gradeDistribution.bMinus.toString(),
+      gradeDistribution.cPlus.toString(),
+      gradeDistribution.c.toString(),
+      gradeDistribution.cMinus.toString(),
+      gradeDistribution.dPlus.toString(),
+      gradeDistribution.d.toString(),
+      gradeDistribution.dMinus.toString(),
+      gradeDistribution.e.toString(),
     ],
-    datasets: [
-      {
-        label: "Grade Distribution",
-        data: [
-          gradeDistribution.aPlus,
-          gradeDistribution.a,
-          gradeDistribution.aMinus,
-          gradeDistribution.bPlus,
-          gradeDistribution.b,
-          gradeDistribution.bMinus,
-          gradeDistribution.cPlus,
-          gradeDistribution.c,
-          gradeDistribution.cMinus,
-          gradeDistribution.dPlus,
-          gradeDistribution.d,
-          gradeDistribution.dMinus,
-          gradeDistribution.e,
-        ],
-        backgroundColor: [
-          "#003f5c", // A+
-          "#58508d", // A
-          "#bc5090", // A-
-          "#ff6361", // B+
-          "#ffa600", // B
-          "#6a2135", // B-
-          "#9b59b6", // C+
-          "#3498db", // C
-          "#2ecc71", // C-
-          "#f1c40f", // D+
-          "#e67e22", // D
-          "#e74c3c", // D-
-          "#95a5a6", // E
-        ],
-        borderWidth: 0,
-      },
-    ],
-  };
+  });
 
   return (
     <main>
@@ -221,7 +177,12 @@ const ResultManagement = () => {
               Refresh
             </button>
           </div>
-          <Pie data={pieChartData} options={pieChartOptions} />
+          <Pie
+            data={pieChartData}
+            options={getChartOptions({
+              title: "Grade Distribution",
+            })}
+          />
         </div>
       </div>
     </main>
