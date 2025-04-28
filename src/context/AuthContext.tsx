@@ -6,19 +6,9 @@ import {
   SetStateAction,
 } from "react";
 import { useAppDispatch } from "@slices/store";
-import { getUserInfo, refreshAccessToken } from "@slices/authSlice";
+import { refreshAccessToken } from "@slices/authSlice";
 import { AxiosPrivateService, AxiosPublicService } from "@utils/apiService";
 import PreLoader from "@components/PreLoader";
-import { getInstituteById } from "@slices/instituteSlice";
-import {
-  Batch,
-  getBatchesByInstituteId,
-  selectBatch,
-} from "@slices/batchSlice";
-import { getSubjects } from "@/slices/subjectSlice";
-import { getSemesters } from "@/slices/semesterSlice";
-import { getStudentByBatch } from "@/slices/studentSlice";
-import { getRoleDistribution } from "@/slices/userSlice";
 
 interface AuthType {
   user: string | null;
@@ -58,34 +48,9 @@ export const AppAuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setAuth((prev: any) => ({
         ...prev,
         accessToken,
+        user: userId,
       }));
       new AxiosPrivateService(accessToken);
-
-      const userInfoResponse = await dispatch(getUserInfo(userId));
-      const instituteId = userInfoResponse?.payload?.data.instituteId;
-
-      if (!instituteId) {
-        console.error("Institute ID is missing in user info");
-        return;
-      }
-
-      await dispatch(getInstituteById(instituteId));
-
-      const batchesResponse = await dispatch(
-        getBatchesByInstituteId(instituteId)
-      );
-      const batches = batchesResponse?.payload?.data as Batch[];
-
-      if (batches?.length > 0) {
-        dispatch(selectBatch(batches[0].id));
-      } else {
-        console.warn("No batches found for the institute");
-      }
-
-      dispatch(getSubjects({ instituteId }));
-      dispatch(getSemesters({ instituteId }));
-      dispatch(getRoleDistribution({ instituteId }));
-      dispatch(getStudentByBatch(batches[0].id));
     } catch (error) {
       console.error(
         "An error occurred during the authentication process",
