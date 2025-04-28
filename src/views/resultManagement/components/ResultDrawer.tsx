@@ -1,4 +1,4 @@
-import { Field, Input, Select } from "@headlessui/react";
+import { Field, Select } from "@headlessui/react";
 import { ChevronDownIcon } from "@radix-ui/themes";
 import clsx from "clsx";
 import { Drawer } from "rsuite";
@@ -13,6 +13,8 @@ import ToastContainer from "@/components/ToastContainer";
 import useCSV, { CSVConfig } from "@/hooks/useCSV";
 import AppDragDropArea from "@/components/AppDragDropArea";
 import { useState } from "react";
+import AppCombobox, { ComboboxOption } from "@/components/AppCombobox";
+import { GRADE_LIST } from "@/utils/constant";
 
 interface ResultDrawerProps {
   open: boolean;
@@ -31,6 +33,9 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
   const subjects = useAppSelector((state) => state.subject.subjects);
   const instituteId = useAppSelector((state) => state.institute.institute.id);
   const addResultStatus = useAppSelector((state) => state.result.createStatus);
+  const studentsByBatchResult = useAppSelector(
+    (state) => state.student.students
+  );
   const dispatch = useAppDispatch();
   const { addToast } = useToast();
 
@@ -38,6 +43,10 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
   const [subject, setSubject] = useState<string>("");
   const [grade, setGrade] = useState<string>("");
   const [indexNumber, setIndexNumber] = useState<string>("");
+
+  const [selectedPerson, setSelectedPerson] = useState<ComboboxOption | null>(
+    null
+  );
 
   const userCSVConfig: CSVConfig<ResultCSVConfig> = {
     headers: {
@@ -156,19 +165,17 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
 
         <div className="flex gap-x-2 justify-between">
           {/* indexNumber */}
-          <Field className="w-1/2">
-            <Input
-              id="indexNumber"
-              placeholder="Index Number"
-              type="text"
-              required
-              className={clsx(
-                "ring-1 ring-inset block w-full rounded-md bg-light-subBg dark:bg-subBg dark:ring-borderGray ring-light-borderGray py-2.5 px-3 text-sm text-light-font01 dark:text-font01",
-                "focus:outline-none data-[focus]:outline-1 data-[focus]:-outline-offset-1 data-[focus]:outline-light-font01 dark:data-[focus]:outline-font01"
-              )}
-              onChange={(e) => setIndexNumber(e.target.value)}
+          <div className="w-1/2">
+            <AppCombobox
+              onChange={(value) => setSelectedPerson(value)}
+              options={studentsByBatchResult.map((item) => ({
+                id: item.id,
+                name: item.indexNumber,
+              }))}
+              selected={selectedPerson}
+              placeholder={"Select Index Number"}
             />
-          </Field>
+          </div>
 
           {/* grade */}
           <Field className="w-1/2">
@@ -182,19 +189,11 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
                 onChange={(e) => setGrade(e.target.value)}
               >
                 <option value=""> Select Grade</option>
-                <option value="A+">A+</option>
-                <option value="A">A</option>
-                <option value="A-">A-</option>
-                <option value="B+">B</option>
-                <option value="B">B+</option>
-                <option value="B-">B-</option>
-                <option value="C+">C+</option>
-                <option value="C">C</option>
-                <option value="C-">C-</option>
-                <option value="D+">D+</option>
-                <option value="D">D</option>
-                <option value="D-">D-</option>
-                <option value="E">E</option>
+                {GRADE_LIST.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
               </Select>
               <ChevronDownIcon
                 className="group pointer-events-none absolute top-4 right-2.5 size-2 fill-light-font02 dark:fill-font02"
