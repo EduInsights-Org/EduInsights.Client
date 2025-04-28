@@ -4,6 +4,7 @@ import { AxiosPrivateService } from "@utils/apiService";
 import { RequestState } from "@utils/enums";
 
 export interface Semester {
+  id?: string;
   year: string;
   sem: string;
   instituteId: string;

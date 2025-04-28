@@ -77,3 +77,12 @@ export enum RequestState {
   SUCCEEDED = "succeeded",
   FAILED = "failed",
 }
+
+export type GPAClass =
+  | "First Class"
+  | "Second Upper Class"
+  | "Second Lower Class"
+  | "Pass Class"
+  | "Fail";
+
+export type GPAColor = "blue" | "sky" | "lime" | "amber" | "red";

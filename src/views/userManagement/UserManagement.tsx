@@ -4,7 +4,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { useEffect, useState } from "react";
-import { Bar, Pie } from "react-chartjs-2";
+import { Pie } from "react-chartjs-2";
 import { useAppDispatch, useAppSelector } from "@slices/store";
 import {
   getRoleDistribution,
@@ -12,21 +12,21 @@ import {
   resetPagination,
   User,
 } from "@slices/userSlice";
-import { Badge, IconButton, Select, TextField } from "@radix-ui/themes";
+import { Badge, Select, TextField } from "@radix-ui/themes";
 import { capitalize } from "@utils/utils";
 import { RequestState, Role } from "@utils/enums";
 import AppTable, { TableColumn } from "@components/AppTable";
 import { usePopUp } from "@/context/PopUpContext";
 import DeleteConfirmationForm from "@/components/DeleteConfirmationForm";
-import useCharts from "@/hooks/useCharts";
+import useChart from "@/hooks/useChart";
 
 const UserManagement = () => {
   const dispatch = useAppDispatch();
   const { showPopUp, hidePopUp } = usePopUp();
+  const { getChartOptions, setChartData } = useChart();
 
   const [page, setPage] = useState(1);
   const [selectBatch, setSelectBatch] = useState<string | null>(null);
-  const { pieChartOptions } = useCharts();
 
   const user = useAppSelector((state) => state.auth.userInfo);
   const instituteId = useAppSelector((state) => state.institute.institute!.id);
@@ -53,41 +53,27 @@ const UserManagement = () => {
     );
     if (!getUsers.fulfilled.match(result)) dispatch(resetPagination());
 
-    await dispatch(getRoleDistribution({ instituteId }));
+    handleGetRoleDistribution();
   };
 
   const reloadTableData = () => {
     initialLoad();
   };
 
-  const pieChartData = {
-    labels: ["Super admin", "Admin", "Data entry", "Student"],
-    datasets: [
-      {
-        label: "Role",
-        data: [
-          roleDistribution.superAdmin,
-          roleDistribution.admin,
-          roleDistribution.dataEntry,
-          roleDistribution.student,
-        ],
-        backgroundColor: [
-          "#003f5c",
-          "#58508d",
-          "#bc5090",
-          "#ff6361",
-          "#ffa600",
-        ],
-        // borderColor: [
-        //   "rgba(30, 92, 199)",
-        //   "rgba(56, 118, 225)",
-        //   "rgba(100, 148, 232)",
-        //   "rgba(144, 179, 238)",
-        // ],
-        borderWidth: 0,
-      },
-    ],
+  const handleGetRoleDistribution = async () => {
+    await dispatch(getRoleDistribution({ instituteId }));
   };
+
+  const pieChartData = setChartData({
+    labels: Object.keys(Role) as Array<keyof typeof Role>,
+    datasetLabel: "Role",
+    dataset: [
+      roleDistribution.superAdmin,
+      roleDistribution.admin,
+      roleDistribution.dataEntry,
+      roleDistribution.student,
+    ],
+  });
 
   const columns: TableColumn<User>[] = [
     {
@@ -238,8 +224,22 @@ const UserManagement = () => {
         </div>
 
         {/* chart */}
-        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray p-3 min-w-[250px] w-[35%] h-[500px] flex justify-center">
-          <Pie data={pieChartData} options={pieChartOptions} />
+        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[250px] w-[35%] h-[500px] flex flex-col">
+          <div className="flex items-center py-4 px-3 bg-light-subBg dark:bg-subBg">
+            <button
+              onClick={handleGetRoleDistribution}
+              className="ml-auto text-xs text-light-font02 dark:text-font02 flex justify-center items-center gap-x-1"
+            >
+              <ArrowPathIcon className="size-3" />
+              Refresh
+            </button>
+          </div>
+          <Pie
+            data={pieChartData}
+            options={getChartOptions({
+              title: "User Role Distribution",
+            })}
+          />
         </div>
       </div>
     </main>

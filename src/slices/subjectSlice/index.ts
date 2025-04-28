@@ -4,6 +4,7 @@ import { AxiosPrivateService } from "@utils/apiService";
 import { RequestState } from "@utils/enums";
 
 export interface Subject {
+  id: string;
   name: string;
   code: string;
   credit: string;
@@ -18,26 +19,14 @@ export interface SubjectState {
   status: RequestState;
   createStatus: RequestState;
   error: string | null;
-  paginatedResponse: PaginatedResponse;
-}
-
-interface PaginatedResponse {
-  data: Subject[];
-  totalRecords: number;
-  currentPage: number;
-  pageSize: number;
+  subjects: Subject[];
 }
 
 const initialState: SubjectState = {
   status: RequestState.IDLE,
   createStatus: RequestState.IDLE,
   error: null,
-  paginatedResponse: {
-    currentPage: 0,
-    data: [],
-    pageSize: 10,
-    totalRecords: 0,
-  },
+  subjects: [],
 };
 
 const batchSlice = createSlice({
@@ -62,8 +51,8 @@ const batchSlice = createSlice({
       })
       .addCase(
         getSubjects.fulfilled,
-        (state, action: PayloadAction<{ data: PaginatedResponse }>) => {
-          state.paginatedResponse = action.payload.data;
+        (state, action: PayloadAction<{ data: Subject[] }>) => {
+          state.subjects = action.payload.data;
           state.createStatus = RequestState.SUCCEEDED;
         }
       )
@@ -76,11 +65,11 @@ const batchSlice = createSlice({
 export const getSubjects = createAsyncThunk(
   "subject/getSubjects",
   async ({
-    instituteId = "67e2bd370b72702dfca67020",
+    instituteId,
     page = 1,
     pageSize = 10,
   }: {
-    instituteId?: string;
+    instituteId: string;
     page?: number;
     pageSize?: number;
   }) => {

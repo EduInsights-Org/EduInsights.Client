@@ -11,17 +11,13 @@ import {
 import { useToast } from "@context/ToastContext";
 import ToastContainer from "@components/ToastContainer";
 import { RequestState, Role } from "@utils/enums";
-import useCSV from "@hooks/useCSV";
-import {
-  CheckCircleIcon,
-  ExclamationCircleIcon,
-  XCircleIcon,
-} from "@heroicons/react/16/solid";
+import useCSV, { CSVConfig } from "@hooks/useCSV";
 import { useState } from "react";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { Drawer } from "rsuite";
 import AppButton from "@components/AppButton";
 import AppDivider from "@components/AppDivider";
+import AppDragDropArea from "@/components/AppDragDropArea";
 
 interface UserDrawerProps {
   open: boolean;
@@ -29,13 +25,16 @@ interface UserDrawerProps {
 }
 
 const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
-  const {
-    usersList,
-    fileName,
-    error: csvFileError,
-    resetCSVFile,
-    handleCSVSelect,
-  } = useCSV();
+  interface UserData {
+    firstName: string;
+    lastName: string;
+    indexNumber: string;
+    email: string;
+    role: string;
+    instituteId: string;
+    batchId: string;
+    password: string;
+  }
 
   const { addToast } = useToast();
   const dispatch = useAppDispatch();
@@ -60,10 +59,39 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
     indexNumber: false,
     email: false,
   });
-  const [csvFileValidation, setCsvFileValidation] = useState<boolean>(false);
+
+  const userCSVConfig: CSVConfig<UserData> = {
+    headers: {
+      firstName: "firstName",
+      lastName: "lastName",
+      indexNumber: "indexNumber",
+      email: "email",
+      role: "role",
+      instituteId: "instituteId",
+      batchId: "batchId",
+      password: "password",
+    },
+    requiredHeaders: ["firstName", "lastName", "email", "role"],
+    defaultValues: {
+      password: "123321",
+      instituteId: instituteId,
+      batchId: batchId,
+    },
+    validateRow: (row) => {
+      return row.email.includes("@");
+    },
+  };
+
+  const {
+    parsedData: usersList,
+    error: csvFileError,
+    fileName,
+    handleCSVSelect,
+    resetCSVFile,
+  } = useCSV<UserData>(userCSVConfig);
 
   const handleCreateUsers = () => {
-    if (!usersList) return setCsvFileValidation(true);
+    if (!usersList) return;
     dispatch(addMultipleUsers(usersList)).then((result) => {
       const responseMessage = result.payload.data as AddUsersResponse;
       const isAllAreSuccessfullyAdded: boolean =
@@ -159,14 +187,6 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
       indexNumber: false,
       email: false,
     });
-  };
-
-  const CSVResetButton = () => {
-    return (
-      <button onClick={() => resetCSVFile()}>
-        <XCircleIcon className="h-5 w-5 absolute top-2 right-2 text-light-font02 dark:text-font02" />
-      </button>
-    );
   };
 
   return (
@@ -360,89 +380,13 @@ const UserDrawer = ({ open, setOpen }: UserDrawerProps) => {
 
         <AppDivider label="Or" className="my-8" />
 
-        <div
-          className={clsx(
-            "flex gap-x-2 justify-between w-full h-56 border-[1px] rounded-md",
-            {
-              "border-light-borderGray dark:border-borderGray border-dashed":
-                csvFileValidation === false && csvFileError === null,
-              "border-red-500 border-dashed": csvFileValidation === true,
-              "border-[#bd5622] dark:border-[#df985d]": csvFileError === true,
-              "border-[#45855f] dark:border-[#59aa77]": csvFileError === false,
-            }
-          )}
-        >
-          {csvFileError === null ? (
-            <label
-              form="dropzone-file"
-              className="flex flex-col items-center justify-center w-full cursor-pointer bg-light-subBg dark:bg-subBg hover:bg-light-mainBg dark:hover:bg-mainBg rounded-md"
-            >
-              <div className="flex flex-col items-center justify-center pt-5 pb-6">
-                <svg
-                  className="w-8 h-8 mb-2 text-light-font02 dark:text-font02"
-                  aria-hidden="true"
-                  xmlns="http://www.w3.org/2000/svg"
-                  fill="none"
-                  viewBox="0 0 20 16"
-                >
-                  <path
-                    stroke="currentColor"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth="2"
-                    d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"
-                  />
-                </svg>
-                <p className="text-sm text-light-font02 dark:text-font02">
-                  <span className="font-semibold">Click to upload</span> or drag
-                  and drop
-                </p>
-                <p className="text-xs text-light-font02 dark:text-font02">
-                  CSV file
-                </p>
-              </div>
-              <input
-                type="file"
-                accept=".csv"
-                className="hidden"
-                onChange={(e) => {
-                  setCsvFileValidation(false);
-                  handleCSVSelect(e, instituteId, batchId);
-                }}
-              />
-            </label>
-          ) : (
-            <>
-              {csvFileError ? (
-                <div className="relative flex items-center justify-center gap-x-2 w-full bg-[#fdf0d9] dark:bg-[#301f13] px-2 rounded-md">
-                  <ExclamationCircleIcon className="h-10 w-10 text-[#bd5622] dark:text-[#df985d]" />
-                  <CSVResetButton />
-                  <div className="flex flex-col gap-y-1">
-                    <span className="text-sm font-semibold leading-none text-[#bd5622] dark:text-[#df985d]">
-                      {fileName}
-                    </span>
-                    <span className="flex gap-x-2 items-center text-xs leading-none text-[#bd5622] dark:text-[#df985d]">
-                      Invalid data found
-                    </span>
-                  </div>
-                </div>
-              ) : (
-                <div className="relative flex items-center justify-center w-full gap-x-2 rounded-md bg-[#e9f6eb] dark:bg-[#192d23] dark:border-[#59aa77] px-2">
-                  <CheckCircleIcon className="h-10 w-10 dark:text-[#59aa77] text-[#45855f]" />
-                  <CSVResetButton />
-                  <div className="flex flex-col gap-y-1">
-                    <span className="text-sm font-semibold leading-none dark:text-[#59aa77] text-[#45855f]">
-                      {fileName}
-                    </span>
-                    <span className="flex gap-x-2 items-center text-xs leading-none dark:text-[#59aa77] text-[#45855f]">
-                      Ready to save
-                    </span>
-                  </div>
-                </div>
-              )}
-            </>
-          )}
-        </div>
+        <AppDragDropArea
+          csvFileError={csvFileError}
+          dataList={usersList}
+          fileName={fileName}
+          handleCSVSelect={handleCSVSelect}
+          resetCSVFile={resetCSVFile}
+        />
 
         <AppButton
           title="Add Users"

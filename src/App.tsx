@@ -7,6 +7,7 @@ import { PopUpProvider } from "@context/PopUpContext";
 import { ThemeProvider } from "@context/ThemeContext";
 import { Theme } from "@radix-ui/themes";
 import { ToastProvider } from "@context/ToastContext";
+import { ChartJSProvider } from "@providers/ChartJSProvider";
 
 export default function App() {
   return (
@@ -16,7 +17,9 @@ export default function App() {
           <ThemeProvider>
             <PopUpProvider>
               <ToastProvider>
-                <AppHandler />
+                <ChartJSProvider>
+                  <AppHandler />
+                </ChartJSProvider>
               </ToastProvider>
             </PopUpProvider>
           </ThemeProvider>
