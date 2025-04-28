@@ -10,10 +10,11 @@ import { useAppDispatch, useAppSelector } from "@/slices/store";
 import { RequestState } from "@/utils/enums";
 import { getGPAClassInfo } from "@/utils/utils";
 import {
-  AcademicCapIcon,
   ArrowPathIcon,
+  PresentationChartBarIcon,
   SquaresPlusIcon,
   UserGroupIcon,
+  UsersIcon,
 } from "@heroicons/react/24/outline";
 import { Badge } from "@radix-ui/themes";
 import { useEffect } from "react";
@@ -22,6 +23,9 @@ import { Bar, Pie } from "react-chartjs-2";
 const Dashboard = () => {
   const dispatch = useAppDispatch();
   const { getChartOptions, setChartData } = useChart();
+  const roleDistribution = useAppSelector(
+    (state) => state.user.roleDistribution
+  );
   const instituteId = useAppSelector((state) => state.institute.institute.id);
   const studentsGPAs = useAppSelector((state) => state.result.studentsGPAs);
   const resultsStatus = useAppSelector((state) => state.result.status);
@@ -68,21 +72,21 @@ const Dashboard = () => {
           {/* card one */}
           <AppStatCard
             icon={UserGroupIcon}
-            title="Total Student"
-            value={1000}
+            subTitle="Total Students"
+            value={roleDistribution.student}
           />
           {/* card two */}
           <AppStatCard
-            icon={AcademicCapIcon}
-            title="Total Lectures"
-            value={100}
+            icon={UsersIcon}
+            subTitle="Total Admins"
+            value={roleDistribution.admin}
           />
 
           {/* card two */}
           <AppStatCard
             icon={SquaresPlusIcon}
-            title="Total Batches"
-            value={100}
+            subTitle="Total Batches"
+            value={batchGPAInfo.length}
           />
         </div>
 
@@ -135,26 +139,37 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[250px] w-[45%] flex flex-col">
-        <div className="flex items-center py-4 px-3 bg-light-subBg dark:bg-subBg">
-          <button
-            onClick={handleGetBatchAverageGPAs}
-            className="ml-auto text-xs text-light-font02 dark:text-font02 flex justify-center items-center gap-x-1"
-          >
-            <ArrowPathIcon className="size-3" />
-            Refresh
-          </button>
+      <div className="flex justify-between gap-x-2">
+        {/* pie chart */}
+        <div className="pl-1 border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[250px] w-[40%] flex flex-col">
+          <Bar
+            options={getChartOptions({
+              title: "Total Number of Students in Each Batch",
+            })}
+            data={setChartData({
+              labels: batchGPAInfo.map((item) => item.batchName),
+              dataset: batchGPAInfo.map((item) => item.totalStudentsInBatch),
+              datasetLabel: "Total Students",
+            })}
+          />
         </div>
-        <Bar
-          options={getChartOptions({
-            title: "Total Number of Students in Each Batch",
-          })}
-          data={setChartData({
-            labels: batchGPAInfo.map((item) => item.batchName),
-            dataset: batchGPAInfo.map((item) => item.totalStudentsInBatch),
-            datasetLabel: "Total Students",
-          })}
-        />
+
+        {/* cards */}
+        <div className="w-[60%] flex gap-x-2 justify-between">
+          <AppStatCard
+            icon={PresentationChartBarIcon}
+            subTitle="Current GPA"
+            value={3.53}
+          />
+          {batchGPAInfo.map((item) => (
+            <AppStatCard
+              key={item.batchName}
+              mainTitle={item.batchName}
+              subTitle="Current GPA"
+              value={item.averageGpa}
+            />
+          ))}
+        </div>
       </div>
     </main>
   );
