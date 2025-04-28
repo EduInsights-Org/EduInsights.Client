@@ -163,15 +163,23 @@ const batchSlice = createSlice({
   },
 });
 
-export const getResults = createAsyncThunk("result/getResults", async () =>
-  // { instituteId }: { instituteId: string }
-  {
+export const getResults = createAsyncThunk(
+  "result/getResults",
+  async ({
+    instituteId,
+    batchId,
+  }: {
+    instituteId: string;
+    batchId?: string;
+  }) => {
     return new Promise<any>((resolve, reject) => {
-      // const params = new URLSearchParams();
-      // params.append("instituteId", instituteId);
       AxiosPrivateService.getInstance()
-        // .get(`${AppConfig.serviceUrls.result}?${params.toString()}`)
-        .get(`${AppConfig.serviceUrls.result}`)
+        .get(`${AppConfig.serviceUrls.result}`, {
+          params: {
+            instituteId,
+            batchId,
+          },
+        })
         .then((response) => {
           resolve(response.data);
         })
@@ -187,7 +195,7 @@ export const addResult = createAsyncThunk(
   async (result: CreateResultPayload) => {
     return new Promise<any>((resolve, reject) => {
       AxiosPrivateService.getInstance()
-        .post(AppConfig.serviceUrls.result, result)
+        .post(`${AppConfig.serviceUrls.result}/`, result)
         .then((response) => {
           resolve(response.data);
         })
@@ -209,7 +217,7 @@ export const getGradeDistribution = createAsyncThunk(
         .get(
           `${
             AppConfig.serviceUrls.result
-          }grade-distribution?${params.toString()}`
+          }/grade-distribution?${params.toString()}`
         )
         .then((response) => {
           resolve(response.data);
@@ -238,7 +246,9 @@ export const getStudentsGPAs = createAsyncThunk(
       }
 
       AxiosPrivateService.getInstance()
-        .get(`${AppConfig.serviceUrls.result}students-gpa?${params.toString()}`)
+        .get(
+          `${AppConfig.serviceUrls.result}/students-gpa?${params.toString()}`
+        )
         .then((response) => {
           resolve(response.data);
         })
@@ -257,7 +267,9 @@ export const getBatchAverageGPAs = createAsyncThunk(
       params.append("instituteId", instituteId);
 
       AxiosPrivateService.getInstance()
-        .get(`${AppConfig.serviceUrls.result}average-gpas?${params.toString()}`)
+        .get(
+          `${AppConfig.serviceUrls.result}/average-gpas?${params.toString()}`
+        )
         .then((response) => {
           resolve(response.data);
         })
