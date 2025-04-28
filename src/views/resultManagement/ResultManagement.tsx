@@ -174,7 +174,6 @@ const ResultManagement = () => {
               data={results.slice((currentPage - 1) * 10, currentPage * 10)}
               columns={columns}
               loading={resultsStatus === RequestState.LOADING}
-              checkboxSelection
               pagination={{
                 handlePagination: (targetPage) => {
                   if (targetPage === 1) return setCurrentPage(1);
