@@ -39,11 +39,7 @@ const ResultManagement = () => {
       render: (result) => {
         const gradeColorMap: Record<
           string,
-          | "gray"
-          | "gold"
-          | "bronze"
           | "brown"
-          | "yellow"
           | "amber"
           | "orange"
           | "tomato"
@@ -56,15 +52,6 @@ const ResultManagement = () => {
           | "violet"
           | "iris"
           | "indigo"
-          | "blue"
-          | "cyan"
-          | "teal"
-          | "jade"
-          | "green"
-          | "grass"
-          | "lime"
-          | "mint"
-          | "sky"
         > = {
           "A+": "indigo",
           A: "iris",
