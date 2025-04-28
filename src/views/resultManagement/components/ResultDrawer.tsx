@@ -42,11 +42,7 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
   const [semester, setSemester] = useState<string>("");
   const [subject, setSubject] = useState<string>("");
   const [grade, setGrade] = useState<string>("");
-  const [indexNumber, setIndexNumber] = useState<string>("");
-
-  const [selectedPerson, setSelectedPerson] = useState<ComboboxOption | null>(
-    null
-  );
+  const [indexNumber, setIndexNumber] = useState<ComboboxOption | null>(null);
 
   const userCSVConfig: CSVConfig<ResultCSVConfig> = {
     headers: {
@@ -76,7 +72,7 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
     const result = await dispatch(
       addResult({
         grade: grade,
-        indexNumber: indexNumber,
+        indexNumber: indexNumber.name.toString(),
         subjectId: subject,
         semesterId: semester,
         instituteId: instituteId,
@@ -167,12 +163,12 @@ const ResultDrawer = ({ open, setOpen }: ResultDrawerProps) => {
           {/* indexNumber */}
           <div className="w-1/2">
             <AppCombobox
-              onChange={(value) => setSelectedPerson(value)}
+              onChange={(value) => setIndexNumber(value)}
               options={studentsByBatchResult.map((item) => ({
                 id: item.id,
                 name: item.indexNumber,
               }))}
-              selected={selectedPerson}
+              selected={indexNumber}
               placeholder={"Select Index Number"}
             />
           </div>
