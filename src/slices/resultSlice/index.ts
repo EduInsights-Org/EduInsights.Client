@@ -36,12 +36,29 @@ export interface CreateResultPayload {
   instituteId: string;
 }
 
+export interface StudentGPA {
+  indexNumber: string;
+  batch: string;
+  gpa: number;
+  firstName: string;
+  lastName: string;
+  subjectCount: string;
+}
+export interface BatchGPAInfo {
+  batchId: string;
+  batchName: string;
+  averageGpa: number;
+  studentCount: number;
+  totalStudentsInBatch: number;
+}
 export interface ResultState {
   status: RequestState;
   createStatus: RequestState;
   error: string | null;
   results: Result[];
+  studentsGPAs: StudentGPA[];
   gradeDistribution: GradeDistributionResponse;
+  batchGPAInfo: BatchGPAInfo[];
 }
 
 const initialState: ResultState = {
@@ -49,6 +66,8 @@ const initialState: ResultState = {
   createStatus: RequestState.IDLE,
   error: null,
   results: [],
+  studentsGPAs: [],
+  batchGPAInfo: [],
   gradeDistribution: {
     aPlus: 0,
     a: 0,
@@ -106,10 +125,39 @@ const batchSlice = createSlice({
         (state, action: PayloadAction<{ data: GradeDistributionResponse }>) => {
           state.gradeDistribution = action.payload.data;
           state.createStatus = RequestState.SUCCEEDED;
-          console.log(state.gradeDistribution);
         }
       )
       .addCase(getGradeDistribution.rejected, (state) => {
+        state.createStatus = RequestState.FAILED;
+      });
+
+    builder
+      .addCase(getStudentsGPAs.pending, (state) => {
+        state.createStatus = RequestState.LOADING;
+      })
+      .addCase(
+        getStudentsGPAs.fulfilled,
+        (state, action: PayloadAction<{ data: StudentGPA[] }>) => {
+          state.studentsGPAs = action.payload.data;
+          state.createStatus = RequestState.SUCCEEDED;
+        }
+      )
+      .addCase(getStudentsGPAs.rejected, (state) => {
+        state.createStatus = RequestState.FAILED;
+      });
+
+    builder
+      .addCase(getBatchAverageGPAs.pending, (state) => {
+        state.createStatus = RequestState.LOADING;
+      })
+      .addCase(
+        getBatchAverageGPAs.fulfilled,
+        (state, action: PayloadAction<{ data: BatchGPAInfo[] }>) => {
+          state.batchGPAInfo = action.payload.data;
+          state.createStatus = RequestState.SUCCEEDED;
+        }
+      )
+      .addCase(getBatchAverageGPAs.rejected, (state) => {
         state.createStatus = RequestState.FAILED;
       });
   },
@@ -163,6 +211,53 @@ export const getGradeDistribution = createAsyncThunk(
             AppConfig.serviceUrls.result
           }grade-distribution?${params.toString()}`
         )
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+);
+
+export const getStudentsGPAs = createAsyncThunk(
+  "result/getStudentsGPAs",
+  async ({
+    instituteId,
+    batchId,
+  }: {
+    instituteId: string;
+    batchId?: string;
+  }) => {
+    return new Promise<any>((resolve, reject) => {
+      const params = new URLSearchParams();
+      params.append("instituteId", instituteId);
+      if (batchId) {
+        params.append("batchId", batchId);
+      }
+
+      AxiosPrivateService.getInstance()
+        .get(`${AppConfig.serviceUrls.result}students-gpa?${params.toString()}`)
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+);
+
+export const getBatchAverageGPAs = createAsyncThunk(
+  "result/getBatchAverageGPAs",
+  async ({ instituteId }: { instituteId: string }) => {
+    return new Promise<any>((resolve, reject) => {
+      const params = new URLSearchParams();
+      params.append("instituteId", instituteId);
+
+      AxiosPrivateService.getInstance()
+        .get(`${AppConfig.serviceUrls.result}average-gpas?${params.toString()}`)
         .then((response) => {
           resolve(response.data);
         })
