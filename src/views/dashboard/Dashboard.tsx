@@ -1,3 +1,4 @@
+import AppStatCard from "@/components/AppCounterCard";
 import AppTable, { TableColumn } from "@/components/AppTable";
 import useChart from "@/hooks/useChart";
 import {
@@ -6,8 +7,14 @@ import {
   StudentGPA,
 } from "@/slices/resultSlice";
 import { useAppDispatch, useAppSelector } from "@/slices/store";
+import { RequestState } from "@/utils/enums";
 import { getGPAClassInfo } from "@/utils/utils";
-import { ArrowPathIcon } from "@heroicons/react/24/outline";
+import {
+  AcademicCapIcon,
+  ArrowPathIcon,
+  SquaresPlusIcon,
+  UserGroupIcon,
+} from "@heroicons/react/24/outline";
 import { Badge } from "@radix-ui/themes";
 import { useEffect } from "react";
 import { Bar, Pie } from "react-chartjs-2";
@@ -17,6 +24,7 @@ const Dashboard = () => {
   const { getChartOptions, setChartData } = useChart();
   const instituteId = useAppSelector((state) => state.institute.institute.id);
   const studentsGPAs = useAppSelector((state) => state.result.studentsGPAs);
+  const resultsStatus = useAppSelector((state) => state.result.status);
   const batchGPAInfo = useAppSelector((state) => state.result.batchGPAInfo);
 
   const columns: TableColumn<StudentGPA>[] = [
@@ -30,13 +38,6 @@ const Dashboard = () => {
       },
     },
     { key: "batch", header: "Batch" },
-    {
-      key: "subjectCount",
-      header: "Subject Count",
-      render: (item: StudentGPA) => {
-        return <div className="flex">{item.subjectCount}</div>;
-      },
-    },
     {
       key: "gpa",
       header: "Current GPA",
@@ -61,9 +62,32 @@ const Dashboard = () => {
 
   return (
     <main className="flex flex-col gap-y-2">
-      <div className="flex justify-between flex-row-reverse gap-x-2">
+      <div className="flex justify-between gap-x-2">
+        {/* cards */}
+        <div className="flex w-[15%] flex-col justify-between">
+          {/* card one */}
+          <AppStatCard
+            icon={UserGroupIcon}
+            title="Total Student"
+            value={1000}
+          />
+          {/* card two */}
+          <AppStatCard
+            icon={AcademicCapIcon}
+            title="Total Lectures"
+            value={100}
+          />
+
+          {/* card two */}
+          <AppStatCard
+            icon={SquaresPlusIcon}
+            title="Total Batches"
+            value={100}
+          />
+        </div>
+
         {/* table */}
-        <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[600px] w-[65%] h-[500px]">
+        <div className="border flex flex-col rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray w-[50%] h-[500px]">
           {/* table header */}
           <div className="flex gap-x-3 items-center py-4 px-3 bg-light-subBg dark:bg-subBg">
             <button
@@ -78,7 +102,7 @@ const Dashboard = () => {
             <AppTable
               data={studentsGPAs}
               columns={columns}
-              // loading={semestersLoading === RequestState.LOADING}
+              loading={resultsStatus === RequestState.LOADING}
               pagination={{
                 handlePagination: () => {},
                 pageSize: 10,
@@ -87,8 +111,9 @@ const Dashboard = () => {
             />
           )}
         </div>
+
         {/* pie */}
-        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[250px] w-[35%] h-[500px] flex flex-col">
+        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray w-[35%] h-[500px] flex flex-col">
           <div className="flex items-center py-4 px-3 bg-light-subBg dark:bg-subBg">
             <button
               onClick={handleGetBatchAverageGPAs}
@@ -99,12 +124,13 @@ const Dashboard = () => {
             </button>
           </div>
           <Pie
+            className="my-auto"
+            options={getChartOptions({ title: "Batch GPAs Distribution" })}
             data={setChartData({
               labels: batchGPAInfo.map((item) => item.batchName),
               dataset: batchGPAInfo.map((item) => item.averageGpa),
               datasetLabel: "GPA",
             })}
-            options={getChartOptions({ title: "Batch GPAs Distribution" })}
           />
         </div>
       </div>
