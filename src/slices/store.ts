@@ -6,6 +6,7 @@ import userReducer from "@slices/userSlice";
 import subjectReducer from "@slices/subjectSlice";
 import semesterReducer from "@slices/semesterSlice";
 import resultReducer from "@slices/resultSlice";
+import studentReducer from "@slices/studentSlice";
 import { TypedUseSelectorHook, useDispatch, useSelector } from "react-redux";
 
 export const store = configureStore({
@@ -17,6 +18,7 @@ export const store = configureStore({
     subject: subjectReducer,
     semester: semesterReducer,
     result: resultReducer,
+    student: studentReducer,
   },
 });
 

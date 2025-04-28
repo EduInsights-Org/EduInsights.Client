@@ -22,6 +22,7 @@ export const AppConfig = {
     institute: ServiceBaseUrl + "/institutes/",
     batch: ServiceBaseUrl + "/batches/",
     subject: ServiceBaseUrl + "/subjects/",
+    student: ServiceBaseUrl + "/students/",
     semester: ServiceBaseUrl + "/semesters/",
     result: ServiceBaseUrl + "/results/",
     userInfo: ServiceBaseUrl + "/user/basic-information/",
