@@ -168,9 +168,11 @@ const AppTable = <T,>({
         </tbody>
       </table>
       <div className="border-t border-light-borderGray dark:border-borderGray flex justify-between items-center py-3 bg-light-subBg dark:bg-subBg mt-auto">
-        <span className="text-light-font01 text-xs dark:text-font01 pl-3">
-          {selectedIds.size} rows selected
-        </span>
+        {checkboxSelection && (
+          <span className="text-light-font01 text-xs dark:text-font01 pl-3">
+            {selectedIds.size} rows selected
+          </span>
+        )}
         <span className="text-light-font01 text-xs dark:text-font01 ml-auto mr-4">
           Page {page} of {Math.ceil(totalRecords / pageSize)}
         </span>
