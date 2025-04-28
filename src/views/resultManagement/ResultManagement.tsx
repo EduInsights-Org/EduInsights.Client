@@ -3,6 +3,7 @@ import useChart from "@/hooks/useChart";
 import { getGradeDistribution, getResults, Result } from "@/slices/resultSlice";
 import { useAppDispatch, useAppSelector } from "@/slices/store";
 import { GRADE_LIST } from "@/utils/constant";
+import { RequestState } from "@/utils/enums";
 import {
   ArrowPathIcon,
   PencilIcon,
@@ -16,6 +17,7 @@ const ResultManagement = () => {
   const dispatch = useAppDispatch();
   const { getChartOptions, setChartData } = useChart();
   const results = useAppSelector((state) => state.result.results);
+  const resultsStatus = useAppSelector((state) => state.result.status);
   const instituteId = useAppSelector((state) => state.institute.institute.id);
   const gradeDistribution = useAppSelector(
     (state) => state.result.gradeDistribution
@@ -143,7 +145,7 @@ const ResultManagement = () => {
             <AppTable
               data={results.slice((currentPage - 1) * 10, currentPage * 10)}
               columns={columns}
-              // loading={subjectsLoading === RequestState.LOADING}
+              loading={resultsStatus === RequestState.LOADING}
               checkboxSelection
               pagination={{
                 handlePagination: (targetPage) => {
