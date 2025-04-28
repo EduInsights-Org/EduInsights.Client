@@ -9,7 +9,7 @@ import {
   TrashIcon,
 } from "@heroicons/react/24/outline";
 import { Badge } from "@radix-ui/themes";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Pie } from "react-chartjs-2";
 
 const ResultManagement = () => {
@@ -20,6 +20,8 @@ const ResultManagement = () => {
   const gradeDistribution = useAppSelector(
     (state) => state.result.gradeDistribution
   );
+
+  const [currentPage, setCurrentPage] = useState<number>(1);
 
   const columns: TableColumn<Result>[] = [
     {
@@ -139,15 +141,17 @@ const ResultManagement = () => {
           </div>
           {results && (
             <AppTable
-              data={results}
+              data={results.slice((currentPage - 1) * 10, currentPage * 10)}
               columns={columns}
               // loading={subjectsLoading === RequestState.LOADING}
               checkboxSelection
-              // onSelect={handleSelect}
               pagination={{
-                handlePagination: () => {},
+                handlePagination: (targetPage) => {
+                  if (targetPage === 1) return setCurrentPage(1);
+                  setCurrentPage(currentPage + 1);
+                },
                 pageSize: 10,
-                totalRecords: 2,
+                totalRecords: results.length,
               }}
             />
           )}
