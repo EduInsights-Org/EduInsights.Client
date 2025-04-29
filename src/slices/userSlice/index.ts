@@ -31,6 +31,7 @@ export interface User {
   email: string;
   indexNumber: string | null;
   role: Role;
+  isEmailVerified: boolean;
 }
 
 interface PaginatedResponse {

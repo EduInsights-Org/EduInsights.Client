@@ -12,13 +12,17 @@ import {
   resetPagination,
   User,
 } from "@slices/userSlice";
-import { Badge, Select, TextField } from "@radix-ui/themes";
+import { Badge, Select, TextField, Tooltip } from "@radix-ui/themes";
 import { capitalize } from "@utils/utils";
 import { RequestState, Role } from "@utils/enums";
 import AppTable, { TableColumn } from "@components/AppTable";
 import { usePopUp } from "@/context/PopUpContext";
 import DeleteConfirmationForm from "@/components/DeleteConfirmationForm";
 import useChart from "@/hooks/useChart";
+import {
+  CheckCircleIcon,
+  ExclamationCircleIcon,
+} from "@heroicons/react/16/solid";
 
 const UserManagement = () => {
   const dispatch = useAppDispatch();
@@ -91,7 +95,24 @@ const UserManagement = () => {
         <>{item.indexNumber === null ? <>N/A</> : <>{item.indexNumber}</>}</>
       ),
     },
-    { key: "email", header: "Email" },
+    {
+      key: "email",
+      header: "Email",
+      render: (item: User) => (
+        <div className="flex items-center gap-x-1">
+          <span>{item.email}</span>
+          {item.isEmailVerified ? (
+            <Tooltip content="Verified">
+              <CheckCircleIcon className="size-3 text-blue-500" />
+            </Tooltip>
+          ) : (
+            <Tooltip content="Not Verified">
+              <ExclamationCircleIcon className="size-3 text-yellow-600" />
+            </Tooltip>
+          )}
+        </div>
+      ),
+    },
     {
       key: "role",
       header: "Role",
