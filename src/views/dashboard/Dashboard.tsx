@@ -83,9 +83,9 @@ const Dashboard = () => {
 
   return (
     <main className="flex flex-col gap-y-2 h-full">
-      <div className="flex justify-between gap-x-2">
+      <div className="flex justify-between gap-x-2 h-[500px]">
         {/* cards */}
-        <div className="flex w-[15%] flex-col justify-between gap-y-2">
+        <div className="flex w-[15%] flex-col justify-between gap-y-2 h-full">
           {/* card one */}
           <AppStatCard
             icon={UserGroupIcon}
@@ -108,7 +108,7 @@ const Dashboard = () => {
         </div>
 
         {/* table */}
-        <div className="border flex flex-col rounded-lg border-light-borderGray dark:border-borderGray w-[50%] h-[500px]">
+        <div className="border flex flex-col rounded-lg border-light-borderGray dark:border-borderGray w-[50%] h-full">
           {/* table header */}
           <div className="flex gap-x-3 items-center py-4 px-3 bg-light-subBg dark:bg-subBg">
             <button
@@ -140,8 +140,8 @@ const Dashboard = () => {
         </div>
 
         {/* pie */}
-        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray w-[35%] h-[500px] flex flex-col">
-          <div className="flex items-center py-4 px-3 bg-light-subBg dark:bg-subBg overflow-auto">
+        <div className="border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray w-[35%] h-full flex flex-col">
+          <div className="flex items-center py-4 px-3 bg-light-subBg dark:bg-subBg">
             <button
               onClick={handleGetBatchAverageGPAs}
               className="ml-auto text-xs text-light-font02 dark:text-font02 flex justify-center items-center gap-x-1"
@@ -162,9 +162,9 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="flex justify-between gap-x-2 h-full">
-        {/* pie chart */}
-        <div className="pl-1 border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray min-w-[250px] w-[40%] flex flex-col">
+      <div className="flex justify-between gap-x-2 h-[300px]">
+        {/* bar chart */}
+        <div className="pl-1 border rounded-lg overflow-hidden border-light-borderGray dark:border-borderGray w-[40%] h-full">
           <Bar
             options={getChartOptions({
               title: "Total Number of Students in Each Batch",
