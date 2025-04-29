@@ -229,7 +229,7 @@ const Dashboard = () => {
           </div>
 
           <div className="w-full h-full flex-row flex gap-x-2 justify-between">
-            {batchGPAInfo.map((item) => (
+            {batchGPAInfo.slice(0, 4).map((item) => (
               <AppStatCard
                 key={item.batchName}
                 mainTitle={item.batchName}
@@ -237,6 +237,9 @@ const Dashboard = () => {
                 value={item.averageGpa.toFixed(2)}
               />
             ))}
+            {batchGPAInfo.length > 4 && (
+              <AppStatCard mainTitle="See All" type="seeAll" />
+            )}
           </div>
         </div>
       </div>
