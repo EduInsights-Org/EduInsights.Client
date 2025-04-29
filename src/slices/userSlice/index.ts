@@ -57,6 +57,8 @@ export interface UserState {
   error: string | null;
   paginatedResponse: PaginatedResponse;
   roleDistribution: GetRoleDistributionResponse;
+  notVerifiedUsers: User[];
+  userCount: string;
 }
 
 const initialState: UserState = {
@@ -66,6 +68,8 @@ const initialState: UserState = {
   error: null,
   user: null,
   message: null,
+  userCount: "",
+  notVerifiedUsers: [],
   paginatedResponse: {
     currentPage: 0,
     data: [],
@@ -134,6 +138,7 @@ const instituteSlice = createSlice({
       .addCase(getUsers.rejected, (state) => {
         state.status = RequestState.FAILED;
       })
+
       .addCase(getRoleDistribution.pending, (state) => {
         state.status = RequestState.LOADING;
       })
@@ -148,6 +153,34 @@ const instituteSlice = createSlice({
         }
       )
       .addCase(getRoleDistribution.rejected, (state) => {
+        state.status = RequestState.FAILED;
+      })
+
+      .addCase(getUsersByVerificationStatus.pending, (state) => {
+        state.status = RequestState.LOADING;
+      })
+      .addCase(
+        getUsersByVerificationStatus.fulfilled,
+        (state, action: PayloadAction<{ data: User[] }>) => {
+          state.notVerifiedUsers = action.payload.data;
+          state.status = RequestState.SUCCEEDED;
+        }
+      )
+      .addCase(getUsersByVerificationStatus.rejected, (state) => {
+        state.status = RequestState.FAILED;
+      })
+
+      .addCase(getUserCount.pending, (state) => {
+        state.status = RequestState.LOADING;
+      })
+      .addCase(
+        getUserCount.fulfilled,
+        (state, action: PayloadAction<{ data: string }>) => {
+          state.userCount = action.payload.data;
+          state.status = RequestState.SUCCEEDED;
+        }
+      )
+      .addCase(getUserCount.rejected, (state) => {
         state.status = RequestState.FAILED;
       });
   },
@@ -227,6 +260,53 @@ export const getRoleDistribution = createAsyncThunk(
         .get(
           `${AppConfig.serviceUrls.user}role-distribution?${params.toString()}`
         )
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+);
+
+export const getUsersByVerificationStatus = createAsyncThunk(
+  "result/getUsersByVerification",
+  async ({
+    instituteId,
+    isEmailVerified,
+  }: {
+    instituteId: string;
+    isEmailVerified: boolean;
+  }) => {
+    return new Promise<any>((resolve, reject) => {
+      AxiosPrivateService.getInstance()
+        .get(`${AppConfig.serviceUrls.user}by-institute-email`, {
+          params: {
+            instituteId,
+            isEmailVerified,
+          },
+        })
+        .then((response) => {
+          resolve(response.data);
+        })
+        .catch((error) => {
+          reject(error);
+        });
+    });
+  }
+);
+
+export const getUserCount = createAsyncThunk(
+  "result/getUserCount",
+  async (instituteId: string) => {
+    return new Promise<any>((resolve, reject) => {
+      AxiosPrivateService.getInstance()
+        .get(`${AppConfig.serviceUrls.user}get-count`, {
+          params: {
+            instituteId,
+          },
+        })
         .then((response) => {
           resolve(response.data);
         })
