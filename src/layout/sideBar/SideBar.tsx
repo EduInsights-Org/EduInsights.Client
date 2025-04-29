@@ -13,6 +13,7 @@ import {
   PlusIcon,
   SunIcon,
   ArrowLeftStartOnRectangleIcon,
+  CheckCircleIcon,
 } from "@heroicons/react/16/solid";
 import { usePopUp } from "@context/PopUpContext";
 import { useTheme } from "@context/ThemeContext";
@@ -20,6 +21,13 @@ import { resetBatchStore, selectBatch } from "@slices/batchSlice";
 import { Avatar } from "@radix-ui/themes";
 import BatchForm from "@components/BatchForm";
 import { getStudentByBatch } from "@/slices/studentSlice";
+import {
+  ArrowPathIcon,
+  BellIcon,
+  CheckBadgeIcon,
+  CheckIcon,
+} from "@heroicons/react/24/outline";
+import AppDivider from "@/components/AppDivider";
 const roles: Role[] = [Role.SuperAdmin];
 
 function useRouteMatch(patterns: readonly string[]) {
@@ -183,14 +191,60 @@ const SideBar = () => {
         Log out
       </button>
 
-      <button
-        className={
-          "flex items-center px-3 py-2 gap-x-2 text-sm text-light-font02 dark:text-font02 font-medium mb-1 hover:bg-light-hoverBg dark:hover:bg-hoverBg rounded-md"
-        }
-      >
-        <BellAlertIcon className="size-3 mr-1 fill-light-font02 dark:fill-font02" />
-        Notification
-      </button>
+      <Menu as="div">
+        <MenuButton className="flex w-full items-center px-3 py-2 gap-x-2 text-sm text-light-font02 dark:text-font02 font-medium mb-1 hover:bg-light-hoverBg dark:hover:bg-hoverBg rounded-md">
+          <BellAlertIcon className="size-3 mr-1 fill-light-font02 dark:fill-font02" />
+          Notification
+        </MenuButton>
+
+        <MenuItems
+          transition
+          anchor="bottom"
+          className="w-96 h-[620px] ml-6 px-4 py-2 rounded-md shadow-2xl bg-light-mainBg dark:bg-mainBg ring-1 ring-light-borderGray dark:ring-borderGray transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-0 data-[enter]:ease-out data-[leave]:ease-in"
+        >
+          <div className="flex items-center gap-x-2">
+            <span className="text-lg text-light-font01 dark:text-font01 font-bold">
+              Notifications
+            </span>
+
+            <button className="ml-auto text-xs text-light-font02 dark:text-font02 flex justify-center items-center gap-x-1">
+              <CheckBadgeIcon className="size-3" />
+              Mark all as read
+            </button>
+          </div>
+
+          <AppDivider />
+
+          {/* notification list card */}
+
+          <div className="flex flex-col gap-y-3 mt-4">
+            <div className="flex items-start gap-x-2 flex-col">
+              <span className="text-sm font-semibold dark:text-font01 text-light-font01 leading-none">
+                New Student Added
+              </span>
+              <span className="text-xs text-light-font02 dark:text-font02">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                Phasellus imperdiet, nulla et dictum interdum, nisi lorem.
+              </span>
+              <span className="text-xs text-light-font02 dark:text-font02 mt-1 font-extralight">
+                2 days ago
+              </span>
+            </div>
+            <div className="flex items-start gap-x-2 flex-col">
+              <span className="text-sm font-semibold dark:text-font01 text-light-font01 leading-none">
+                New Student Added
+              </span>
+              <span className="text-xs text-light-font02 dark:text-font02">
+                Lorem ipsum dolor sit amet, consectetur adipiscing elit
+                Phasellus imperdiet, nulla et dictum interdum, nisi lorem.
+              </span>
+              <span className="text-xs text-light-font02 dark:text-font02 mt-1 font-extralight">
+                2 days ago
+              </span>
+            </div>
+          </div>
+        </MenuItems>
+      </Menu>
 
       <button
         className={
